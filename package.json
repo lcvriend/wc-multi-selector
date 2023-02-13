@@ -1,0 +1,25 @@
+{
+  "name": "wc-multi-selector",
+  "version": "1.0.0",
+  "description": "Web component that lets a user select multiple options from an arbitrarily nestable hierarchy within drop-down menu.",
+  "main": "src/wc-multi-selector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lcvriend/wc-multi-selector.git"
+  },
+  "keywords": [
+    "web-component",
+    "multi-selector",
+    "omnibox",
+    "nestable"
+  ],
+  "author": "L.C. Vriend",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/lcvriend/wc-multi-selector/issues"
+  },
+  "homepage": "https://github.com/lcvriend/wc-multi-selector#readme"
+}

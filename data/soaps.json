@@ -1,0 +1,82 @@
+[
+    {
+        "label": "Base oils",
+        "value": "Base oils",
+        "children": [
+            {
+                "label": "Olive oil",
+                "value": "Olive oil",
+                "children": []
+            },
+            {
+                "label": "Coconut oil",
+                "value": "Coconut oil",
+                "children": []
+            },
+            {
+                "label": "Palm oil",
+                "value": "Palm oil",
+                "children": []
+            }
+        ]
+    },
+    {
+        "label": "Additives",
+        "value": "Additives",
+        "children": [
+            {
+                "label": "Herbs",
+                "value": "Herbs",
+                "children": [
+                    {
+                        "label": "Lavender",
+                        "value": "Lavender",
+                        "children": []
+                    },
+                    {
+                        "label": "Rosemary",
+                        "value": "Rosemary",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "label": "Essential oils",
+                "value": "Essential oils",
+                "children": [
+                    {
+                        "label": "Lemon",
+                        "value": "Lemon",
+                        "children": []
+                    },
+                    {
+                        "label": "Peppermint",
+                        "value": "Peppermint",
+                        "children": []
+                    }
+                ]
+            },
+            {
+                "label": "Coloring",
+                "value": "Coloring",
+                "children": [
+                    {
+                        "label": "Activated charcoal",
+                        "value": "Activated charcoal",
+                        "children": []
+                    },
+                    {
+                        "label": "Turmeric",
+                        "value": "Turmeric",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "label": "Lye",
+        "value": "Lye",
+        "children": []
+    }
+]

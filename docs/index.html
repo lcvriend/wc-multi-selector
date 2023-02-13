@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>multiselector component test</title>
+    <link rel="stylesheet" href="../static/stylesheet.css">
+    <link rel="stylesheet" href="../static/prism.css">
+</head>
+<body>
+<header>
+    <h1>Multi-Selector</h1>
+    <button data-action="toggle-color-scheme" title="click to switch themes">
+        <span id="sun" class="hidden">☀️</span>
+        <span id="moon">🌒</span>
+    </button>
+</header>
+<main>
+    <section>
+        <div>
+            <h3>Web component demo</h3>
+            <p><code>&lt;multi-selector&gt;</code> is a web component that lets a user select multiple options from a drop-down menu:</p>
+            <ul>
+                <li>Arbitrarily nested groups of options</li>
+                <li>Searchable</li>
+                <li>Easy to control and navigate (also with the <i>keyboard)</i></li>
+                <li>Reads options from JSON or mark up</li>
+                <li>Style with custom properties</li>
+                <li>VanillaJS (no dependencies)</li>
+            </ul>
+            <p>On this page you will find several examples of how to use this web component.</p>
+        </div>
+        <div>
+            <h4>Contents</h4>
+            <ul>
+                <li><a href="#json">Load from JSON</a></li>
+                <li><a href="#options-in-markup">Load from DOM</a></li>
+                <li><a href="#categories-with-optgroup">Categories with optgroup</a></li>
+                <li><a href="#control-navigation">Control & navigation</a></li>
+                <li><a href="#form-integration">Form integration</a></li>
+                <li><a href="#disable">Disable</a></li>
+                <li><a href="#styling-with-custom-properties">Styling with custom properties</a></li>
+                <li><a href="#alternatives">Alternatives</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="json">Load from JSON</h3>
+            <p>Supply the data as JSON using the <code>src</code> attribute of <code>&lt;multi-selector&gt;</code>.</p>
+            <p>The data should be provided in this format:</p>
+            <p><code>{
+                "label": "label",
+                "value": "value",
+                "children": []
+            }</code></p>
+            <p>See <a href="../data/soaps.json">soaps.json</a> for an example.</p>
+            <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. <code>&lt;multi-selector&gt;</code> will convert this to the format above.</p>
+            <p>See <a href="../data/countries.json">countries.json</a> for an example.</p>
+        </div>
+        <div>
+            <multi-selector src="../data/countries.json" name="countries"></multi-selector>
+        <pre><code class="language-html">
+  &lt!-- html --&gt;
+  &lt;multi-selector
+    src="data/countries.json"
+    name="countries"&gt;
+  &lt;/multi-selector&gt;
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="options-in-markup">Load from DOM</a> </h3>
+            <p>Populate <code>&lt;multi-selector&gt;</code> with markup by using <code>&lt;option&gt;</code> tags. <code>&lt;multi-selector&gt;</code> will assume that the value of an option is its text content unless a <code>value</code> attribute is supplied.</p>
+            <p>Adding options to the DOM automatically will update the web component.</p>
+            <blockquote>Note that updating the web component will completely <i>re-render</i> it.</blockquote>
+        </div>
+        <div>
+            <p>Add a color to the color selector:</p>
+            <div>
+                <input type="text" name="color" id="color" placeholder="Enter a color...">
+                <button id="add-color">Add color</button>
+            </div>
+            <multi-selector name="colors">
+                <option>Red</option>
+                <option>Yellow</option>
+                <option>Green</option>
+                <option>Blue</option>
+            </multi-selector>
+            <pre><code class="language-html">
+  &lt!-- html --&gt;
+  &lt;multi-selector name="colors"&gt;
+    &lt;option&gt;Red&lt;/option&gt;
+    &lt;option&gt;Yellow&lt;/option&gt;
+    &lt;option&gt;Green&lt;/option&gt;
+    &lt;option&gt;Blue&lt;/option&gt;
+  &lt;/multi-selector&gt;
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="categories-with-optgroup">Categories with optgroup</h3>
+            <p>Use <code>&lt;optgroup&gt;</code> tags to categorize options. Unlike the default <code>&lt;optgroup&gt;</code> tag (see <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup">MDN</a>) it can be nested.</p>
+            <p>Set labels and values with the <code>label</code> and <code>value</code> attributes. If not present labels and values will be set from the <code>textContent</code>.</p>
+        </div>
+        <div>
+            <multi-selector name="instruments">
+                <optgroup label="String instruments" value="string">
+                    <optgroup label="Guitar" value="guitar">
+                        <option value="acoustic">Acoustic</option>
+                        <option value="electric">Electric</option>
+                    </optgroup>
+                    <option value="violin">Violin</option>
+                    <option value="cello">Cello</option>
+                </optgroup>
+                <optgroup label="Wind instruments" value="wind">
+                    <optgroup label="Brass instruments" value="brass">
+                        <option value="trumpet">Trumpet</option>
+                        <option value="trombone">Trombone</option>
+                        <option value="saxophone">Saxophone</option>
+                    </optgroup>
+                    <optgroup label="Woodwind instruments" value="woodwind">
+                        <option value="flute">Flute</option>
+                        <option value="clarinet">Clarinet</option>
+                    </optgroup>
+                </optgroup>
+                <optgroup label="Percussion instruments" value="percussion">
+                    <option value="drums">Drums</option>
+                    <option value="xylophone">Xylophone</option>
+                    <option value="marimba">Marimba</option>
+                </optgroup>
+            </multi-selector>
+            <pre><code class="language-html">
+  &lt!-- html --&gt;
+  &lt;multi-selector name="instruments"&gt;
+  &lt;optgroup label="String instruments" value="string"&gt;
+      &lt;optgroup label="Guitar" value="guitar"&gt;
+          &lt;option value="acoustic"&gt;Acoustic&lt;/option&gt;
+          &lt;option value="electric"&gt;Electric&lt;/option&gt;
+      &lt;/optgroup&gt;
+      &lt;option value="violin"&gt;Violin&lt;/option&gt;
+      &lt;option value="cello"&gt;Cello&lt;/option&gt;
+  &lt;/optgroup&gt;
+  &lt;optgroup label="Wind instruments" value="wind"&gt;
+      &lt;optgroup label="Brass instruments" value="brass"&gt;
+          &lt;option value="trumpet"&gt;Trumpet&lt;/option&gt;
+          &lt;option value="trombone"&gt;Trombone&lt;/option&gt;
+          &lt;option value="saxophone"&gt;Saxophone&lt;/option&gt;
+      &lt;/optgroup&gt;
+      &lt;optgroup label="Woodwind instruments" value="woodwind"&gt;
+          &lt;option value="flute"&gt;Flute&lt;/option&gt;
+          &lt;option value="clarinet"&gt;Clarinet&lt;/option&gt;
+      &lt;/optgroup&gt;
+  &lt;optgroup label="Percussion instruments" value="percussion"&gt;
+      &lt;option value="drums"&gt;Drums&lt;/option&gt;
+      &lt;option value="xylophone"&gt;Xylophone&lt;/option&gt;
+      &lt;option value="marimba"&gt;Marimba&lt;/option&gt;
+  &lt;/optgroup&gt;
+  &lt;/multi-selector&gt;
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="control-navigation">Control & navigation</h3>
+            <ul>
+                <li>(De)select groups of options using the group checkboxes.</li>
+                <li>Use the search input to filter options by key-word.</li>
+                <li>Use the &#9745;-button or use <kbd>ctrl</kbd>-<kbd>\</kbd> to show <em>only</em> the selected options.</li>
+                <li>Use the &Cross;-button or use <kbd>ctrl</kbd>-<kbd>/</kbd> show all options (clear applied filter).</li>
+                <li>(Un)fold all groups at once with the folding buttons in the control panel or use <kbd>ctrl</kbd>-<kbd>[</kbd> and <kbd>ctrl</kbd>-<kbd>]</kbd> to fold/unfold when the component is in focus.</li>
+                <li>Use <kbd>up</kbd>, <kbd>down</kbd>, <kbd>home</kbd>, <kbd>end</kbd> and <kbd>tab</kbd> to navigate through groups and options with the keyboard.</li>
+                <li>Close the component with <kbd>esc</kbd>.</li>
+            </ul>
+        </div>
+        <div>
+            <multi-selector src="../data/fallacies.json" name="fallacies"></multi-selector>
+        <pre><code class="language-html">
+  &lt!-- html --&gt;
+  &lt;multi-selector
+    src="data/fallacies.json"
+    name="fallacies"&gt;
+  &lt;/multi-selector&gt;
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="disable">Disable</h3>
+            <p>Disable <code>&lt;multi-selector&gt;</code> with the disabled attribute.</p>
+            <p>Also note that the <code>placeholder</code>-attribute can be used to provide the user a brief hint to the expected input.</p>
+        </div>
+        <div>
+            <div>
+                <button id="toggle-genres">Toggle</button>
+                <multi-selector name="media genres" src="../data/lit_and_entertainment.json" placeholder="What are your favorite media genres?" disabled>
+                </multi-selector>
+            </div>
+                <pre><code data-theme="dark" class="language-html">
+  &lt!-- html --&gt;
+  &lt;multi-selector
+    name="Select genres"
+    src="data/genres.json"
+    placeholder=
+      "What are your favorite media genres?"
+    disabled&gt;
+  &lt;/multi-selector&gt;
+                </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="form-integration">Form integration</h3>
+            <p>Use <code>&lt;multi-selector&gt;</code> within a <code>&lt;form&gt;</code>.</p>
+            <p>Selected options will be stored as a stringified JSON array.</p>
+            <p>The <code>selectedValues</code> property on the <code>&lt;multi-selector&gt;</code> element will return the selection as an array.</p>
+        </div>
+        <div style="overflow-x: hidden;">
+            <form>
+                <label for="Albums">Select albums</label>
+                <multi-selector src="../data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
+                <button type="submit">submit</button>
+            </form>
+            <div style="overflow-x: hidden;">
+                <h4>Form data</h4>
+                <pre><code id="output" class="language-json"></code></pre>
+            </div>
+            <pre><code class="language-html">
+  &lt!-- html --&gt;
+  &lt;form&gt;
+    &lt;label for="Albums"&gt;Select albums&lt;/label&gt;
+    &lt;multi-selector
+      src="data/albums.json"
+      name="Albums"
+      placeholder=
+        "Select Captain Beefheart albums..."&gt;
+    &lt;/multi-selector&gt;
+    &lt;button type="submit"&gt;submit&lt;/button&gt;
+  &lt;/form&gt;
+            </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="styling-with-custom-properties">Styling with custom properties</h3>
+            <p>
+                Some simple styling is possible using custom properties. The following properties are available:
+            </p>
+            <ul>
+                <li><code>--ms-primary-color</code></li>
+                <li><code>--ms-primary-color-disabled</code></li>
+                <li><code>--ms-background:</code></li>
+                <li><code>--ms-option-hover</code></li>
+                <li><code>--ms-text-color</code></li>
+                <li><code>--ms-text-color-disabled</code></li>
+                <li><code>--ms-main-padding</code></li>
+                <li><code>--ms-border-radius</code></li>
+                <li><code>--ms-button-color</code></li>
+                <li><code>--ms-button-hover</code></li>
+                <li><code>--ms-button-active</code></li>
+                <li><code>--ms-accent-color</code></li>
+                <li><code>--ms-search-background</code></li>
+                <li><code>--ms-search-text-color</code></li>
+                <li><code>--ms-search-placeholder-color</code></li>
+                <li><code>--ms-max-height</code></li>
+            </ul>
+        </div>
+        <div>
+            <div class="styling-example">
+                <multi-selector name="soap ingredients" src="../data/soaps.json">
+                </multi-selector>
+            </div>
+                <pre><code class="language-css">
+  /* css */
+  .styling-example multi-selector {
+    --ms-primary-color:
+      hsl(120, 24%, 55%);
+    --ms-background:
+      hsl(120, 24%, 25%);
+    --ms-search-background:
+      hsl(120, 24%, 35%);
+    --ms-search-placeholder-color:
+      hsl(0, 5%, 68%);
+    --ms-text-color:
+      hsl(0, 5%, 84%);
+    --ms-accent-color:
+      hsl(120, 24%, 15%);
+    --ms-button-background:
+      hsl(120, 20%, 44%);
+    --ms-button-hover:
+      hsl(120, 20%, 57%);
+    --ms-button-active:
+      hsl(120, 20%, 67%);
+    width: 240px;
+    margin: 0;
+  }
+                </code></pre>
+        </div>
+    </section>
+
+    <section>
+        <div>
+            <h3 id="alternatives">Alternatives</h3>
+            <ul>
+                <li>
+                    <a href="https://bmsvieira.github.io/BVSelect-VanillaJS/">BVSelect </a>
+                </li>
+                <li>
+                    <a href="https://vorotina.github.io/vanilla-select/">vanilla-select</a>
+                </li>
+                <li>
+                    <a href="https://philippemarcmeyer.github.io/vanillaSelectBox/index.html?v=1.04">vanillaSelectBox</a>
+                </li>
+                <li>
+                    <a href="https://multiselect-combo-box.web.app/">multiselect-combo-box</a> <code><a href="https://github.com/gatanaso/multiselect-combo-box">github</a></code>
+                </li>
+                <li>
+                    <a href="https://paper-dropdown.netlify.app/#/elements/paper-dropdown/demos/demo/index.html">paper-dropdown</a> <code><a href="https://github.com/pushkar8723/paper-dropdown">github</a></code>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+    <script src="../static/prism.js"></script>
+    <script src="../src/wc-multi-selector.js"></script>
+    <script>
+        const multiSelectors = document.querySelectorAll("multi-selector")
+        const colorSchemeToggler = document.querySelector(`[data-action="toggle-color-scheme"]`)
+        let darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+        if (darkModeMediaQuery.matches) {
+            document.body.classList.toggle("dark-theme")
+        }
+        colorSchemeToggler.addEventListener("click", () => {
+            document.getElementById("sun").classList.toggle("hidden")
+            document.getElementById("moon").classList.toggle("hidden")
+            document.body.classList.toggle("dark-theme")
+            multiSelectors.forEach(el => {
+                const hasDark = document.body.classList.contains("dark-theme")
+                el.mode = hasDark ? "dark" : "light"
+            })
+        })
+
+        // test options through markup
+        const colorInput = document.querySelector("#color")
+        const addColorButton = document.querySelector("#add-color")
+        const colorOptions = document.querySelector("[name='colors']")
+
+        function addColor() {
+            const val = colorInput.value
+            console.log(colorOptions.options)
+            if (!val || colorOptions.options.includes(val)) { return }
+            const newOption = document.createElement("option")
+            newOption.textContent = val
+            colorOptions.appendChild(newOption)
+            colorInput.value = ""
+        }
+
+        colorInput.addEventListener("keyup", (event) => {
+            if (event.code === "Enter") { addColor() }
+        })
+
+        addColorButton.addEventListener("click", addColor)
+
+        // test disabled
+        let toggle = document.querySelector("#toggle-genres")
+        let genres = document.querySelector("multi-selector[name='media genres']")
+        toggle.addEventListener("click", () => genres.toggleAttribute("disabled"))
+
+        genres.addEventListener("change", () => console.log("i got dun changed me bru"))
+
+        // test form
+        let output = document.querySelector("#output")
+        let form = document.querySelector("form")
+        form.addEventListener("submit", event => {
+            event.preventDefault()
+            let formData = new FormData(form)
+            console.log(formData)
+            let data = {}
+            formData.forEach((value, key) => data[key] = value)
+            output.innerHTML = JSON.stringify(data, null, 2)
+        })
+    </script>
+</body>
+</html>
