@@ -197,6 +197,7 @@
             <h3 id="disable">Disable</h3>
             <p>Disable <code>&lt;multi-selector&gt;</code> with the disabled attribute.</p>
             <p>Also note that the <code>placeholder</code>-attribute can be used to provide the user a brief hint to the expected input.</p>
+            <p>The component dispatches <code>change</code> events whenever an option is (de)selected. Check the console to see it in action.</p>
         </div>
         <div>
             <div>
@@ -376,7 +377,7 @@
         let genres = document.querySelector("multi-selector[name='media genres']")
         toggle.addEventListener("click", () => genres.toggleAttribute("disabled"))
 
-        genres.addEventListener("change", () => console.log("i got dun changed me bru"))
+        genres.addEventListener("change", () => console.log("I was changed."))
 
         // test form
         let output = document.querySelector("#output")
