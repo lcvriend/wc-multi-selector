@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>multiselector component test</title>
-    <link rel="stylesheet" href="../static/stylesheet.css">
-    <link rel="stylesheet" href="../static/prism.css">
+    <link rel="stylesheet" href="static/stylesheet.css">
+    <link rel="stylesheet" href="static/prism.css">
 </head>
 <body>
 <header>
@@ -56,12 +56,12 @@
                 "value": "value",
                 "children": []
             }</code></p>
-            <p>See <a href="../data/soaps.json">soaps.json</a> for an example.</p>
+            <p>See <a href="data/soaps.json">soaps.json</a> for an example.</p>
             <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. <code>&lt;multi-selector&gt;</code> will convert this to the format above.</p>
-            <p>See <a href="../data/countries.json">countries.json</a> for an example.</p>
+            <p>See <a href="data/countries.json">countries.json</a> for an example.</p>
         </div>
         <div>
-            <multi-selector src="../data/countries.json" name="countries"></multi-selector>
+            <multi-selector src="data/countries.json" name="countries"></multi-selector>
         <pre><code class="language-html">
   &lt!-- html --&gt;
   &lt;multi-selector
@@ -181,7 +181,7 @@
             </ul>
         </div>
         <div>
-            <multi-selector src="../data/fallacies.json" name="fallacies"></multi-selector>
+            <multi-selector src="data/fallacies.json" name="fallacies"></multi-selector>
         <pre><code class="language-html">
   &lt!-- html --&gt;
   &lt;multi-selector
@@ -201,7 +201,7 @@
         <div>
             <div>
                 <button id="toggle-genres">Toggle</button>
-                <multi-selector name="media genres" src="../data/lit_and_entertainment.json" placeholder="What are your favorite media genres?" disabled>
+                <multi-selector name="media genres" src="data/lit_and_entertainment.json" placeholder="What are your favorite media genres?" disabled>
                 </multi-selector>
             </div>
                 <pre><code data-theme="dark" class="language-html">
@@ -227,7 +227,7 @@
         <div style="overflow-x: hidden;">
             <form>
                 <label for="Albums">Select albums</label>
-                <multi-selector src="../data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
+                <multi-selector src="data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
                 <button type="submit">submit</button>
             </form>
             <div style="overflow-x: hidden;">
@@ -277,7 +277,7 @@
         </div>
         <div>
             <div class="styling-example">
-                <multi-selector name="soap ingredients" src="../data/soaps.json">
+                <multi-selector name="soap ingredients" src="data/soaps.json">
                 </multi-selector>
             </div>
                 <pre><code class="language-css">
@@ -331,8 +331,8 @@
         </div>
     </section>
 </main>
-    <script src="../static/prism.js"></script>
-    <script src="../src/wc-multi-selector.js"></script>
+    <script src="static/prism.js"></script>
+    <script src="src/wc-multi-selector.js"></script>
     <script>
         const multiSelectors = document.querySelectorAll("multi-selector")
         const colorSchemeToggler = document.querySelector(`[data-action="toggle-color-scheme"]`)
