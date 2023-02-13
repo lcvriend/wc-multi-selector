@@ -1,4 +1,4 @@
-# WC-Multi-Selector
+# multi-selector (web component)
 
 `<multi-selector>` is a web component that lets a user select multiple options from a drop-down menu:
 
@@ -23,16 +23,16 @@ Load the `<multi-selector>` web component and add it to your page:
 <script src="src/wc-multi-selector.js"></script>
 ```
 
-The following attributes are available for customizing the element:
+The following attributes are available for customizing the component:
 
 attribute     | description
 --------------|-------------
-`name`        | Name of the element
+`name`        | Name of the component
 `placeholder` | Text when no value is set
-`disabled`    | If set then element is non-interactive
+`disabled`    | If set then component is non-interactive
 `src`         | Path to data to embed
 
-The element also exposes the following properties:
+The component also exposes the following properties:
 
 property              | description
 ----------------------|-------------
@@ -40,6 +40,8 @@ property              | description
 `selectedValues`      | All selected values as array
 `selectedLabels`      | All selected labels as array
 `selectedLeastNested` | All selected groups and labels that are least nested
+
+The component dispatches a `change` event whenever an option is (de)selected.
 
 ## Data
 ### Load from JSON
