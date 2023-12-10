@@ -85,6 +85,7 @@ function createTemplate(options) {
                 table-layout: fixed;
                 width: 100%;
                 white-space: nowrap;
+                margin-right: 3ch;
             }
             .display span {
                 display: table-cell;
@@ -361,7 +362,7 @@ class MultiSelector extends HTMLElement {
                 query = "details"
                 break
             case "display":
-                query = ".display span"
+                query = ".display"
                 break
             case "fold":
                 query = `[data-command="fold"]`
@@ -405,7 +406,7 @@ class MultiSelector extends HTMLElement {
                 break
             case "selected-values":
                 query = `[data-role="option"] > :checked`
-                break            
+                break
             case "selected-labels":
                 query = `[data-role="option"] > :checked + label`
                 break
@@ -581,7 +582,6 @@ class Renderer {
         let html = this.htmlBuilder.buildHTML(this.ms.data)
         this.optionsContainer.innerHTML += html
         this.renderSelected()
-        this.renderLabelAll()
     }
 
     renderSelected() {
@@ -592,18 +592,6 @@ class Renderer {
             ? `<span title="${this.listFormat.format(selectedLabels)}">${this.listFormat.format(selectedLeastNested)}</span>`
             : this.ms.placeholder
         this.ms.getElement("show-selected").disabled = selectedLabels.length === 0
-    }
-
-    renderLabelAll() {
-        const hasSelection = this.ms.getElements("hidden").length > 0
-        this.labelAll.textContent = hasSelection
-            ? this.ms.settings.labels.selection
-            : this.ms.settings.labels.all
-        const n = hasSelection
-            ? `${this.shownOptions.length} / ${this.options.length}`
-            : this.shownOptions.length
-        this.labelAll.innerHTML += `
-            <code>[${n}]</code>`
     }
 }
 
@@ -619,12 +607,16 @@ class HTMLBuilder {
             .map(item => {
                 this.keys.push(item.label)
                 const itemID = this.keys.join("-")
+                const label =
+                    item.children.length > 0
+                    ? `${item.label} <code>[${this.countCheckboxes(item.children)}]</code>`
+                    : item.label
                 const input = `<input
                     type="checkbox"
                     id="${itemID}"
                     name="${itemID}"
                     value="${item.value}">
-                <label for="${itemID}">${item.label}</label>`
+                <label for="${itemID}">${label} </label>`
                 let rendered = ""
                 if (item.children.length === 0) {
                     rendered = `<div
@@ -646,6 +638,23 @@ class HTMLBuilder {
             })
             .join("")
             .replace(/\s+/g, " ") // remove excess whitespace
+    }
+
+    countCheckboxes(data) {
+        let count = 0
+
+        function countRecursively(items) {
+            for (const item of items) {
+                if (item.children.length === 0) {
+                    count++
+                } else {
+                    countRecursively(item.children)
+                }
+            }
+        }
+
+        countRecursively(data)
+        return count
     }
 }
 
@@ -745,7 +754,7 @@ class SearchHandler {
     get clearQueryButton() {
         return this.ms.getElement("clear-query")
     }
-    
+
     get firstGroup() {
         return this.ms.getElement("first-group")
     }
@@ -809,7 +818,7 @@ class SearchHandler {
     updateStateAfterFilter() {
         this.ms.checkboxHandler.setAllGroupStates()
         this.ms.foldingHandler.openAllLevels()
-        this.ms.renderer.renderLabelAll()    
+        this.ms.renderer.renderLabelAll()
     }
 
     filterData(el, matcher) {
@@ -889,15 +898,15 @@ class CheckboxHandler extends EventTarget {
     toggleCheckboxChildren(clickedCheckbox) {
         // exit if the checkbox is an option (because then it has no children)
         if (clickedCheckbox.closest("div")?.matches(`[data-role="option"]`)) { return }
-    
+
         const parentDetails = clickedCheckbox.closest("details")
         const childCheckboxes = this.getChildCheckboxes(parentDetails)
-    
+
         childCheckboxes.forEach((child) => {
             child.checked = clickedCheckbox.checked
         })
     }
-    
+
     getChildCheckboxes(parentDetails) {
         return parentDetails.querySelectorAll(`
             [data-role="option"]:not(.hide) > [type="checkbox"],

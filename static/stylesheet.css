@@ -65,6 +65,7 @@ header {
     align-items: center;
     background-color: var(--header-background);
     color: var(--header-text-color);
+    padding-right: 1rem;
 }
 h1 {
     font-family: 'Bungee Hairline', cursive;

@@ -11,10 +11,6 @@
 <body>
 <header>
     <h1>Multi-Selector</h1>
-    <button data-action="toggle-color-scheme" title="click to switch themes">
-        <span id="sun" class="hidden">☀️</span>
-        <span id="moon">🌒</span>
-    </button>
 </header>
 <main>
     <section>
@@ -334,22 +330,23 @@
 </main>
     <script src="static/prism.js"></script>
     <script src="src/wc-multi-selector.js"></script>
-    <script>
+    <script type="module">
+        import { DarkModeToggle } from "https://uu-asc.github.io/csa-werkvoorraad/src/darkmode-toggle.js"
+
         const multiSelectors = document.querySelectorAll("multi-selector")
-        const colorSchemeToggler = document.querySelector(`[data-action="toggle-color-scheme"]`)
-        let darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-        if (darkModeMediaQuery.matches) {
-            document.body.classList.toggle("dark-theme")
-        }
-        colorSchemeToggler.addEventListener("click", () => {
-            document.getElementById("sun").classList.toggle("hidden")
-            document.getElementById("moon").classList.toggle("hidden")
-            document.body.classList.toggle("dark-theme")
+
+        document.addEventListener("color-scheme-change", event => {
+            event.detail.scheme === "dark"
+            ? document.body.classList.add("dark-theme")
+            : document.body.classList.remove("dark-theme")
+
             multiSelectors.forEach(el => {
                 const hasDark = document.body.classList.contains("dark-theme")
                 el.mode = hasDark ? "dark" : "light"
             })
         })
+        const darkModeToggle = new DarkModeToggle()
+        document.querySelector("header").appendChild(darkModeToggle)
 
         // test options through markup
         const colorInput = document.querySelector("#color")
