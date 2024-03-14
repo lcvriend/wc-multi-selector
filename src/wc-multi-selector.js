@@ -324,9 +324,8 @@ class MultiSelector extends HTMLElement {
         return [...this.getElements("selected-values")].map(i => i.value)
     }
 
-    addSelectedValues(value) {
-        if (!Array.isArray(value)) { value = [value] }
-        value.forEach(item => {
+    addSelectedValues(...values) {
+        values.forEach(item => {
             const element = this.shadowRoot.querySelector(`input[value="${item}"]`)
             if (element) { element.checked = true }
         })
@@ -334,9 +333,8 @@ class MultiSelector extends HTMLElement {
         this.renderer.renderSelected()
     }
 
-    removeSelectedValues(value) {
-        if (!Array.isArray(value)) { value = [value] }
-        value.forEach(item => {
+    removeSelectedValues(...values) {
+        values.forEach(item => {
             const element = this.shadowRoot.querySelector(`input[value="${item}"]`)
             if (element) { element.checked = false }
         })
