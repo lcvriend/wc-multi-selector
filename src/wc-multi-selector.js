@@ -581,6 +581,7 @@ class Renderer {
         this.ms.shadowRoot.innerHTML = createTemplate(this.ms.settings).trim()
         let html = this.htmlBuilder.buildHTML(this.ms.data)
         this.optionsContainer.innerHTML += html
+        this.ms.checkboxHandler.setAllGroupStates()
         this.renderSelected()
     }
 
@@ -615,7 +616,8 @@ class HTMLBuilder {
                     type="checkbox"
                     id="${itemID}"
                     name="${itemID}"
-                    value="${item.value}">
+                    value="${item.value}"
+                    ${item.selected ? "checked": ""}>
                 <label for="${itemID}">${label} </label>`
                 let rendered = ""
                 if (item.children.length === 0) {
@@ -677,7 +679,7 @@ class DataHandler {
             {
                 label: [this.ms.settings.labels.all],
                 value: 'all',
-                children: data
+                children: data ?? []
             }
         ]
     }
@@ -691,16 +693,17 @@ class DataHandler {
 
     getDataFromDOM() {
         return [...this.ms.querySelectorAll(":scope > :where(optgroup, option)")].map(
-            opt =>  this.getDataFromElement(opt)
+            opt => this.getDataFromElement(opt)
         )
     }
 
     getDataFromElement(element) {
-        const label = element.getAttribute("label") || element.textContent;
-        const value = element.getAttribute("value") || element.textContent;
+        const label = element.getAttribute("label") || element.textContent
+        const value = element.getAttribute("value") || element.textContent
+        const selected = element.hasAttribute("selected")
         const children = [...element.querySelectorAll(":scope > :where(optgroup, option)")]
             .map(this.getDataFromElement);
-        return {label, value, children};
+        return { label, value, children, selected };
     }
 
     convertStructure(source) {
@@ -708,12 +711,13 @@ class DataHandler {
             return source.map(item => ({
                 label: item,
                 value: item,
+                selected: false,
                 children: this.convertStructure(item),
             }))
         } else if (typeof source === "object") {
             return Object.keys(source).map(key => {
                 const children = this.convertStructure(source[key])
-                return { label: key, value: key, children }
+                return { label: key, value: key, selected: false, children }
             })
         } else {
             return []

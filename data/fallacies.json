@@ -10,31 +10,37 @@
                     {
                         "label": "Affirming the Consequent",
                         "value": "Affirming the Consequent",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Denying the Antecedent",
                         "value": "Denying the Antecedent",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Affirming a Disjunct",
                         "value": "Affirming a Disjunct",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Commutation of a Conditional",
                         "value": "Commutation of a Conditional",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Denying a Conjunct",
                         "value": "Denying a Conjunct",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Improper Transposition",
                         "value": "Improper Transposition",
+                        "selected": true,
                         "children": []
                     }
                 ]
@@ -51,11 +57,13 @@
                     {
                         "label": "Conjunction Fallacy",
                         "value": "Conjunction Fallacy",
+                        "selected": true,
                         "children": []
                     },
                     {
                         "label": "Fallacy of the Sheep",
                         "value": "Fallacy of the Sheep",
+                        "selected": true,
                         "children": []
                     },
                     {
