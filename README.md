@@ -100,8 +100,8 @@ To translate the labels on the component set `multiSelectorSettings` *before* lo
     </multi-selector>
 </body>
 <script>
-    const multiSelectorSettings = {
-        "labels": {
+    window.multiSelectorSettings = {
+        labels: {
             all: "Alle items",
             selection: "Geselecteerde items",
             placeholder_search: "Zoeken..."

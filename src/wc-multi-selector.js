@@ -273,7 +273,7 @@ function createTemplate(options) {
 
 class MultiSelector extends HTMLElement {
     static formAssociated = true
-    settings = multiSelectorSettings ?? {
+    defaultSettings = {
         labels: {
             all: "All items",
             selection: "Filtered items",
@@ -313,6 +313,10 @@ class MultiSelector extends HTMLElement {
         this.checkboxHandler.addEventListener("change", () => {
             this.dispatchEvent(new CustomEvent("change"))
         })
+    }
+
+    get settings() {
+        return window.multiSelectorSettings ?? this.defaultSettings
     }
 
     get options() {
