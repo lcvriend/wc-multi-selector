@@ -273,7 +273,7 @@ function createTemplate(options) {
 
 class MultiSelector extends HTMLElement {
     static formAssociated = true
-    settings = {
+    settings = multiSelectorSettings ?? {
         labels: {
             all: "All items",
             selection: "Filtered items",

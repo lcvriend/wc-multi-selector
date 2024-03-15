@@ -53,7 +53,7 @@ The data should be provided in this format:
 { "label": "label", "value": "value", "children": [] }
 ```
 
-See [soaps.json](data/soaps.json) for an example. To preselect values add `"selected": true`. Note that only values can be selected not categories.
+See [soaps.json](data/soaps.json) for an example. To preselect values add `"selected": true`. Note that only values can be selected, not categories.
 
 It is also possible to provide the data as a nested object where the options are given as strings in an array. `<multi-selector>` will convert this to the format above.
 
@@ -85,3 +85,35 @@ Some simple styling is possible using custom properties. The following propertie
 * `--ms-search-text-color`
 * `--ms-search-placeholder-color`
 * `--ms-max-height`
+
+## Translations
+To translate the labels on the component set `multiSelectorSettings` *before* loading the `wc-multi-selector.js`:
+
+```html
+<html>
+<body>
+    <multi-selector name="kleuren">
+        <option>Red</option>
+        <option>Yellow</option>
+        <option>Green</option>
+        <option>Blue</option>
+    </multi-selector>
+</body>
+<script>
+    const multiSelectorSettings = {
+        "labels": {
+            all: "Alle items",
+            selection: "Geselecteerde items",
+            placeholder_search: "Zoeken..."
+        },
+        titles: {
+            unfold_groups: "groepen openvouwen: ctrl-]",
+            fold_groups: "groepen dichtklappen: ctrl-[",
+            show_selected: "toon geselecteerde items: ctrl-\\",
+            clear_filter: "zoekopdracht leegmaken",
+        }
+    }
+</script>
+<script src="src/wc-multi-selector.js"></script>
+</html>
+```
