@@ -53,14 +53,14 @@ The data should be provided in this format:
 { "label": "label", "value": "value", "children": [] }
 ```
 
-See [soaps.json](data/soaps.json) for an example.
+See [soaps.json](data/soaps.json) for an example. To preselect values add `"selected": true`. Note that only values can be selected not categories.
 
 It is also possible to provide the data as a nested object where the options are given as strings in an array. `<multi-selector>` will convert this to the format above.
 
 See [countries.json](data/countries.json) for an example.
 
 ### Load from DOM
-Populate `<multi-selector>` with markup by using `<option>` tags. `<multi-selector>` will assume that the value of an option is its text content unless a value attribute is supplied.
+Populate `<multi-selector>` with markup by using `<option>` tags. `<multi-selector>` will assume that the value of an option is its text content unless a value attribute is supplied. Use the `selected` attribute to preselect a value.
 
 Use `<optgroup>` tags to categorize options. Unlike the default `<optgroup>` tag, it can be nested.
 
