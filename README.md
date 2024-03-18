@@ -23,6 +23,7 @@ Load the `<multi-selector>` web component and add it to your page:
 <script src="src/wc-multi-selector.js"></script>
 ```
 
+### Attributes
 The following attributes are available for customizing the component:
 
 attribute     | description
@@ -32,6 +33,7 @@ attribute     | description
 `disabled`    | If set then component is non-interactive
 `src`         | Path to data to embed
 
+### Properties
 The component also exposes the following properties:
 
 property              | description
@@ -41,7 +43,16 @@ property              | description
 `selectedLabels`      | All selected labels as array
 `selectedLeastNested` | All selected groups and labels that are least nested
 
+### Events
 The component dispatches a `change` event whenever an option is (de)selected.
+
+### Methods
+The following methods are available:
+
+method                          | description
+--------------------------------|-----------------------------
+addSelectedValues(...values)    | Add values to selection
+removeSelectedValues(...values) | Remove values from selection
 
 ## Data
 ### Load from JSON
