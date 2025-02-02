@@ -649,8 +649,9 @@ class HTMLBuilder {
             .map(item => {
                 this.keys.push(item.label)
                 const itemID = this.keys.join("-")
+                const children = item?.children ?? []
                 const label =
-                    item.children.length > 0
+                    children.length > 0
                     ? `${item.label} <code>[${this.countCheckboxes(item.children)}]</code>`
                     : item.label
                 const input = `<input
@@ -661,7 +662,7 @@ class HTMLBuilder {
                     ${item.selected ? "checked": ""}>
                 <label for="${itemID}">${label} </label>`
                 let rendered = ""
-                if (item.children.length === 0) {
+                if (children.length === 0) {
                     rendered = `<div
                         data-role="option"
                         data-value="${item.label}">
@@ -688,7 +689,8 @@ class HTMLBuilder {
 
         function countRecursively(items) {
             for (const item of items) {
-                if (item.children.length === 0) {
+                const children = item?.children ?? []
+                if (children.length === 0) {
                     count++
                 } else {
                     countRecursively(item.children)
@@ -769,8 +771,10 @@ class DataHandler {
         if (Array.isArray(obj)) {
             return obj.every(item => this.needsConversion(item))
         }
-        if (typeof obj === "object" && obj.label && obj.value && Array.isArray(obj.children)) {
-            return false
+        // Only check for label and value, children is optional
+        if (typeof obj === "object" && obj.label && obj.value) {
+            // If children exists, it must be an array
+            return obj.children ? !Array.isArray(obj.children) : false
         }
         return true
     }
