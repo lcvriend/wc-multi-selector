@@ -72,11 +72,13 @@ function createTemplate(options) {
                 flex-direction: column;
                 gap: .5rem;
                 padding: var(--ms-main-padding);
+                padding-right: calc(var(--ms-main-padding) + 8px);
                 border: 1px solid var(--ms-primary-color);
                 border-top: none;
                 margin-top: 2px;
                 border-radius: 0 0 var(--ms-border-radius) var(--ms-border-radius);
                 background-color: var(--ms-background);
+                scrollbar-gutter: stable;
             }
             /* display */
             /* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
@@ -168,6 +170,7 @@ function createTemplate(options) {
                 content: "\\2B";
                 color: var(--ms-text-color);
                 justify-self: end;
+                margin-right: .25em;
             }
             [data-role="group"][open] > summary:after {
                 content: "\\2212";
