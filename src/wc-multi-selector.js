@@ -23,7 +23,7 @@ function createTemplate(options) {
                 display: grid;
                 color: var(--ms-text-color);
             }
-            :host(.darkmode) {
+            :host([mode="dark"]) {
                 --ms-primary-color: hsl(0, 0%, 67%);
                 --ms-primary-color-disabled: hsl(0, 5%, 42%);
                 --ms-background: hsl(0, 0%, 7%);
@@ -478,19 +478,28 @@ class MultiSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["src", "name", "disabled", "placeholder"]
+        return ["src", "name", "disabled", "placeholder", "mode"]
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
         if (oldValue === newValue) return
-        this[property] = newValue
-        if (this.getElement("box") && property === "disabled") {
-            if (newValue === "") {
-                this.getElement("box").setAttribute("tabindex", -1)
-                return
-            }
-            this.getElement("box").removeAttribute("tabindex")
-            return
+
+        switch(property) {
+            case "mode":
+                this._mode = newValue
+                this.updateStyles()
+                break
+            case "disabled":
+                if (this.getElement("box")) {
+                    if (newValue === "") {
+                        this.getElement("box").setAttribute("tabindex", -1)
+                        return
+                    }
+                    this.getElement("box").removeAttribute("tabindex")
+                }
+                break
+            default:
+                this[property] = newValue
         }
     }
 
@@ -520,12 +529,15 @@ class MultiSelector extends HTMLElement {
 
     // COLOR SCHEME
     set mode(newValue) {
-        this._mode = newValue
-        this.updateStyles()
+        if (newValue === "dark" || newValue === "light" || newValue === "auto") {
+            this.setAttribute("mode", newValue)
+            this._mode = newValue
+            this.updateStyles()
+        }
     }
 
     get mode() {
-        return this._mode
+        return this._mode || "auto"
     }
 
     setMode() {
@@ -535,12 +547,21 @@ class MultiSelector extends HTMLElement {
     }
 
     handleMediaQueryChange() {
-        this.mode = this.mediaQuery.matches ? "dark" : "light";
+        if (this.mode === "auto") {
+            this.updateStyles()
+        }
     }
 
     updateStyles() {
-        const hostClassList = this.shadowRoot.host.classList
-        this.mode === "dark" ? hostClassList.add("darkmode") : hostClassList.remove("darkmode")
+        if (this._mode === "auto") {
+            // Use system preference
+            this.mediaQuery.matches ?
+                this.setAttribute("mode", "dark") :
+                this.setAttribute("mode", "light")
+        } else {
+            // Use explicit setting
+            this.setAttribute("mode", this._mode)
+        }
     }
 
     // FOCUS
