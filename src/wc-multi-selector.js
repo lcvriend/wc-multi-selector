@@ -278,6 +278,10 @@ function createTemplate(options) {
 
 class MultiSelector extends HTMLElement {
     static formAssociated = true
+    static get observedAttributes() {
+        return ["src", "name", "disabled", "placeholder", "mode"]
+    }
+
     settings = window.multiSelectorSettings ?? {
         labels: {
             all: "All items",
@@ -320,6 +324,83 @@ class MultiSelector extends HTMLElement {
         this.checkboxHandler.addEventListener("change", () => {
             this.dispatchEvent(new CustomEvent("change"))
         })
+    }
+
+    async connectedCallback() {
+        this.data = await this.dataHandler.getData()
+
+        this._isReady = true
+        for (const [property, value] of this._pendingAttributes) {
+            this.applyAttribute(property, value)
+        }
+        this._pendingAttributes.clear()
+
+        // participate in form
+        this.internals_.setFormValue(this.selectedValues)
+
+        document.addEventListener("click", this.onDocumentClick)
+        document.addEventListener("keyup", this.onTabOutOrEscape)
+
+        this.addEventListener('mouseenter', this.onMouseEnter)
+        this.addEventListener('mouseleave', this.onMouseLeave)
+
+        this.checkboxHandler.addListener()
+        this.searchHandler.addListener()
+        this.foldingHandler.addListener()
+        this.navigationHandler.addListener()
+
+        if (this.hasAttribute("disabled")) {
+            this.getElement("box").setAttribute("tabindex", -1)
+        }
+
+        // observe mutations
+        let observer = new MutationObserver(async () => {
+            this.data = await this.dataHandler.getData()
+        })
+        observer.observe(this, {childList: true})
+
+        this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+        this.mediaQuery.addEventListener("change", this.handleMediaQueryChange)
+        this.handleMediaQueryChange()
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("click", this.onDocumentClick)
+        document.removeEventListener("keyup", this.onTabOutOrEscape)
+        document.removeEventListener("keydown", this.foldingHandler.handleKeyFolding)
+        document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
+        this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
+    }
+
+    attributeChangedCallback(property, oldValue, newValue) {
+        if (oldValue === newValue) return
+
+        if (!this._isReady) {
+            this._pendingAttributes.set(property, newValue)
+            return
+        }
+
+        this.applyAttribute(property, newValue)
+    }
+
+    applyAttribute(property, newValue) {
+        switch(property) {
+            case "mode":
+                this.getElement("box").classList.remove('system-dark')
+                break
+            case "disabled":
+                const box = this.getElement("box")
+                if (box) {
+                    if (newValue === "") {
+                        box.setAttribute("tabindex", -1)
+                    } else {
+                        box.removeAttribute("tabindex")
+                    }
+                }
+                break
+            default:
+                this[property] = newValue
+        }
     }
 
     get options() {
@@ -445,87 +526,6 @@ class MultiSelector extends HTMLElement {
                 return null
         }
         return this.shadowRoot.querySelectorAll(query)
-    }
-
-    async connectedCallback() {
-        this.data = await this.dataHandler.getData()
-
-        this._isReady = true
-        for (const [property, value] of this._pendingAttributes) {
-            this.applyAttribute(property, value)
-        }
-        this._pendingAttributes.clear()
-
-        // participate in form
-        this.internals_.setFormValue(this.selectedValues)
-
-        document.addEventListener("click", this.onDocumentClick)
-        document.addEventListener("keyup", this.onTabOutOrEscape)
-
-        this.addEventListener('mouseenter', this.onMouseEnter)
-        this.addEventListener('mouseleave', this.onMouseLeave)
-
-        this.checkboxHandler.addListener()
-        this.searchHandler.addListener()
-        this.foldingHandler.addListener()
-        this.navigationHandler.addListener()
-
-        if (this.hasAttribute("disabled")) {
-            this.getElement("box").setAttribute("tabindex", -1)
-        }
-
-        // observe mutations
-        let observer = new MutationObserver(async () => {
-            this.data = await this.dataHandler.getData()
-        })
-        observer.observe(this, {childList: true})
-
-        this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-        this.mediaQuery.addEventListener("change", this.handleMediaQueryChange)
-        this.handleMediaQueryChange()
-    }
-
-    disconnectedCallback() {
-        document.removeEventListener("click", this.onDocumentClick)
-        document.removeEventListener("keyup", this.onTabOutOrEscape)
-        document.removeEventListener("keydown", this.foldingHandler.handleKeyFolding)
-        document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
-        this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
-    }
-
-    static get observedAttributes() {
-        return ["src", "name", "disabled", "placeholder", "mode"]
-    }
-
-    attributeChangedCallback(property, oldValue, newValue) {
-        if (oldValue === newValue) return
-
-        if (!this._isReady) {
-            this._pendingAttributes.set(property, newValue)
-            return
-        }
-
-        this.applyAttribute(property, newValue)
-    }
-
-    applyAttribute(property, newValue) {
-        switch(property) {
-            case "mode":
-                this.getElement("box").classList.remove('system-dark')
-                break
-            case "disabled":
-                const box = this.getElement("box")
-                if (box) {
-                    if (newValue === "") {
-                        box.setAttribute("tabindex", -1)
-                    } else {
-                        box.removeAttribute("tabindex")
-                    }
-                }
-                break
-            default:
-                this[property] = newValue
-        }
     }
 
     // DATA
