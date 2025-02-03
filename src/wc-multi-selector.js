@@ -321,8 +321,8 @@ class MultiSelector extends HTMLElement {
         this.isHover = false
 
         // re-dispatch changes
-        this.checkboxHandler.addEventListener("change", () => {
-            this.dispatchEvent(new CustomEvent("change"))
+        this.checkboxHandler.addEventListener("change", (event) => {
+            this.dispatchEvent(new CustomEvent("change", {detail: event.detail}))
         })
     }
 
@@ -951,7 +951,7 @@ class CheckboxHandler extends EventTarget {
         if (event.target.closest("details").matches(`[data-role="group"]`)) {
             this.toggleCheckboxChildren(event.target)
         }
-        this.dispatchEvent(new CustomEvent("change"))
+        this.dispatchEvent(new CustomEvent("change", {detail: this.ms.selectedValues}))
     }
 
     toggleCheckboxChildren(clickedCheckbox) {
