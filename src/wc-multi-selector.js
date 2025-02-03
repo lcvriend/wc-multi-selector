@@ -294,6 +294,8 @@ class MultiSelector extends HTMLElement {
 
     constructor() {
         super()
+        this._pendingAttributes = new Map()
+        this._isReady = false
         this.internals_ = this.attachInternals()
         this.attachShadow({ mode: 'open' })
         this.name = "options"
@@ -447,6 +449,13 @@ class MultiSelector extends HTMLElement {
 
     async connectedCallback() {
         this.data = await this.dataHandler.getData()
+
+        this._isReady = true
+        for (const [property, value] of this._pendingAttributes) {
+            this.applyAttribute(property, value)
+        }
+        this._pendingAttributes.clear()
+
         // participate in form
         this.internals_.setFormValue(this.selectedValues)
 
@@ -491,17 +500,27 @@ class MultiSelector extends HTMLElement {
     attributeChangedCallback(property, oldValue, newValue) {
         if (oldValue === newValue) return
 
+        if (!this._isReady) {
+            this._pendingAttributes.set(property, newValue)
+            return
+        }
+
+        this.applyAttribute(property, newValue)
+    }
+
+    applyAttribute(property, newValue) {
         switch(property) {
             case "mode":
                 this.getElement("box").classList.remove('system-dark')
                 break
             case "disabled":
-                if (this.getElement("box")) {
+                const box = this.getElement("box")
+                if (box) {
                     if (newValue === "") {
-                        this.getElement("box").setAttribute("tabindex", -1)
-                        return
+                        box.setAttribute("tabindex", -1)
+                    } else {
+                        box.removeAttribute("tabindex")
                     }
-                    this.getElement("box").removeAttribute("tabindex")
                 }
                 break
             default:
@@ -538,7 +557,7 @@ class MultiSelector extends HTMLElement {
         if (newValue === "dark") {
             this.setAttribute("mode", "dark")
         } else if (newValue === "light") {
-            this.removeAttribute("mode")
+            this.setAttribute("mode", "light")
         } else if (newValue === null) {
             this.removeAttribute("mode")
         }
@@ -550,11 +569,10 @@ class MultiSelector extends HTMLElement {
 
     handleMediaQueryChange() {
         if (!this.hasAttribute("mode")) {
-            const details = this.shadowRoot.querySelector("details")
             if (this.mediaQuery.matches) {
-                details.classList.add("system-dark")
+                this.getElement("box").classList.add("system-dark")
             } else {
-                details.classList.remove("system-dark")
+                this.getElement("box").classList.remove("system-dark")
             }
         }
     }
