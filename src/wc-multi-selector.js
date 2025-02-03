@@ -23,7 +23,8 @@ function createTemplate(options) {
                 display: grid;
                 color: var(--ms-text-color);
             }
-            :host([mode="dark"]) {
+            :host([mode="dark"]),
+            :host > details.system-dark {
                 --ms-primary-color: hsl(0, 0%, 67%);
                 --ms-primary-color-disabled: hsl(0, 5%, 42%);
                 --ms-background: hsl(0, 0%, 7%);
@@ -36,6 +37,7 @@ function createTemplate(options) {
                 --ms-accent-color: hsl(0, 0%, 100%);
                 --ms-search-background: hsl(0, 0%, 12%);
                 --ms-search-text-color: var(--ms-text-color);
+                color: var(--ms-text-color);
             }
             :host > details {
                 position: relative;
@@ -469,7 +471,9 @@ class MultiSelector extends HTMLElement {
         })
         observer.observe(this, {childList: true})
 
-        this.setMode()
+        this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+        this.mediaQuery.addEventListener("change", this.handleMediaQueryChange)
+        this.handleMediaQueryChange()
     }
 
     disconnectedCallback() {
@@ -477,7 +481,7 @@ class MultiSelector extends HTMLElement {
         document.removeEventListener("keyup", this.onTabOutOrEscape)
         document.removeEventListener("keydown", this.foldingHandler.handleKeyFolding)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
-        this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange);
+        this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
     }
 
     static get observedAttributes() {
@@ -489,8 +493,7 @@ class MultiSelector extends HTMLElement {
 
         switch(property) {
             case "mode":
-                this._mode = newValue
-                this.updateStyles()
+                this.getElement("box").classList.remove('system-dark')
                 break
             case "disabled":
                 if (this.getElement("box")) {
@@ -532,38 +535,27 @@ class MultiSelector extends HTMLElement {
 
     // COLOR SCHEME
     set mode(newValue) {
-        if (newValue === "dark" || newValue === "light" || newValue === "auto") {
-            this.setAttribute("mode", newValue)
-            this._mode = newValue
-            this.updateStyles()
+        if (newValue === "dark") {
+            this.setAttribute("mode", "dark")
+        } else if (newValue === "light") {
+            this.removeAttribute("mode")
+        } else if (newValue === null) {
+            this.removeAttribute("mode")
         }
     }
 
     get mode() {
-        return this._mode || "auto"
-    }
-
-    setMode() {
-        this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        this.handleMediaQueryChange();
-        this.mediaQuery.addEventListener("change", this.handleMediaQueryChange);
+        return this.getAttribute("mode") || "light"
     }
 
     handleMediaQueryChange() {
-        if (this.mode === "auto") {
-            this.updateStyles()
-        }
-    }
-
-    updateStyles() {
-        if (this._mode === "auto") {
-            // Use system preference
-            this.mediaQuery.matches ?
-                this.setAttribute("mode", "dark") :
-                this.setAttribute("mode", "light")
-        } else {
-            // Use explicit setting
-            this.setAttribute("mode", this._mode)
+        if (!this.hasAttribute("mode")) {
+            const details = this.shadowRoot.querySelector("details")
+            if (this.mediaQuery.matches) {
+                details.classList.add("system-dark")
+            } else {
+                details.classList.remove("system-dark")
+            }
         }
     }
 
