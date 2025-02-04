@@ -282,7 +282,7 @@ class MultiSelector extends HTMLElement {
         return ["src", "name", "disabled", "placeholder", "mode"]
     }
 
-    settings = window.multiSelectorSettings ?? {
+    static defaultSettings = {
         labels: {
             all: "All items",
             selection: "Filtered items",
@@ -298,6 +298,7 @@ class MultiSelector extends HTMLElement {
 
     constructor() {
         super()
+        this._settings = {...this.constructor.defaultSettings}
         this._pendingAttributes = new Map()
         this._isReady = false
         this.internals_ = this.attachInternals()
@@ -401,6 +402,15 @@ class MultiSelector extends HTMLElement {
             default:
                 this[property] = newValue
         }
+    }
+
+    get settings() {
+        return this._settings
+    }
+
+    set settings(newSettings) {
+        this._settings = {...this.constructor.defaultSettings, ...newSettings}
+        this.renderer?.render()
     }
 
     get options() {

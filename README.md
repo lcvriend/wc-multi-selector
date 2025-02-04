@@ -98,33 +98,30 @@ Some simple styling is possible using custom properties. The following propertie
 * `--ms-max-height`
 
 ## Translations
-To translate the labels on the component set `multiSelectorSettings` *before* loading the `wc-multi-selector.js`:
+There are three main ways to override the default labels:
 
-```html
-<html>
-<body>
-    <multi-selector name="kleuren">
-        <option>Red</option>
-        <option>Yellow</option>
-        <option>Green</option>
-        <option>Blue</option>
-    </multi-selector>
-</body>
-<script>
-    window.multiSelectorSettings = {
-        labels: {
-            all: "Alle items",
-            selection: "Geselecteerde items",
-            placeholder_search: "Zoeken..."
-        },
-        titles: {
-            unfold_groups: "groepen openvouwen: ctrl-]",
-            fold_groups: "groepen dichtklappen: ctrl-[",
-            show_selected: "toon geselecteerde items: ctrl-\\",
-            clear_filter: "zoekopdracht leegmaken",
-        }
-    }
-</script>
-<script src="src/wc-multi-selector.js"></script>
-</html>
+1. Per instance after creation:
+```js
+const selector = document.querySelector('multi-selector')
+selector.settings = {
+    labels: { all: "Alle items" }
+}
+```
+
+2. Global defaults before any instances:
+```js
+MultiSelector.defaultSettings = {
+    labels: { all: "Alle items" }
+}
+```
+
+3. Hybrid - extend defaults and set per instance:
+```js
+// Extend defaults
+MultiSelector.defaultSettings.labels.all = "Alle items"
+
+// Override specific instance
+selector.settings = {
+    titles: { unfold_groups: "Openvouwen" }
+}
 ```
