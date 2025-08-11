@@ -445,7 +445,8 @@ class MultiSelector extends HTMLElement {
     }
 
     get selectedLeastNested() {
-        return this.getLeastNestedCheckedLabels(this.getElement("first-group"))
+        const firstGroup = this.getElement("first-group")
+        return firstGroup ? this.getLeastNestedCheckedLabels(firstGroup) : []
     }
 
     getLeastNestedCheckedLabels(el) {
