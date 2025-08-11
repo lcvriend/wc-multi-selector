@@ -275,7 +275,7 @@ function createTemplate(options) {
     }
 
 
-
+// region selector
 class MultiSelector extends HTMLElement {
     static formAssociated = true
     static get observedAttributes() {
@@ -417,6 +417,7 @@ class MultiSelector extends HTMLElement {
         return [...this.getElements("options")].map(i => i.dataset.value)
     }
 
+    // MARK: ...selection
     get selectedValues() {
         return [...this.getElements("selected-values")].map(i => i.value)
     }
@@ -470,6 +471,7 @@ class MultiSelector extends HTMLElement {
         return output
     }
 
+    // MARK: ...elements
     getElement(name) {
         let query
         switch (name) {
@@ -538,14 +540,28 @@ class MultiSelector extends HTMLElement {
         return this.shadowRoot.querySelectorAll(query)
     }
 
-    // DATA
+    // MARK: ...data
     get data() {
         return this._data
     }
 
     set data(newValue) {
-        if (JSON.stringify(newValue) !== JSON.stringify(this._data)) {
-            this._data = newValue
+        let processedData = newValue
+
+        if (this.dataHandler.needsConversion(newValue)) {
+            processedData = this.dataHandler.convertStructure(newValue)
+        }
+
+        if (this.dataHandler.needsWrapping(processedData)) {
+            processedData = [{
+                label: this.settings.labels.all,
+                value: 'all',
+                children: processedData ?? []
+            }]
+        }
+
+        if (JSON.stringify(processedData) !== JSON.stringify(this._data)) {
+            this._data = processedData
             this.renderer.render()
         }
     }
@@ -562,7 +578,7 @@ class MultiSelector extends HTMLElement {
         }
     }
 
-    // COLOR SCHEME
+    // MARK: ...color
     set mode(newValue) {
         if (newValue === "dark") {
             this.setAttribute("mode", "dark")
@@ -587,7 +603,7 @@ class MultiSelector extends HTMLElement {
         }
     }
 
-    // FOCUS
+    // MARK: ...focus
     onDocumentClick(event) {
         if ( event.target === this ) { return }
         this.shadowRoot.querySelector("details").open = false
@@ -615,6 +631,7 @@ class MultiSelector extends HTMLElement {
 }
 
 
+// region render
 class Renderer {
     constructor(multiselector) {
         this.ms = multiselector
@@ -658,6 +675,7 @@ class Renderer {
 }
 
 
+// region builder
 class HTMLBuilder {
     constructor() {
         this.keys = []
@@ -724,6 +742,7 @@ class HTMLBuilder {
 }
 
 
+// region data
 class DataHandler {
     constructor(multiselector) {
         this.ms = multiselector
@@ -731,20 +750,9 @@ class DataHandler {
     }
 
     async getData() {
-        let data = this.ms.getAttribute('src')
+        return this.ms.getAttribute('src')
             ? await this.getDataFromJSON()
             : this.getDataFromDOM()
-
-        if (this.needsConversion(data)) {
-            data = this.convertStructure(data)
-        }
-        return [
-            {
-                label: [this.ms.settings.labels.all],
-                value: 'all',
-                children: data ?? []
-            }
-        ]
     }
 
     async getDataFromJSON() {
@@ -761,12 +769,12 @@ class DataHandler {
     }
 
     getDataFromElement(element) {
-        const label = element.getAttribute("label") || element.textContent
-        const value = element.getAttribute("value") || element.textContent
+        const label = element.getAttribute("label") ?? element.textContent
+        const value = element.getAttribute("value") ?? element.textContent
         const selected = element.hasAttribute("selected")
         const children = [...element.querySelectorAll(":scope > :where(optgroup, option)")]
-            .map(this.getDataFromElement);
-        return { label, value, children, selected };
+            .map(this.getDataFromElement)
+        return { label, value, children, selected }
     }
 
     convertStructure(source) {
@@ -788,19 +796,17 @@ class DataHandler {
     }
 
     needsConversion(obj) {
-        if (Array.isArray(obj)) {
-            return obj.every(item => this.needsConversion(item))
-        }
-        // Only check for label and value, children is optional
-        if (typeof obj === "object" && obj.label && obj.value) {
-            // If children exists, it must be an array
-            return obj.children ? !Array.isArray(obj.children) : false
-        }
-        return true
+        if (!Array.isArray(obj)) return true
+        return (obj.length > 0 && !(obj[0]?.label && obj[0]?.value))
+    }
+
+    needsWrapping(data) {
+        return !(data.length === 1 && data[0]?.value === 'all')
     }
 }
 
 
+// region search
 class SearchHandler {
     constructor(multiselector) {
         this.ms = multiselector
@@ -942,6 +948,7 @@ class SearchHandler {
 }
 
 
+// region checkbox
 class CheckboxHandler extends EventTarget {
     constructor(multiselector) {
         super()
@@ -1021,6 +1028,7 @@ class CheckboxHandler extends EventTarget {
 }
 
 
+// region folding
 class FoldingHandler {
     constructor(multiselector) {
         this.ms = multiselector
@@ -1109,6 +1117,7 @@ class FoldingHandler {
 }
 
 
+// region navigation
 class NavigationHandler {
     constructor(multiselector) {
         this.ms = multiselector
