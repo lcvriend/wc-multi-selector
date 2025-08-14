@@ -4,6 +4,16 @@ function createTemplate(options) {
     return `
         <style>
             :host {
+                position: relative;
+                box-sizing: border-box;
+            }
+
+            :host *,
+            :host *::before,
+            :host *::after {
+                box-sizing: border-box;
+            }
+            :host {
                 --ms-primary-color: hsl(0, 0%, 67%);
                 --ms-primary-color-disabled: hsl(0, 5%, 72%);
                 --ms-background: hsl(0, 0%, 100%);
@@ -20,9 +30,11 @@ function createTemplate(options) {
                 --ms-search-background: hsl(0, 0%, 100%);
                 --ms-search-text-color: var(--ms-text-color);
                 --ms-search-placeholder-color: hsl(0, 0%, 50%);
+                --ms-height: calc(2rem + var(--ms-padding-block));
                 --ms-max-height: 60vh;
                 display: grid;
                 color: var(--ms-text-color);
+                height: var(--ms-height);
             }
             :host([mode="dark"]),
             :host > details.system-dark {
@@ -41,49 +53,29 @@ function createTemplate(options) {
                 color: var(--ms-text-color);
             }
             :host > details {
-                position: relative;
-                padding-block: var(--ms-padding-block);
-                padding-inline: var(--ms-padding-inline);
+                position: absolute;
                 border: 1px solid var(--ms-primary-color);
                 border-radius: var(--ms-border-radius);
                 cursor: pointer;
+                height: 100%;
             }
             :host > details[open] {
-                border-bottom: none;
-                margin-bottom: 1px;
-                border-radius: var(--ms-border-radius) var(--ms-border-radius) 0 0;
-                z-index: 9999;
+                height: unset;
+                z-index: 999999;
             }
             :host > details > summary {
                 display: flex;
                 align-items : center;
-                border-radius: var(--ms-border-radius);
-                gap: .25rem;
+                gap: .5em;
+                height: var(--ms-height);
+                padding-block: var(--ms-padding-block);
+                padding-inline: var(--ms-padding-inline);
             }
             :host > details > summary > .display {
                 margin-right: auto;
             }
             :host > details[open] .click-me {
                 display: none;
-            }
-            :host > details[open] > div {
-                position: absolute;
-                max-height: var(--ms-max-height);
-                overflow-y: auto;
-                left: -1px;
-                right: -1px;
-                display: flex;
-                flex-direction: column;
-                gap: .5rem;
-                padding-block: var(--ms-padding-block);
-                padding-inline: var(--ms-padding-inline);
-                padding-inline-end: calc(var(--ms-padding-inline) + 8px);
-                border: 1px solid var(--ms-primary-color);
-                border-top: none;
-                margin-top: 2px;
-                border-radius: 0 0 var(--ms-border-radius) var(--ms-border-radius);
-                background-color: var(--ms-background);
-                scrollbar-gutter: stable;
             }
             /* display */
             /* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
@@ -137,13 +129,25 @@ function createTemplate(options) {
                 visibility: visible;
                 place-items: center;
             }
+            /* container */
+            :host > details[open] > div {
+                background-color: var(--ms-background);
+                border-bottom-left-radius: var(--ms-border-radius);
+                border-bottom-right-radius: var(--ms-border-radius);
+                padding-inline: var(--ms-padding-inline);
+                padding-bottom: 1em;
+                display: grid;
+                grid-template-rows: auto 1fr;
+                gap: .5em;
+
+            }
             /* filter */
             .filter {
                 display: flex;
             }
             .filter input {
                 width: 100%;
-                padding-block: calc(var(--ms-padding-block) * 0.5);
+                padding-block: var(--ms-padding-block);
                 padding-inline: var(--ms-padding-inline);
                 background-color: var(--ms-search-background);
                 border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
@@ -156,6 +160,16 @@ function createTemplate(options) {
             }
             [data-role].hide {
                 display: none;
+            }
+            /* options */
+            :host > details[open] > div > .options {
+                display: flex;
+                flex-direction: column;
+                gap: .5em;
+                overflow-y: auto;
+                scrollbar-gutter: stable;
+                padding-right: 8px;
+                max-height: var(--ms-max-height);
             }
             /* focus */
             :focus-visible {
@@ -273,6 +287,7 @@ function createTemplate(options) {
                     <button data-command="clear-query"
                         title="${options.titles.clear_filter}">&Cross;</button>
                 </div>
+                <div class="options"></div>
             </div>
         </details>
         `.trim()
@@ -502,7 +517,7 @@ class MultiSelector extends HTMLElement {
                 query = `[data-command="clear-query"]`
                 break
             case "options-container":
-                query = ":host > details > div"
+                query = ":host > details > div > .options"
                 break
             case "first-group":
                 query = `[data-role="group"]`
@@ -898,7 +913,6 @@ class SearchHandler {
     updateStateAfterFilter() {
         this.ms.checkboxHandler.setAllGroupStates()
         this.ms.foldingHandler.openAllLevels()
-        this.ms.renderer.renderLabelAll()
     }
 
     filterData(el, matcher) {
