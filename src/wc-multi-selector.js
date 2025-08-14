@@ -10,7 +10,8 @@ function createTemplate(options) {
                 --ms-option-hover: hsl(0, 0%, 92%);
                 --ms-text-color: hsl(0, 0%, 0%);
                 --ms-text-color-disabled: hsl(0, 5%, 72%);
-                --ms-main-padding: .5rem;
+                --ms-padding-block: .25em;
+                --ms-padding-inline: 1em;
                 --ms-border-radius: 5px;
                 --ms-button-background: hsl(0, 0%, 94%);
                 --ms-button-hover: hsl(0, 0%, 87%);
@@ -41,7 +42,8 @@ function createTemplate(options) {
             }
             :host > details {
                 position: relative;
-                padding: var(--ms-main-padding);
+                padding-block: var(--ms-padding-block);
+                padding-inline: var(--ms-padding-inline);
                 border: 1px solid var(--ms-primary-color);
                 border-radius: var(--ms-border-radius);
                 cursor: pointer;
@@ -73,8 +75,9 @@ function createTemplate(options) {
                 display: flex;
                 flex-direction: column;
                 gap: .5rem;
-                padding: var(--ms-main-padding);
-                padding-right: calc(var(--ms-main-padding) + 8px);
+                padding-block: var(--ms-padding-block);
+                padding-inline: var(--ms-padding-inline);
+                padding-inline-end: calc(var(--ms-padding-inline) + 8px);
                 border: 1px solid var(--ms-primary-color);
                 border-top: none;
                 margin-top: 2px;
@@ -140,7 +143,8 @@ function createTemplate(options) {
             }
             .filter input {
                 width: 100%;
-                padding: .25rem;
+                padding-block: calc(var(--ms-padding-block) * 0.5);
+                padding-inline: var(--ms-padding-inline);
                 background-color: var(--ms-search-background);
                 border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
                 border: 1px solid var(--ms-primary-color);
