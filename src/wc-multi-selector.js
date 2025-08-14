@@ -139,7 +139,6 @@ function createTemplate(options) {
                 display: grid;
                 grid-template-rows: auto 1fr;
                 gap: .5em;
-
             }
             /* filter */
             .filter {
@@ -163,6 +162,7 @@ function createTemplate(options) {
             }
             /* options */
             :host > details[open] > div > .options {
+            position: relative;
                 display: flex;
                 flex-direction: column;
                 gap: .5em;
