@@ -142,6 +142,7 @@ function createTemplate(options) {
             }
             /* filter */
             .filter {
+                padding-block: var(--ms-padding-block);
                 display: flex;
             }
             .filter input {
@@ -162,7 +163,7 @@ function createTemplate(options) {
             }
             /* options */
             :host > details[open] > div > .options {
-            position: relative;
+                position: relative;
                 display: flex;
                 flex-direction: column;
                 gap: .5em;

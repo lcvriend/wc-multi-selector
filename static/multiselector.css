@@ -1,11 +1,22 @@
 :host {
+    position: relative;
+    box-sizing: border-box;
+}
+
+:host *,
+:host *::before,
+:host *::after {
+    box-sizing: border-box;
+}
+:host {
     --ms-primary-color: hsl(0, 0%, 67%);
     --ms-primary-color-disabled: hsl(0, 5%, 72%);
     --ms-background: hsl(0, 0%, 100%);
     --ms-option-hover: hsl(0, 0%, 92%);
     --ms-text-color: hsl(0, 0%, 0%);
     --ms-text-color-disabled: hsl(0, 5%, 72%);
-    --ms-main-padding: .5rem;
+    --ms-padding-block: .25em;
+    --ms-padding-inline: 1em;
     --ms-border-radius: 5px;
     --ms-button-background: hsl(0, 0%, 94%);
     --ms-button-hover: hsl(0, 0%, 87%);
@@ -14,11 +25,14 @@
     --ms-search-background: hsl(0, 0%, 100%);
     --ms-search-text-color: var(--ms-text-color);
     --ms-search-placeholder-color: hsl(0, 0%, 50%);
+    --ms-height: calc(2rem + var(--ms-padding-block));
     --ms-max-height: 60vh;
     display: grid;
     color: var(--ms-text-color);
+    height: var(--ms-height);
 }
-:host(.darkmode) {
+:host([mode="dark"]),
+:host > details.system-dark {
     --ms-primary-color: hsl(0, 0%, 67%);
     --ms-primary-color-disabled: hsl(0, 5%, 42%);
     --ms-background: hsl(0, 0%, 7%);
@@ -31,47 +45,32 @@
     --ms-accent-color: hsl(0, 0%, 100%);
     --ms-search-background: hsl(0, 0%, 12%);
     --ms-search-text-color: var(--ms-text-color);
+    color: var(--ms-text-color);
 }
 :host > details {
-    position: relative;
-    padding: var(--ms-main-padding);
+    position: absolute;
     border: 1px solid var(--ms-primary-color);
     border-radius: var(--ms-border-radius);
     cursor: pointer;
+    height: 100%;
 }
 :host > details[open] {
-    border-bottom: none;
-    margin-bottom: 1px;
-    border-radius: var(--ms-border-radius) var(--ms-border-radius) 0 0;
-    z-index: 9999;
+    height: unset;
+    z-index: 999999;
 }
 :host > details > summary {
     display: flex;
     align-items : center;
-    border-radius: var(--ms-border-radius);
-    gap: .25rem;
+    gap: .5em;
+    height: var(--ms-height);
+    padding-block: var(--ms-padding-block);
+    padding-inline: var(--ms-padding-inline);
 }
 :host > details > summary > .display {
     margin-right: auto;
 }
 :host > details[open] .click-me {
     display: none;
-}
-:host > details[open] > div {
-    position: absolute;
-    max-height: var(--ms-max-height);
-    overflow-y: auto;
-    left: -1px;
-    right: -1px;
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    padding: var(--ms-main-padding);
-    border: 1px solid var(--ms-primary-color);
-    border-top: none;
-    margin-top: 2px;
-    border-radius: 0 0 var(--ms-border-radius) var(--ms-border-radius);
-    background-color: var(--ms-background);
 }
 /* display */
 /* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
@@ -80,6 +79,7 @@
     table-layout: fixed;
     width: 100%;
     white-space: nowrap;
+    margin-right: 3ch;
 }
 .display span {
     display: table-cell;
@@ -124,13 +124,26 @@ code {
     visibility: visible;
     place-items: center;
 }
+/* container */
+:host > details[open] > div {
+    background-color: var(--ms-background);
+    border-bottom-left-radius: var(--ms-border-radius);
+    border-bottom-right-radius: var(--ms-border-radius);
+    padding-inline: var(--ms-padding-inline);
+    padding-bottom: 1em;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: .5em;
+}
 /* filter */
 .filter {
+    padding-block: var(--ms-padding-block);
     display: flex;
 }
 .filter input {
     width: 100%;
-    padding: .25rem;
+    padding-block: var(--ms-padding-block);
+    padding-inline: var(--ms-padding-inline);
     background-color: var(--ms-search-background);
     border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
     border: 1px solid var(--ms-primary-color);
@@ -142,6 +155,17 @@ code {
 }
 [data-role].hide {
     display: none;
+}
+/* options */
+:host > details[open] > div > .options {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding-right: 8px;
+    max-height: var(--ms-max-height);
 }
 /* focus */
 :focus-visible {
@@ -162,6 +186,7 @@ code {
     content: "\\2B";
     color: var(--ms-text-color);
     justify-self: end;
+    margin-right: .25em;
 }
 [data-role="group"][open] > summary:after {
     content: "\\2212";
