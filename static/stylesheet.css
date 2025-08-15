@@ -184,10 +184,10 @@ kbd:active {
 
 multi-selector {
     margin-block: 1rem;
-    background-color: hsl(0, 0%, 98%);
+    --ms-background: hsl(0, 0%, 98%);
 }
 multi-selector[mode="dark"] {
-    background-color: hsl(0, 0%, 10%);
+    --ms-background: hsl(0, 0%, 10%);
 }
 form {
     border: 1px solid var(--border-color);
