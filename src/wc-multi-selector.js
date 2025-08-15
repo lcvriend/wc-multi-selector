@@ -70,6 +70,7 @@ function createTemplate(options) {
                 height: var(--ms-height);
                 padding-block: var(--ms-padding-block);
                 padding-inline: var(--ms-padding-inline);
+                background-color: inherit;
             }
             :host > details > summary > .display {
                 margin-right: auto;
@@ -131,14 +132,14 @@ function createTemplate(options) {
             }
             /* container */
             :host > details[open] > div {
-                background-color: var(--ms-background);
-                border-bottom-left-radius: var(--ms-border-radius);
-                border-bottom-right-radius: var(--ms-border-radius);
-                padding-inline: var(--ms-padding-inline);
-                padding-bottom: 1em;
                 display: grid;
                 grid-template-rows: auto 1fr;
                 gap: .5em;
+                padding-inline: var(--ms-padding-inline);
+                padding-bottom: 1em;
+                background-color: var(--ms-background, inherit);
+                border-bottom-left-radius: var(--ms-border-radius);
+                border-bottom-right-radius: var(--ms-border-radius);
             }
             /* filter */
             .filter {
