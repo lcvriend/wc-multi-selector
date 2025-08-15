@@ -101,8 +101,7 @@ function createTemplate(options) {
             }
             /* buttons */
             [data-command] {
-                display: grid;
-                visibility: hidden;
+                display: none;
                 background-color: var(--ms-button-background);
                 border: 1px solid var(--ms-primary-color);
                 user-select: none;
@@ -126,7 +125,6 @@ function createTemplate(options) {
             }
             :host > details[open] [data-command] {
                 display: grid;
-                visibility: visible;
                 place-items: center;
             }
             /* container */
