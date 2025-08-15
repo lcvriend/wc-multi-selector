@@ -185,6 +185,9 @@ function createTemplate(options) {
                 font-variant: small-caps;
                 font-weight: bold;
             }
+            [data-role="group"] > summary code {
+                font-weight: normal;
+            }
             [data-role="group"] > summary:after {
                 content: "\\2B";
                 color: var(--ms-text-color);
@@ -691,6 +694,20 @@ class Renderer {
             ? `<span title="${this.listFormat.format(selectedLabels)}">${this.listFormat.format(selectedLeastNested)}</span>`
             : this.ms.placeholder
         this.ms.getElement("show-selected").disabled = selectedLabels.length === 0
+        this.updateGroupCounts()
+    }
+
+    updateGroupCounts() {
+        const groupCounts = this.ms.shadowRoot.querySelectorAll('[data-role="group-count"]')
+        groupCounts.forEach(countElement => {
+            const group = countElement.closest('[data-role="group"]')
+            const selectedCount = group.querySelectorAll(':scope > div [data-role="option"] input:checked').length
+            const total = countElement.dataset.total
+
+            countElement.textContent = selectedCount > 0
+                ? `[${selectedCount}/${total}]`
+                : `[${total}]`
+        })
     }
 }
 
@@ -708,9 +725,8 @@ class HTMLBuilder {
                 this.keys.push(item.label)
                 const itemID = this.keys.join("-")
                 const children = item?.children ?? []
-                const label =
-                    children.length > 0
-                    ? `${item.label} <code>[${this.countCheckboxes(item.children)}]</code>`
+                const label = children.length > 0
+                    ? `${item.label} <code data-role="group-count" data-total="${this.countCheckboxes(item.children)}">[${this.countCheckboxes(item.children)}]</code>`
                     : item.label
                 const input = `<input
                     type="checkbox"
