@@ -184,10 +184,10 @@ kbd:active {
 
 multi-selector {
     margin-block: 1rem;
-    --ms-background: hsl(0, 0%, 98%);
+    --ms-dropdown-background: hsl(0, 0%, 98%);
 }
 multi-selector[mode="dark"] {
-    --ms-background: hsl(0, 0%, 10%);
+    --ms-dropdown-background: hsl(0, 0%, 10%);
 }
 form {
     border: 1px solid var(--border-color);
@@ -203,7 +203,7 @@ form {
 }
 .styling-example multi-selector {
     --ms-primary-color: hsl(120, 24%, 55%);
-    --ms-background: hsl(120, 24%, 25%);
+    --ms-dropdown-background: hsl(120, 24%, 25%);
     --ms-search-background: hsl(120, 24%, 35%);
     --ms-search-placeholder-color: hsl(0, 5%, 68%);
     --ms-text-color: hsl(0, 5%, 84%);

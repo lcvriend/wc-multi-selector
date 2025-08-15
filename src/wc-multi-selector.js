@@ -16,7 +16,7 @@ function createTemplate(options) {
             :host {
                 --ms-primary-color: hsl(0, 0%, 67%);
                 --ms-primary-color-disabled: hsl(0, 5%, 72%);
-                --ms-background: hsl(0, 0%, 100%);
+                --ms-dropdown-background: hsl(0, 0%, 100%);
                 --ms-option-hover: hsl(0, 0%, 92%);
                 --ms-text-color: hsl(0, 0%, 0%);
                 --ms-text-color-disabled: hsl(0, 5%, 72%);
@@ -40,7 +40,7 @@ function createTemplate(options) {
             :host > details.system-dark {
                 --ms-primary-color: hsl(0, 0%, 67%);
                 --ms-primary-color-disabled: hsl(0, 5%, 42%);
-                --ms-background: hsl(0, 0%, 7%);
+                --ms-dropdown-background: hsl(0, 0%, 7%);
                 --ms-option-hover: hsl(0, 0%, 15%);
                 --ms-text-color: hsl(0, 0%, 84%);
                 --ms-text-color-disabled: hsl(0, 5%, 52%);
@@ -131,7 +131,7 @@ function createTemplate(options) {
             }
             /* container */
             :host > details[open] > div {
-                background-color: var(--ms-background);
+                background-color: var(--ms-dropdown-background);
                 border-bottom-left-radius: var(--ms-border-radius);
                 border-bottom-right-radius: var(--ms-border-radius);
                 padding-inline: var(--ms-padding-inline);
@@ -238,7 +238,7 @@ function createTemplate(options) {
                 background-color: var(--ms-accent-color);
             }
             input[type="checkbox"]:indeterminate + label:before {
-                background: linear-gradient(to right, var(--ms-background) 50%, var(--ms-accent-color) 50%);
+                background: linear-gradient(to right, var(--ms-dropdown-background) 50%, var(--ms-accent-color) 50%);
             }
             input[type="checkbox"]:focus-visible + label:before {
                 outline: 2px solid Highlight;
@@ -274,19 +274,19 @@ function createTemplate(options) {
                 <div class="display"><span>...</span></div>
                 <div class="control-panel">
                     <button data-command="unfold"
-                        title="${options.titles.unfold_groups}">&plus;</button>
+                        title="${options.titles.unfoldGroups}">&plus;</button>
                     <button data-command="fold"
-                        title="${options.titles.fold_groups}">&minus;</button>
+                        title="${options.titles.foldGroups}">&minus;</button>
                     <button data-command="show-selected"
-                        title="${options.titles.show_selected}" disabled>&#9745;</button>
+                        title="${options.titles.showSelected}" disabled>&#9745;</button>
                 </div>
                 <div class="click-me">&#9660;</div>
             </summary>
             <div>
                 <div class="filter">
-                    <input type="text" placeholder="${options.labels.placeholder_search}" aria-label="search" role="searchbox">
+                    <input type="text" placeholder="${options.labels.placeholderSearch}" aria-label="search" role="searchbox">
                     <button data-command="clear-query"
-                        title="${options.titles.clear_filter}">&Cross;</button>
+                        title="${options.titles.clearFilter}">&Cross;</button>
                 </div>
                 <div class="options"></div>
             </div>
@@ -306,13 +306,14 @@ class MultiSelector extends HTMLElement {
         labels: {
             all: "All items",
             selection: "Filtered items",
-            placeholder_search: "Search...",
+            placeholderSearch: "Search...",
+            placeholderAllSelected: "<all selected>",
         },
         titles: {
-            unfold_groups: "unfold groups: ctrl-]",
-            fold_groups: "fold groups: ctrl-[",
-            show_selected: "show selected: ctrl-\\",
-            clear_filter: "clear filter",
+            unfoldGroups: "unfold groups: ctrl-]",
+            foldGroups: "fold groups: ctrl-[",
+            showSelected: "show selected: ctrl-\\",
+            clearFilter: "clear filter",
         }
     }
 
@@ -865,6 +866,7 @@ class SearchHandler {
     handleClickShowSelected() {
         this.filterData(this.firstGroup, this.matchSelected)
         this.updateStateAfterFilter()
+        this.searchbox.placeholder = this.ms.settings.labels.placeholderAllSelected
     }
 
     handleKeyManageFilter(event) {
@@ -886,6 +888,7 @@ class SearchHandler {
         this.searchbox.value = ""
         this.filterData(this.firstGroup, this.matchPhrase)
         this.updateStateAfterFilter()
+        this.searchbox.placeholder = this.ms.settings.labels.placeholderSearch
     }
 
     makeHandleKeyUp() {
@@ -905,6 +908,7 @@ class SearchHandler {
             timeout = setTimeout( () => {
                 this.filterData(this.firstGroup, this.matchPhrase)
                 this.updateStateAfterFilter()
+                this.searchbox.placeholder = this.ms.settings.labels.placeholderSearch
             }, waitSeconds)
             // don't propegate: escape should clear the input but not close the selector
             event.stopPropagation()
@@ -974,12 +978,13 @@ class CheckboxHandler extends EventTarget {
         super()
         this.ms = multiselector
         this.handleCheckboxChange = this.handleCheckboxChange.bind(this)
-        this.addEventListener("change", this.setAllGroupStates.bind(this))
+        this.setAllGroupStates = this.setAllGroupStates.bind(this)
+        this.renderSelected = () => this.ms.renderer.renderSelected()
     }
 
     addListener() {
-        const renderSelected = this.ms.renderer.renderSelected.bind(this.ms.renderer)
-        this.addEventListener("change", renderSelected)
+        this.addEventListener("change", this.setAllGroupStates)
+        this.addEventListener("change", this.renderSelected)
         this.ms.shadowRoot.addEventListener("change", this.handleCheckboxChange)
     }
 
