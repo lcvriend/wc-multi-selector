@@ -28,6 +28,12 @@
             <p>On this page you will find several examples of how to use this web component.</p>
         </div>
         <div>
+            <form>
+                <label for="courses">
+                    Agricultural courses (demo)
+                    <multi-selector src="data/courses.json" name="courses"></multi-selector>
+                </label>
+            </form>
             <h4>Contents</h4>
             <ul>
                 <li><a href="#json">Load from JSON</a></li>
@@ -223,7 +229,7 @@
         </div>
         <div style="overflow-x: hidden;">
             <form>
-                <label for="Albums">Select albums</label>
+                <label for="Albums">Captain Beefheart</label>
                 <multi-selector src="data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
                 <button type="submit">submit</button>
             </form>
@@ -234,7 +240,7 @@
             <pre><code class="language-html">
   &lt!-- html --&gt;
   &lt;form&gt;
-    &lt;label for="Albums"&gt;Select albums&lt;/label&gt;
+    &lt;label for="Albums"&gt;Captain Beefheart&lt;/label&gt;
     &lt;multi-selector
       src="data/albums.json"
       name="Albums"

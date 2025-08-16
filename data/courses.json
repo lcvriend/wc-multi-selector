@@ -1,0 +1,127 @@
+{
+  "Crop Science": {
+    "Agronomy": {
+      "Soil Management": [
+        "AGRO 201: Soil Chemistry & Fertility",
+        "AGRO 202: Precision Agriculture",
+        "AGRO 203: Soil Conservation Techniques",
+        "AGRO 204: Organic Soil Amendments",
+        "AGRO 205: Soil Microbiology"
+      ],
+      "Crop Production": [
+        "AGRO 211: Cereal Crop Systems",
+        "AGRO 212: Legume Production",
+        "AGRO 213: Cover Crop Management",
+        "AGRO 214: Greenhouse Production"
+      ]
+    },
+    "Plant Pathology": {
+      "Disease Management": [
+        "PATH 301: Fungal Diseases in Agriculture",
+        "PATH 302: Viral Plant Pathogens",
+        "PATH 303: Bacterial Diseases",
+        "PATH 304: Integrated Pest Management"
+      ],
+      "Laboratory Methods": [
+        "PATH 311: Disease Diagnosis Techniques",
+        "PATH 312: Molecular Plant Pathology",
+        "PATH 313: Pathogen Culture & Storage",
+        "PATH 314: Field Sampling Methods"
+      ]
+    }
+  },
+  "Animal Science": {
+    "Livestock Management": {
+      "Ruminant Systems": [
+        "ANIM 201: Dairy Cattle Management",
+        "ANIM 202: Beef Production Systems",
+        "ANIM 203: Sheep & Goat Husbandry",
+        "ANIM 204: Pasture-Based Systems"
+      ],
+      "Monogastric Systems": [
+        "ANIM 211: Swine Production",
+        "ANIM 212: Poultry Science",
+        "ANIM 213: Rabbit Production",
+        "ANIM 214: Aquaculture Systems"
+      ]
+    },
+    "Animal Health": {
+      "Preventive Care": [
+        "VETS 301: Vaccination Programs",
+        "VETS 302: Parasite Control",
+        "VETS 303: Biosecurity Measures",
+        "VETS 304: Herd Health Management"
+      ],
+      "Nutrition Science": [
+        "NUTR 311: Feed Formulation",
+        "NUTR 312: Forage Analysis",
+        "NUTR 313: Mineral Requirements",
+        "NUTR 314: Alternative Feed Sources"
+      ]
+    }
+  },
+  "Agricultural Engineering": {
+    "Precision Agriculture": {
+      "GPS & Mapping": [
+        "AGEN 401: GPS in Agriculture",
+        "AGEN 402: Yield Mapping",
+        "AGEN 403: Variable Rate Technology",
+        "AGEN 404: Drone Applications"
+      ],
+      "Data Analytics": [
+        "AGEN 411: Farm Data Management",
+        "AGEN 412: Predictive Modeling",
+        "AGEN 413: IoT Sensors in Agriculture",
+        "AGEN 414: Decision Support Systems"
+      ]
+    },
+    "Irrigation Systems": {
+      "Design & Installation": [
+        "IRRI 421: Drip Irrigation Design",
+        "IRRI 422: Center Pivot Systems",
+        "IRRI 423: Micro-Sprinkler Technology",
+        "IRRI 424: Subsurface Irrigation"
+      ]
+    }
+  },
+  "Sustainable Agriculture": {
+    "Organic Farming": {
+      "Certification Process": [
+        "SUST 301: Organic Standards & Regulations",
+        "SUST 302: Transition Planning",
+        "SUST 303: Record Keeping",
+        "SUST 304: Inspection Preparation"
+      ],
+      "Production Methods": [
+        "SUST 311: Biological Pest Control",
+        "SUST 312: Composting Systems",
+        "SUST 313: Crop Rotation Planning",
+        "SUST 314: Natural Fertilizers"
+      ]
+    },
+    "Permaculture": {
+      "Design Principles": [
+        "PERM 321: Zone & Sector Analysis",
+        "PERM 322: Water Harvesting",
+        "PERM 323: Food Forest Design",
+        "PERM 324: Urban Permaculture"
+      ]
+    }
+  },
+  "Agribusiness": {
+    "Supply Chain": {
+      "Post-Harvest": [
+        "AGBS 401: Cold Chain Management",
+        "AGBS 402: Grain Storage & Handling",
+        "AGBS 403: Processing & Value Addition",
+        "AGBS 404: Quality Control Systems"
+      ],
+      "Marketing": [
+        "AGBS 411: Agricultural Commodities Trading",
+        "AGBS 412: Direct-to-Consumer Sales",
+        "AGBS 413: Cooperative Management",
+        "AGBS 414: Export Regulations"
+      ]
+    }
+  }
+}

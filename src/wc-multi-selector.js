@@ -1,5 +1,3 @@
-let template = document.createElement("template")
-// template.innerHTML = `
 function createTemplate(options) {
     return `
         <style>
@@ -182,11 +180,19 @@ function createTemplate(options) {
                 padding: .15em;
                 align-items: center;
                 cursor: pointer;
-                font-variant: small-caps;
-                font-weight: bold;
+                }
+            [data-role="group"] > summary > label {
+                display: flex;
+                align-items: center;
+                gap: .25em;
             }
-            [data-role="group"] > summary code {
-                font-weight: normal;
+            [data-role="group"] > summary > label > span {
+                font-weight: bold;
+                font-variant: small-caps;
+            }
+            [data-role="group"] > summary > label > code {
+                user-select: none;
+                font-size: .65em;
             }
             [data-role="group"] > summary:after {
                 content: "\\2B";
@@ -202,7 +208,7 @@ function createTemplate(options) {
                 margin-left: .25rem;
                 padding-left: .75rem;
             }
-            [data-role="group"] > summary > label:hover {
+            [data-role="group"] > summary > label:hover span {
                 text-decoration: underline;
                 text-underline-offset: .25em;
             }
@@ -285,14 +291,14 @@ function createTemplate(options) {
             </summary>
             <div>
                 <div class="filter">
-                    <input type="text" placeholder="${options.labels.placeholderSearch}" aria-label="search" role="searchbox">
+                    <input type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
                     <button data-command="clear-query"
                         title="${options.titles.clearFilter}">&Cross;</button>
                 </div>
                 <div class="options"></div>
             </div>
         </details>
-        `.trim()
+        `
     }
 
 
@@ -306,9 +312,12 @@ class MultiSelector extends HTMLElement {
     static defaultSettings = {
         labels: {
             all: "All items",
+            placeholder: "options",
             selection: "Filtered items",
-            placeholderSearch: "Search...",
-            placeholderAllSelected: "<all selected>",
+            filter: {
+                placeholder: "Search...",
+                allSelected: "<all selected>",
+            }
         },
         titles: {
             unfoldGroups: "unfold groups: ctrl-]",
@@ -324,8 +333,7 @@ class MultiSelector extends HTMLElement {
         this._pendingAttributes = new Map()
         this._isReady = false
         this.internals_ = this.attachInternals()
-        this.attachShadow({ mode: 'open' })
-        this.name = "options"
+        this.attachShadow({ mode: "open" })
         this._data = null
 
         this.renderer = new Renderer(this)
@@ -364,8 +372,8 @@ class MultiSelector extends HTMLElement {
         document.addEventListener("click", this.onDocumentClick)
         document.addEventListener("keyup", this.onTabOutOrEscape)
 
-        this.addEventListener('mouseenter', this.onMouseEnter)
-        this.addEventListener('mouseleave', this.onMouseLeave)
+        this.addEventListener("mouseenter", this.onMouseEnter)
+        this.addEventListener("mouseleave", this.onMouseLeave)
 
         this.checkboxHandler.addListener()
         this.searchHandler.addListener()
@@ -408,8 +416,11 @@ class MultiSelector extends HTMLElement {
 
     applyAttribute(property, newValue) {
         switch(property) {
+            case "name":
+                this.name = newValue
+                break
             case "mode":
-                this.getElement("box").classList.remove('system-dark')
+                this.getElement("box").classList.remove("system-dark")
                 break
             case "disabled":
                 const box = this.getElement("box")
@@ -475,14 +486,8 @@ class MultiSelector extends HTMLElement {
         let output = []
         const checkbox = el.querySelector("input")
         if (checkbox?.checked) {
-            // let label = checkbox.nextElementSibling.textContent
-            const textNodes = checkbox.nextElementSibling.childNodes
-            let label = ""
-            for (const node of textNodes) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    label += node.textContent
-                }
-            }
+            const span = checkbox.nextElementSibling.querySelector("span")
+            let label = span ? span.textContent : checkbox.nextElementSibling.textContent
             if (el.dataset.role === "group") {
                 const n = el.querySelectorAll(`[data-role="option"] input:checked`).length
                 label = `${label} <code>[${n}]</code>`
@@ -578,7 +583,7 @@ class MultiSelector extends HTMLElement {
         if (this.dataHandler.needsWrapping(processedData)) {
             processedData = [{
                 label: this.settings.labels.all,
-                value: 'all',
+                value: "all",
                 children: processedData ?? []
             }]
         }
@@ -589,15 +594,19 @@ class MultiSelector extends HTMLElement {
         }
     }
 
+    // MARK: ...placeholder
     get placeholder() {
-        if (!this._placeholder) { return `Select ${this.name}...` }
+        if (!this._placeholder) {
+            const displayName = this.getAttribute("name") ?? this.options.label.placeholder
+            return `Select ${displayName}...`
+        }
         return this._placeholder
     }
 
     set placeholder(text) {
         this._placeholder = text
-        if (this.selectedValues === 0) {
-            this.render.renderSelected()
+        if (this.selectedValues.length === 0) {
+            this.renderer.renderSelected()
         }
     }
 
@@ -698,10 +707,10 @@ class Renderer {
     }
 
     updateGroupCounts() {
-        const groupCounts = this.ms.shadowRoot.querySelectorAll('[data-role="group-count"]')
+        const groupCounts = this.ms.shadowRoot.querySelectorAll(`[data-role="group-count"]`)
         groupCounts.forEach(countElement => {
-            const group = countElement.closest('[data-role="group"]')
-            const selectedCount = group.querySelectorAll(':scope > div [data-role="option"] input:checked').length
+            const group = countElement.closest(`[data-role="group"]`)
+            const selectedCount = group.querySelectorAll(`:scope > div [data-role="option"] input:checked`).length
             const total = countElement.dataset.total
 
             countElement.textContent = selectedCount > 0
@@ -726,7 +735,7 @@ class HTMLBuilder {
                 const itemID = this.keys.join("-")
                 const children = item?.children ?? []
                 const label = children.length > 0
-                    ? `${item.label} <code data-role="group-count" data-total="${this.countCheckboxes(item.children)}">[${this.countCheckboxes(item.children)}]</code>`
+                    ? `<span>${item.label}</span><code data-role="group-count" data-total="${this.countCheckboxes(item.children)}">[${this.countCheckboxes(item.children)}]</code>`
                     : item.label
                 const input = `<input
                     type="checkbox"
@@ -786,13 +795,13 @@ class DataHandler {
     }
 
     async getData() {
-        return this.ms.getAttribute('src')
+        return this.ms.getAttribute("src")
             ? await this.getDataFromJSON()
             : this.getDataFromDOM()
     }
 
     async getDataFromJSON() {
-        const src = this.ms.getAttribute('src')
+        const src = this.ms.getAttribute("src")
         const response = await fetch(src)
         const data = await response.json()
         return data
@@ -837,7 +846,7 @@ class DataHandler {
     }
 
     needsWrapping(data) {
-        return !(data.length === 1 && data[0]?.value === 'all')
+        return !(data.length === 1 && data[0]?.value === "all")
     }
 }
 
@@ -880,7 +889,7 @@ class SearchHandler {
     handleClickShowSelected() {
         this.filterData(this.firstGroup, this.matchSelected)
         this.updateStateAfterFilter()
-        this.searchbox.placeholder = this.ms.settings.labels.placeholderAllSelected
+        this.searchbox.placeholder = this.ms.settings.labels.filter.allSelected
     }
 
     handleKeyManageFilter(event) {
@@ -902,7 +911,7 @@ class SearchHandler {
         this.searchbox.value = ""
         this.filterData(this.firstGroup, this.matchPhrase)
         this.updateStateAfterFilter()
-        this.searchbox.placeholder = this.ms.settings.labels.placeholderSearch
+        this.searchbox.placeholder = this.ms.settings.labels.filter.placeholder
     }
 
     makeHandleKeyUp() {
@@ -922,7 +931,7 @@ class SearchHandler {
             timeout = setTimeout( () => {
                 this.filterData(this.firstGroup, this.matchPhrase)
                 this.updateStateAfterFilter()
-                this.searchbox.placeholder = this.ms.settings.labels.placeholderSearch
+                this.searchbox.placeholder = this.ms.settings.labels.filter.placeholder
             }, waitSeconds)
             // don't propegate: escape should clear the input but not close the selector
             event.stopPropagation()
@@ -1262,4 +1271,4 @@ class NavigationHandler {
 }
 
 
-window.customElements.define('multi-selector', MultiSelector)
+window.customElements.define("multi-selector", MultiSelector)
