@@ -3,8 +3,8 @@
 :root {
     --background: hsl(0, 0%, 98%);
     --input-background: hsl(0, 0%, 98%);
-    --button-background: hsl(20, 30%, 94%);
-    --button-hover: hsl(20, 30%, 75%);
+    --button-background: hsl(20, 30%, 84%);
+    --button-hover: hsl(20, 30%, 72%);
     --button-active: hsl(20, 30%, 97%);
     --header-background: hsl(0, 0%, 15%);
     --header-text-color: hsl(0, 0%, 95%);
@@ -197,6 +197,35 @@ multi-selector[mode="dark"] {
 form {
     border: 1px solid var(--border-color);
     padding: 1rem;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3rem;
+    height: 3rem;
+    background: var(--button-background, #666);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+    font-family: monospace;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background: var(--button-hover, #333);
 }
 
 /* examples */

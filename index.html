@@ -387,6 +387,7 @@
         </div>
     </section>
 </main>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
 <!-- MARK: scripts -->
 <script src="static/prism.js"></script>
 <script src="src/wc-multi-selector.js"></script>
@@ -469,6 +470,24 @@
         const data = {}
         formData.forEach((value, key) => data[key] = value)
         output.innerHTML = JSON.stringify(data, null, 2)
+    })
+
+    // back to top
+    const backToTopButton = document.getElementById("back-to-top")
+    const main = document.querySelector("main")
+
+    main.addEventListener("scroll", () => {
+        const scrollY = main.scrollTop
+
+        if (scrollY > 300) {
+            backToTopButton.classList.add("visible")
+        } else {
+            backToTopButton.classList.remove("visible")
+        }
+    })
+
+    backToTopButton.addEventListener("click", () => {
+        main.scrollTo({ top: 0, behavior: "smooth" })
     })
 </script>
 </body>
