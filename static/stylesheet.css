@@ -155,6 +155,11 @@ button:hover {
 button:active {
     background-color: var(--button-active);
 }
+button:disabled {
+    opacity: .6;
+    pointer-events: none;
+    user-select: none;
+}
 
 /* elements */
 button[data-action="toggle-color-scheme"] {

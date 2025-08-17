@@ -254,7 +254,8 @@ function createTemplate(options) {
             }
             /* disable */
             /* https://stackoverflow.com/a/63207226 */
-            :host([disabled]) {
+            :host([disabled]),
+            :host([data-empty]) {
                 --ms-primary-color: var(--ms-primary-color-disabled);
                 background-color: var(--ms-background-disabled);
                 color: var(--ms-text-color-disabled);
@@ -312,6 +313,7 @@ class MultiSelector extends HTMLElement {
     static defaultSettings = {
         labels: {
             all: "All items",
+            empty: "No options loaded...",
             placeholder: "options",
             selection: "Filtered items",
             filter: {
@@ -576,6 +578,15 @@ class MultiSelector extends HTMLElement {
     set data(newValue) {
         let processedData = newValue
 
+        if (!processedData || processedData.length === 0) {
+            this.setAttribute('data-empty', '')
+            this._data = []
+            this.renderer.renderEmpty()
+            return
+        }
+
+        this.removeAttribute('data-empty')
+
         if (this.dataHandler.needsConversion(newValue)) {
             processedData = this.dataHandler.convertStructure(newValue)
         }
@@ -597,7 +608,7 @@ class MultiSelector extends HTMLElement {
     // MARK: ...placeholder
     get placeholder() {
         if (!this._placeholder) {
-            const displayName = this.getAttribute("name") ?? this.options.label.placeholder
+            const displayName = this.getAttribute("name") ?? this.settings.labels.placeholder
             return `Select ${displayName}...`
         }
         return this._placeholder
@@ -693,6 +704,11 @@ class Renderer {
         this.optionsContainer.innerHTML += html
         this.ms.checkboxHandler.setAllGroupStates()
         this.renderSelected()
+    }
+
+    renderEmpty() {
+        this.ms.shadowRoot.innerHTML = createTemplate(this.ms.settings).trim()
+        this.ms.getElement("display").innerHTML = `<span>${this.ms.settings.labels.empty}</span>`
     }
 
     renderSelected() {

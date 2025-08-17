@@ -26,6 +26,7 @@
                 <li>VanillaJS (no dependencies)</li>
             </ul>
             <p>On this page you will find several examples of how to use this web component.</p>
+            <p><a href="https://github.com/lcvriend/wc-multi-selector">Here</a> is the Github repository.</p>
         </div>
         <div>
             <form>
@@ -43,11 +44,13 @@
                 <li><a href="#form-integration">Form integration</a></li>
                 <li><a href="#disable">Disable</a></li>
                 <li><a href="#styling-with-custom-properties">Styling with custom properties</a></li>
+                <li><a href="#empty">Empty state</a></li>
                 <li><a href="#alternatives">Alternatives</a></li>
             </ul>
         </div>
     </section>
 
+<!-- MARK: json -->
     <section>
         <div>
             <h3 id="json">Load from JSON</h3>
@@ -64,16 +67,16 @@
         </div>
         <div>
             <multi-selector src="data/countries.json" name="countries"></multi-selector>
-        <pre><code class="language-html">
-  &lt!-- html --&gt;
+<pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     src="data/countries.json"
     name="countries"&gt;
   &lt;/multi-selector&gt;
-            </code></pre>
+</code></pre>
         </div>
     </section>
 
+<!-- MARK: dom -->
     <section>
         <div>
             <h3 id="options-in-markup">Load from DOM</a> </h3>
@@ -93,18 +96,18 @@
                 <option>Green</option>
                 <option>Blue</option>
             </multi-selector>
-            <pre><code class="language-html">
-  &lt!-- html --&gt;
+<pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector name="colors"&gt;
     &lt;option&gt;Red&lt;/option&gt;
     &lt;option&gt;Yellow&lt;/option&gt;
     &lt;option&gt;Green&lt;/option&gt;
     &lt;option&gt;Blue&lt;/option&gt;
   &lt;/multi-selector&gt;
-            </code></pre>
+</code></pre>
         </div>
     </section>
 
+<!-- MARK: optgroup -->
     <section>
         <div>
             <h3 id="categories-with-optgroup">Categories with optgroup</h3>
@@ -138,8 +141,7 @@
                     <option value="marimba">Marimba</option>
                 </optgroup>
             </multi-selector>
-            <pre><code class="language-html">
-  &lt!-- html --&gt;
+<pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector name="instruments"&gt;
   &lt;optgroup label="String instruments" value="string"&gt;
       &lt;optgroup label="Guitar" value="guitar"&gt;
@@ -165,10 +167,11 @@
       &lt;option value="marimba"&gt;Marimba&lt;/option&gt;
   &lt;/optgroup&gt;
   &lt;/multi-selector&gt;
-            </code></pre>
+</code></pre>
         </div>
     </section>
 
+<!-- MARK: navigation -->
     <section>
         <div>
             <h3 id="control-navigation">Control & navigation</h3>
@@ -184,8 +187,7 @@
         </div>
         <div>
             <multi-selector src="data/fallacies.json" name="fallacies"></multi-selector>
-        <pre><code class="language-html">
-  &lt!-- html --&gt;
+        <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     src="data/fallacies.json"
     name="fallacies"&gt;
@@ -194,6 +196,7 @@
         </div>
     </section>
 
+<!-- MARK: disable -->
     <section>
         <div>
             <h3 id="disable">Disable</h3>
@@ -207,8 +210,7 @@
                 <multi-selector name="media genres" src="data/lit_and_entertainment.json" placeholder="What are your favorite media genres?" disabled>
                 </multi-selector>
             </div>
-                <pre><code data-theme="dark" class="language-html">
-  &lt!-- html --&gt;
+                <pre><code data-theme="dark" class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     name="Select genres"
     src="data/genres.json"
@@ -220,6 +222,7 @@
         </div>
     </section>
 
+<!-- MARK: form -->
     <section>
         <div>
             <h3 id="form-integration">Form integration</h3>
@@ -228,7 +231,7 @@
             <p>The <code>selectedValues</code> property on the <code>&lt;multi-selector&gt;</code> element will return the selection as an array.</p>
         </div>
         <div style="overflow-x: hidden;">
-            <form>
+            <form id="beefheart-form">
                 <label for="Albums">Captain Beefheart</label>
                 <multi-selector src="data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
                 <button type="submit">submit</button>
@@ -237,8 +240,7 @@
                 <h4>Form data</h4>
                 <pre><code id="output" class="language-json"></code></pre>
             </div>
-            <pre><code class="language-html">
-  &lt!-- html --&gt;
+<pre><code class="language-html">  &lt!-- html --&gt;
   &lt;form&gt;
     &lt;label for="Albums"&gt;Captain Beefheart&lt;/label&gt;
     &lt;multi-selector
@@ -249,10 +251,11 @@
     &lt;/multi-selector&gt;
     &lt;button type="submit"&gt;submit&lt;/button&gt;
   &lt;/form&gt;
-            </code></pre>
+</code></pre>
         </div>
     </section>
 
+<!-- MARK: styling -->
     <section>
         <div>
             <h3 id="styling-with-custom-properties">Styling with custom properties</h3>
@@ -262,11 +265,12 @@
             <ul>
                 <li><code>--ms-primary-color</code></li>
                 <li><code>--ms-primary-color-disabled</code></li>
-                <li><code>--ms-background:</code></li>
+                <li><code>--ms-dropdown-background:</code></li>
                 <li><code>--ms-option-hover</code></li>
                 <li><code>--ms-text-color</code></li>
                 <li><code>--ms-text-color-disabled</code></li>
-                <li><code>--ms-main-padding</code></li>
+                <li><code>--ms-padding-block</code></li>
+                <li><code>--ms-padding-inline</code></li>
                 <li><code>--ms-border-radius</code></li>
                 <li><code>--ms-button-color</code></li>
                 <li><code>--ms-button-hover</code></li>
@@ -283,12 +287,11 @@
                 <multi-selector name="soap ingredients" src="data/soaps.json">
                 </multi-selector>
             </div>
-                <pre><code class="language-css">
-  /* css */
+<pre><code class="language-css">  /* css */
   .styling-example multi-selector {
     --ms-primary-color:
       hsl(120, 24%, 55%);
-    --ms-background:
+    --ms-dropdown-background:
       hsl(120, 24%, 25%);
     --ms-search-background:
       hsl(120, 24%, 35%);
@@ -307,10 +310,60 @@
     width: 240px;
     margin: 0;
   }
-                </code></pre>
+</code></pre>
         </div>
     </section>
 
+<!-- MARK: empty -->
+    <section>
+        <div>
+            <h3 id="empty">Empty state and adding data</h3>
+            <p>
+                When the <code>&lt;multi-selector&gt;</code> is added without data it will display an empty message and be disabled.
+            </p>
+            <p>
+                Besides loading data from JSON or the DOM, data can also be set directly using javascript.
+            </p>
+        </div>
+        <div>
+            <div>
+                <button id="add-data">Add data</button>
+                <button id="clear-data" disabled>Clear data</button>
+                <multi-selector name="fruits">
+                </multi-selector>
+            </div>
+<pre><code class="language-html">  &lt!-- html --&gt;
+  &lt;button id="add-data"&gt;Add data&lt;/button&gt;
+  &lt;button id="clear-data" disabled&gt;Clear data&lt;/button&gt;
+  &lt;multi-selector name="fruits"&gt;&lt;/multi-selector&gt;
+</code></pre>
+<pre><code class="language-js">  // javascript
+  const fruitSelector = document.querySelector("multi-selector[name='fruits']")
+  const addDataButton = document.getElementById("add-data")
+  const clearDataButton = document.getElementById("clear-data")
+
+  const fruits = [
+      { label: "Apple", value: "apple" },
+      { label: "Banana", value: "banana" },
+      { label: "Orange", value: "orange" },
+      { label: "Grape", value: "grape" },
+  ]
+
+  addDataButton.addEventListener("click", () => {
+      fruitSelector.data = fruits
+      addDataButton.disabled = true
+      clearDataButton.disabled = false
+  })
+  clearDataButton.addEventListener("click", () => {
+      fruitSelector.data = []
+      clearDataButton.disabled = true
+      addDataButton.disabled = false
+  })
+</code></pre>
+        </div>
+    </section>
+
+<!-- MARK: alternatives -->
     <section>
         <div>
             <h3 id="alternatives">Alternatives</h3>
@@ -334,65 +387,89 @@
         </div>
     </section>
 </main>
-    <script src="static/prism.js"></script>
-    <script src="src/wc-multi-selector.js"></script>
-    <script type="module">
-        import { DarkModeToggle } from "https://uu-asc.github.io/csa-werkvoorraad/src/darkmode-toggle.js"
+<!-- MARK: scripts -->
+<script src="static/prism.js"></script>
+<script src="src/wc-multi-selector.js"></script>
+<script type="module">
+    import { DarkModeToggle } from "https://uu-asc.github.io/csa-werkvoorraad/src/darkmode-toggle.js"
 
-        const multiSelectors = document.querySelectorAll("multi-selector")
+    const multiSelectors = document.querySelectorAll("multi-selector")
 
-        document.addEventListener("color-scheme-change", event => {
-            event.detail.scheme === "dark"
-            ? document.body.classList.add("dark-theme")
-            : document.body.classList.remove("dark-theme")
+    document.addEventListener("color-scheme-change", event => {
+        event.detail.scheme === "dark"
+        ? document.body.classList.add("dark-theme")
+        : document.body.classList.remove("dark-theme")
 
-            multiSelectors.forEach(el => {
-                const hasDark = document.body.classList.contains("dark-theme")
-                el.mode = hasDark ? "dark" : "light"
-            })
+        multiSelectors.forEach(el => {
+            const hasDark = document.body.classList.contains("dark-theme")
+            el.mode = hasDark ? "dark" : "light"
         })
-        const darkModeToggle = new DarkModeToggle()
-        document.querySelector("header").appendChild(darkModeToggle)
+    })
+    const darkModeToggle = new DarkModeToggle()
+    document.querySelector("header").appendChild(darkModeToggle)
 
-        // test options through markup
-        const colorInput = document.querySelector("#color")
-        const addColorButton = document.querySelector("#add-color")
-        const colorOptions = document.querySelector("[name='colors']")
+    // test options through markup
+    const colorInput = document.getElementById("color")
+    const addColorButton = document.getElementById("add-color")
+    const colorOptions = document.querySelector("[name='colors']")
 
-        function addColor() {
-            const val = colorInput.value
-            console.log(colorOptions.options)
-            if (!val || colorOptions.options.includes(val)) { return }
-            const newOption = document.createElement("option")
-            newOption.textContent = val
-            colorOptions.appendChild(newOption)
-            colorInput.value = ""
-        }
+    function addColor() {
+        const val = colorInput.value
+        console.log(colorOptions.options)
+        if (!val || colorOptions.options.includes(val)) { return }
+        const newOption = document.createElement("option")
+        newOption.textContent = val
+        colorOptions.appendChild(newOption)
+        colorInput.value = ""
+    }
 
-        colorInput.addEventListener("keyup", (event) => {
-            if (event.code === "Enter") { addColor() }
-        })
+    colorInput.addEventListener("keyup", (event) => {
+        if (event.code === "Enter") { addColor() }
+    })
 
-        addColorButton.addEventListener("click", addColor)
+    addColorButton.addEventListener("click", addColor)
 
-        // test disabled
-        let toggle = document.querySelector("#toggle-genres")
-        let genres = document.querySelector("multi-selector[name='media genres']")
-        toggle.addEventListener("click", () => genres.toggleAttribute("disabled"))
+    // test disabled
+    const toggle = document.getElementById("toggle-genres")
+    const genres = document.querySelector("multi-selector[name='media genres']")
+    toggle.addEventListener("click", () => genres.toggleAttribute("disabled"))
 
-        genres.addEventListener("change", () => console.log("I was changed."))
+    genres.addEventListener("change", () => console.log("I was changed."))
 
-        // test form
-        let output = document.querySelector("#output")
-        let form = document.querySelector("form")
-        form.addEventListener("submit", event => {
-            event.preventDefault()
-            let formData = new FormData(form)
-            console.log(formData)
-            let data = {}
-            formData.forEach((value, key) => data[key] = value)
-            output.innerHTML = JSON.stringify(data, null, 2)
-        })
-    </script>
+    // test set and clear data
+    const fruitSelector = document.querySelector("multi-selector[name='fruits']")
+    const addDataButton = document.getElementById("add-data")
+    const clearDataButton = document.getElementById("clear-data")
+
+    const fruits = [
+        { label: "Apple", value: "apple" },
+        { label: "Banana", value: "banana" },
+        { label: "Orange", value: "orange" },
+        { label: "Grape", value: "grape" },
+    ]
+
+    addDataButton.addEventListener("click", () => {
+        fruitSelector.data = fruits
+        addDataButton.disabled = true
+        clearDataButton.disabled = false
+    })
+    clearDataButton.addEventListener("click", () => {
+        fruitSelector.data = []
+        clearDataButton.disabled = true
+        addDataButton.disabled = false
+    })
+
+    // test form
+    const output = document.getElementById("output")
+    const form = document.getElementById("beefheart-form")
+    form.addEventListener("submit", event => {
+        event.preventDefault()
+        const formData = new FormData(form)
+        console.log(formData)
+        const data = {}
+        formData.forEach((value, key) => data[key] = value)
+        output.innerHTML = JSON.stringify(data, null, 2)
+    })
+</script>
 </body>
 </html>
