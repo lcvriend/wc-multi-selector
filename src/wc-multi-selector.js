@@ -1,304 +1,430 @@
 function createTemplate(options) {
-    return `
-        <style>
-            :host {
-                position: relative;
-                box-sizing: border-box;
-            }
+    const css = /*css*/`
+/* ==========================================================================
+   HOST & FOUNDATION
+   ========================================================================== */
 
-            :host *,
-            :host *::before,
-            :host *::after {
-                box-sizing: border-box;
-            }
-            :host {
-                --ms-primary-color: hsl(0, 0%, 67%);
-                --ms-primary-color-disabled: hsl(0, 5%, 72%);
-                --ms-dropdown-background: hsl(0, 0%, 100%);
-                --ms-option-hover: hsl(0, 0%, 92%);
-                --ms-text-color: hsl(0, 0%, 0%);
-                --ms-text-color-disabled: hsl(0, 5%, 72%);
-                --ms-padding-block: .25em;
-                --ms-padding-inline: 1em;
-                --ms-border-radius: 5px;
-                --ms-button-background: hsl(0, 0%, 94%);
-                --ms-button-hover: hsl(0, 0%, 87%);
-                --ms-button-active: hsl(0, 0%, 97%);
-                --ms-accent-color: hsl(0, 0%, 0%);
-                --ms-search-background: hsl(0, 0%, 100%);
-                --ms-search-text-color: var(--ms-text-color);
-                --ms-search-placeholder-color: hsl(0, 0%, 50%);
-                --ms-height: calc(2rem + var(--ms-padding-block));
-                --ms-max-height: 60vh;
-                display: grid;
-                color: var(--ms-text-color);
-                height: var(--ms-height);
-            }
-            :host([mode="dark"]),
-            :host > details.system-dark {
-                --ms-primary-color: hsl(0, 0%, 67%);
-                --ms-primary-color-disabled: hsl(0, 5%, 42%);
-                --ms-dropdown-background: hsl(0, 0%, 7%);
-                --ms-option-hover: hsl(0, 0%, 15%);
-                --ms-text-color: hsl(0, 0%, 84%);
-                --ms-text-color-disabled: hsl(0, 5%, 52%);
-                --ms-button-background: hsl(0, 0%, 24%);
-                --ms-button-hover: hsl(0, 0%, 32%);
-                --ms-button-active: hsl(0, 0%, 39%);
-                --ms-accent-color: hsl(0, 0%, 100%);
-                --ms-search-background: hsl(0, 0%, 12%);
-                --ms-search-text-color: var(--ms-text-color);
-                color: var(--ms-text-color);
-            }
-            :host > details {
-                position: absolute;
-                border: 1px solid var(--ms-primary-color);
-                border-radius: var(--ms-border-radius);
-                cursor: pointer;
-                height: 100%;
-            }
-            :host > details[open] {
-                height: unset;
-                z-index: 999999;
-            }
-            :host > details > summary {
-                display: flex;
-                align-items : center;
-                gap: .5em;
-                height: var(--ms-height);
-                padding-block: var(--ms-padding-block);
-                padding-inline: var(--ms-padding-inline);
-            }
-            :host > details > summary > .display {
-                margin-right: auto;
-            }
-            :host > details[open] .click-me {
-                display: none;
-            }
-            /* display */
-            /* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
-            .display {
-                display: table;
-                table-layout: fixed;
-                width: 100%;
-                white-space: nowrap;
-                margin-right: 3ch;
-            }
-            .display span {
-                display: table-cell;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-            code {
-                font-family: Consolas, 'Courier New', Courier, monospace;
-                font-size: .8em;
-            }
-            /* control panel */
-            .control-panel {
-                display: flex;
-            }
-            /* buttons */
-            [data-command] {
-                display: none;
-                background-color: var(--ms-button-background);
-                border: 1px solid var(--ms-primary-color);
-                user-select: none;
-                color: var(--ms-text-color);
-            }
-            [data-command][disabled] {
-                color:hsl(0, 0%, 72%);
-            }
-            [data-command]:not([disabled]):hover {
-                cursor: pointer;
-                background-color: var(--ms-button-hover);
-            }
-            [data-command]:not([disabled]):active {
-                background-color: var(--ms-button-active);
-            }
-            [data-command]:first-of-type {
-                border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
-            }
-            [data-command]:last-of-type {
-                border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
-            }
-            :host > details[open] [data-command] {
-                display: grid;
-                place-items: center;
-            }
-            /* container */
-            :host > details[open] > div {
-                background-color: var(--ms-dropdown-background);
-                border-bottom-left-radius: var(--ms-border-radius);
-                border-bottom-right-radius: var(--ms-border-radius);
-                padding-inline: var(--ms-padding-inline);
-                padding-bottom: 1em;
-                display: grid;
-                grid-template-rows: auto 1fr;
-                gap: .5em;
-            }
-            /* filter */
-            .filter {
-                padding-block: var(--ms-padding-block);
-                display: flex;
-            }
-            .filter input {
-                width: 100%;
-                padding-block: var(--ms-padding-block);
-                padding-inline: var(--ms-padding-inline);
-                background-color: var(--ms-search-background);
-                border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
-                border: 1px solid var(--ms-primary-color);
-                border-right: none;
-                color: var(--ms-search-text-color);
-            }
-            ::placeholder {
-                color: var(--ms-search-placeholder-color);
-            }
-            [data-role].hide {
-                display: none;
-            }
-            /* options */
-            :host > details[open] > div > .options {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                gap: .5em;
-                overflow-y: auto;
-                scrollbar-gutter: stable;
-                padding-right: 8px;
-                max-height: var(--ms-max-height);
-            }
-            /* focus */
-            :focus-visible {
-                z-index: 99999;
-            }
-            /* groups */
-            [data-role="group"] > summary {
-                display: grid;
-                grid-template-columns: auto 1fr;
-                border-radius: var(--ms-border-radius);
-                padding: .15em;
-                align-items: center;
-                cursor: pointer;
-                }
-            [data-role="group"] > summary > label {
-                display: flex;
-                align-items: center;
-                gap: .25em;
-            }
-            [data-role="group"] > summary > label > span {
-                font-weight: bold;
-                font-variant: small-caps;
-            }
-            [data-role="group"] > summary > label > code {
-                user-select: none;
-                font-size: .65em;
-            }
-            [data-role="group"] > summary:after {
-                content: "\\2B";
-                color: var(--ms-text-color);
-                justify-self: end;
-                margin-right: .25em;
-            }
-            [data-role="group"][open] > summary:after {
-                content: "\\2212";
-            }
-            [data-role="group"] > :not(summary) {
-                border-left: 2px solid var(--ms-primary-color);
-                margin-left: .25rem;
-                padding-left: .75rem;
-            }
-            [data-role="group"] > summary > label:hover span {
-                text-decoration: underline;
-                text-underline-offset: .25em;
-            }
-            /* options */
-            [data-role="option"] {
-                display: grid;
-                padding: .1em;
-            }
-            /* groups/options */
-            [data-role="group"] > summary:hover,
-            [data-role="option"]:hover {
-                background-color: var(--ms-option-hover);
-            }
-            /* custom checkbox */
-            input[type="checkbox"] {
-                position: absolute;
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-            input[type="checkbox"] + label {
-                cursor: pointer;
-            }
-            input[type="checkbox"] + label:before {
-                content: "";
-                display: inline-block;
-                border-radius: 3px;
-                margin-right: .5rem;
-                width: .6rem;
-                height: .6rem;
-                outline: 1px solid var(--ms-primary-color);
-            }
-            input[type="checkbox"]:checked + label:before {
-                background-color: var(--ms-accent-color);
-            }
-            input[type="checkbox"]:indeterminate + label:before {
-                background: linear-gradient(to right, var(--ms-dropdown-background) 50%, var(--ms-accent-color) 50%);
-            }
-            input[type="checkbox"]:focus-visible + label:before {
-                outline: 2px solid Highlight;
-                outline: 2px solid -webkit-focus-ring-color;
-                outline-offset: 2px;
-            }
-            /* disable */
-            /* https://stackoverflow.com/a/63207226 */
-            :host([disabled]),
-            :host([data-empty]) {
-                --ms-primary-color: var(--ms-primary-color-disabled);
-                background-color: var(--ms-background-disabled);
-                color: var(--ms-text-color-disabled);
-                tab-index: -1;
-                pointer-events: none;
-                user-select: none;
-            }
-            /* scrollbar chrome */
-            /* https://stackoverflow.com/questions/66166047 */
-            ::-webkit-scrollbar {
-                width: 6px;
-            }
-            ::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            ::-webkit-scrollbar-thumb {
-                background-color: rgba(155, 155, 155, 0.5);
-                border-radius: 20px;
-                border: transparent;
-            }
-        </style>
-        <details>
-            <summary>
-                <div class="display"><span>...</span></div>
-                <div class="control-panel">
-                    <button data-command="unfold"
-                        title="${options.titles.unfoldGroups}">&plus;</button>
-                    <button data-command="fold"
-                        title="${options.titles.foldGroups}">&minus;</button>
-                    <button data-command="show-selected"
-                        title="${options.titles.showSelected}" disabled>&#9745;</button>
-                </div>
-                <div class="click-me">&#9660;</div>
-            </summary>
-            <div>
-                <div class="filter">
-                    <input type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
-                    <button data-command="clear-query"
-                        title="${options.titles.clearFilter}">&Cross;</button>
-                </div>
-                <div class="options"></div>
-            </div>
-        </details>
+:host {
+    position: relative;
+    box-sizing: border-box;
+    display: grid;
+    height: var(--ms-height);
+    color: var(--ms-text-color);
+}
+
+:host *,
+:host *::before,
+:host *::after {
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   CUSTOM PROPERTIES (LIGHT THEME)
+   ========================================================================== */
+
+:host {
+    --ms-primary-color: hsl(0, 0%, 67%);
+    --ms-primary-color-disabled: hsl(0, 5%, 72%);
+    --ms-dropdown-background: hsl(0, 0%, 100%);
+    --ms-option-hover: hsl(0, 0%, 92%);
+    --ms-text-color: hsl(0, 0%, 0%);
+    --ms-text-color-disabled: hsl(0, 5%, 72%);
+    --ms-padding-block: .25em;
+    --ms-padding-inline: 1em;
+    --ms-border-radius: 5px;
+    --ms-button-background: hsl(0, 0%, 94%);
+    --ms-button-hover: hsl(0, 0%, 87%);
+    --ms-button-active: hsl(0, 0%, 97%);
+    --ms-accent-color: hsl(0, 0%, 0%);
+    --ms-search-background: hsl(0, 0%, 100%);
+    --ms-search-text-color: var(--ms-text-color);
+    --ms-search-placeholder-color: hsl(0, 0%, 50%);
+    --ms-height: calc(2rem + var(--ms-padding-block));
+    --ms-max-height: 60vh;
+}
+
+/* ==========================================================================
+   CUSTOM PROPERTIES (DARK THEME)
+   ========================================================================== */
+
+:host([mode="dark"]),
+:host > details.system-dark {
+    --ms-primary-color: hsl(0, 0%, 67%);
+    --ms-primary-color-disabled: hsl(0, 5%, 42%);
+    --ms-dropdown-background: hsl(0, 0%, 7%);
+    --ms-option-hover: hsl(0, 0%, 15%);
+    --ms-text-color: hsl(0, 0%, 84%);
+    --ms-text-color-disabled: hsl(0, 5%, 52%);
+    --ms-button-background: hsl(0, 0%, 24%);
+    --ms-button-hover: hsl(0, 0%, 32%);
+    --ms-button-active: hsl(0, 0%, 39%);
+    --ms-accent-color: hsl(0, 0%, 100%);
+    --ms-search-background: hsl(0, 0%, 12%);
+    --ms-search-text-color: var(--ms-text-color);
+    color: var(--ms-text-color);
+}
+
+/* ==========================================================================
+   MAIN CONTAINER & DETAILS
+   ========================================================================== */
+
+:host > details {
+    position: absolute;
+    height: 100%;
+    cursor: pointer;
+}
+
+:where(:host > details) {
+    border: 1px solid var(--ms-primary-color);
+    border-radius: var(--ms-border-radius);
+}
+
+:host > details[open] {
+    height: unset;
+    z-index: 999999;
+}
+
+/* ==========================================================================
+   SUMMARY (TRIGGER)
+   ========================================================================== */
+
+:host > details > summary {
+    display: flex;
+    align-items: center;
+    gap: .5em;
+    height: var(--ms-height);
+    padding-block: var(--ms-padding-block);
+    padding-inline: var(--ms-padding-inline);
+}
+
+:host > details > summary > .display {
+    margin-right: auto;
+}
+
+:host > details[open] .click-me {
+    display: none;
+}
+
+/* ==========================================================================
+   DISPLAY AREA
+   ========================================================================== */
+
+.display {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    white-space: nowrap;
+    margin-right: 3ch;
+}
+
+/* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
+.display span {
+    display: table-cell;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   CONTROL PANEL & BUTTONS
+   ========================================================================== */
+
+.control-panel {
+    display: flex;
+}
+
+[data-command] {
+    display: none;
+    user-select: none;
+}
+
+:where([data-command]) {
+    background-color: var(--ms-button-background);
+    border: 1px solid var(--ms-primary-color);
+    color: var(--ms-text-color);
+}
+
+[data-command][disabled] {
+    color: hsl(0, 0%, 72%);
+}
+
+:where([data-command]:not([disabled])):hover {
+    cursor: pointer;
+    background-color: var(--ms-button-hover);
+}
+
+:where([data-command]:not([disabled])):active {
+    background-color: var(--ms-button-active);
+}
+
+[data-command]:first-of-type {
+    border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
+}
+
+[data-command]:last-of-type {
+    border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
+}
+
+:host > details[open] [data-command] {
+    display: grid;
+    place-items: center;
+}
+
+/* ==========================================================================
+   DROPDOWN CONTAINER
+   ========================================================================== */
+
+:host > details[open] > div {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: .5em;
+    padding-inline: var(--ms-padding-inline);
+    padding-bottom: 1em;
+    border-bottom-left-radius: var(--ms-border-radius);
+    border-bottom-right-radius: var(--ms-border-radius);
+}
+
+:where(:host > details[open] > div) {
+    background-color: var(--ms-dropdown-background);
+}
+
+/* ==========================================================================
+   FILTER SECTION
+   ========================================================================== */
+
+.filter {
+    padding-block: var(--ms-padding-block);
+    display: flex;
+}
+
+.filter input {
+    width: 100%;
+    padding-block: var(--ms-padding-block);
+    padding-inline: var(--ms-padding-inline);
+    border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
+    border: 1px solid var(--ms-primary-color);
+    border-right: none;
+}
+
+:where(.filter input) {
+    background-color: var(--ms-search-background);
+    color: var(--ms-search-text-color);
+}
+
+::placeholder {
+    color: var(--ms-search-placeholder-color);
+}
+
+/* ==========================================================================
+   OPTIONS CONTAINER
+   ========================================================================== */
+
+:host > details[open] > div > .options {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    padding: 3px;
+    padding-right: 8px;
+    max-height: var(--ms-max-height);
+}
+
+/* ==========================================================================
+   GROUPS
+   ========================================================================== */
+
+[data-role="group"] > summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    padding: .15em;
+    align-items: center;
+    cursor: pointer;
+}
+
+:where([data-role="group"] > summary) {
+    border-radius: var(--ms-border-radius);
+}
+
+[data-role="group"] > summary > label {
+    display: flex;
+    align-items: center;
+    gap: .25em;
+}
+
+[data-role="group"] > summary > label > span {
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+[data-role="group"] > summary > label > code {
+    user-select: none;
+    font-size: .65em;
+}
+
+[data-role="group"] > summary:after {
+    content: "\\2B";
+    color: var(--ms-text-color);
+    justify-self: end;
+    margin-right: .25em;
+}
+
+[data-role="group"][open] > summary:after {
+    content: "\\2212";
+}
+
+[data-role="group"] > :not(summary) {
+    border-left: 2px solid var(--ms-primary-color);
+    margin-left: .25rem;
+    padding-left: .75rem;
+}
+
+:where([data-role="group"] > summary > label):hover span {
+    text-decoration: underline;
+    text-underline-offset: .25em;
+}
+
+/* ==========================================================================
+   OPTIONS
+   ========================================================================== */
+
+[data-role="option"] {
+    display: grid;
+    padding: .1em;
+}
+
+/* ==========================================================================
+   HOVER STATES (GROUPS & OPTIONS)
+   ========================================================================== */
+
+:where([data-role="group"] > summary):hover,
+:where([data-role="option"]):hover {
+    background-color: var(--ms-option-hover);
+}
+
+/* ==========================================================================
+   CUSTOM CHECKBOXES
+   ========================================================================== */
+
+input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+input[type="checkbox"] + label {
+    cursor: pointer;
+}
+
+input[type="checkbox"] + label:before {
+    content: "";
+    display: inline-block;
+    border-radius: 3px;
+    margin-right: .5rem;
+    width: .6rem;
+    height: .6rem;
+    outline: 1px solid var(--ms-primary-color);
+}
+
+input[type="checkbox"]:checked + label:before {
+    background-color: var(--ms-accent-color);
+}
+
+input[type="checkbox"]:indeterminate + label:before {
+    background: linear-gradient(to right,
+        var(--ms-accent-color) 0%,
+        var(--ms-accent-color) 48%,
+        var(--ms-dropdown-background) 48%,
+        var(--ms-dropdown-background) 100%
+    );
+}
+
+input[type="checkbox"]:focus-visible + label:before {
+    outline: 2px solid Highlight;
+    outline: 2px solid -webkit-focus-ring-color;
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   STATES & UTILITIES
+   ========================================================================== */
+
+[data-role].hide {
+    display: none;
+}
+
+:focus-visible {
+    z-index: 999999;
+}
+
+/* ==========================================================================
+   DISABLED STATE
+   ========================================================================== */
+
+:host([disabled]),
+:host([data-empty]) {
+    --ms-primary-color: var(--ms-primary-color-disabled);
+    background-color: var(--ms-background-disabled);
+    color: var(--ms-text-color-disabled);
+    tab-index: -1;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+code {
+    font-family: Consolas, 'Courier New', Courier, monospace;
+    font-size: .8em;
+}
+
+/* ==========================================================================
+   SCROLLBAR (WEBKIT)
+   ========================================================================== */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
+`
+    return /*html*/`
+<style>
+${css}
+</style>
+<details part="container">
+    <summary>
+        <div part="display" class="display"><span>...</span></div>
+        <div part="controls" class="control-panel">
+            <button part="control-button" data-command="unfold"
+                title="${options.titles.unfoldGroups}">&plus;</button>
+            <button part="control-button" data-command="fold"
+                title="${options.titles.foldGroups}">&minus;</button>
+            <button part="control-button" data-command="show-selected"
+                title="${options.titles.showSelected}" disabled>&#9745;</button>
+        </div>
+        <div class="click-me">&#9660;</div>
+    </summary>
+    <div part="dropdown">
+        <div part="filter" class="filter">
+            <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
+            <button part="control-button" data-command="clear-query"
+                title="${options.titles.clearFilter}">&Cross;</button>
+        </div>
+        <div part="options" class="options"></div>
+    </div>
+</details>
         `
     }
 
