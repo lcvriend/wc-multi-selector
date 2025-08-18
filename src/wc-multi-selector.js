@@ -1383,12 +1383,19 @@ class NavigationHandler {
     }
 
     addListener() {
-        this.ms.shadowRoot.addEventListener("keydown", event => {
-            let ignore = [
-                "ArrowUp",
-                "ArrowDown",
-            ]
-            if (event.target === this.searchbox && !ignore.includes(event.key)) {return}
+        this.ms.shadowRoot.addEventListener("keydown", event =>
+        {
+            if (event.target === this.searchbox) {
+                const allowNavigation = ["ArrowUp", "ArrowDown"].includes(event.key) ||
+                    (["ArrowLeft", "ArrowRight"].includes(event.key) &&
+                    (event.target.value === "" ||
+                    (event.key === "ArrowRight" && event.target.selectionStart === event.target.value.length) ||
+                    (event.key === "ArrowLeft" && event.target.selectionStart === 0)))
+
+                if (!allowNavigation) {
+                    return // Let text editing happen
+                }
+            }
             switch ( event.key ) {
                 case "ArrowUp":
                 case "ArrowDown":
@@ -1437,6 +1444,21 @@ class NavigationHandler {
             }
         }
 
+        // handle filter buttons
+        if ( event.target.matches(`.filter button`)) {
+            if ( inc > 0 ) {
+                const firstOption = this.box.querySelector(`.options details:not(.hide) > summary, .options div:not(.hide) > [type="checkbox"]`)
+                if (firstOption) {
+                    firstOption.focus()
+                }
+                return
+            }
+            if ( inc < 0 ) {
+                this.box.querySelector(`summary`).focus()
+                return
+            }
+        }
+
         const selectors = this.focusableElementsSelector
         const opened = this.box.querySelectorAll(selectors)
         const closest = event.target.closest(selectors)
@@ -1446,21 +1468,20 @@ class NavigationHandler {
     }
 
     handleLeftRightArrow(event) {
-        // handle searchbox
-        if ( event.target.matches("#search") ) { return }
-
-        let inc = event.key === "ArrowRight" ? 1 : -1
-        let opened = this.box.querySelectorAll(`
-            #control-panel,
-            button,
-            input[type="text"],
+        const inc = event.key === "ArrowRight" ? 1 : -1
+        const opened = this.box.querySelectorAll(`
+            .control-panel button:not([disabled]),
+            .search input[type="text"],
+            [data-command="toggle-values-only"],
+            [data-command="clear-query"],
             details[open]:not(.hide) > summary,
+            details[open]:not(.hide) > summary > [type="checkbox"],
             details[open]:not(.hide) > div > details:not(.hide) > summary,
             details[open]:not(.hide) > div > details:not(.hide) > summary > [type="checkbox"],
             details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
         )
-        let nextIdx = [...opened].indexOf(event.target)
-        let next = opened[nextIdx + inc]
+        const nextIdx = [...opened].indexOf(event.target)
+        const next = opened[nextIdx + inc]
         if (next) { next.focus() }
     }
 }
