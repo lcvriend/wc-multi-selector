@@ -1,5 +1,7 @@
 # multi-selector (web component)
 
+<img src="./screenshots/ms-countries.png" alt="Multi-selector with dropdown open" width="570">
+
 `<multi-selector>` is a web component that lets a user select multiple options from a drop-down menu:
 
 * Arbitrarily nested groups of options
@@ -77,27 +79,98 @@ Use `<optgroup>` tags to categorize options. Unlike the default `<optgroup>` tag
 
 Set labels and values with the label and value attributes. If not present labels and values will be set from the textContent.
 
-## Styling with custom properties
+## Keyboard navigation
+### Opening and Closing
+- **Enter/Space** on the closed selector opens the dropdown
+- **Escape** closes the dropdown from anywhere within
+- **Tab** navigates away and closes the dropdown
+
+### General Navigation
+- **Arrow Up/Down** - Navigate between focusable elements (summary, search, group headers, options)
+- **Arrow Left/Right** - Navigate horizontally through control buttons and elements
+- **Home** - Jump to the top (selector summary)
+- **End** - Jump to the last focusable element in the dropdown
+
+### Search and Filtering
+- **Ctrl + \\** - Show only selected items (same as clicking the ✓ button)
+- **Ctrl + /** - Clear search filter and show all items
+- **Escape** in search box - Clear the current search term
+
+### Group Management
+- **Ctrl + ]** - Unfold/expand all groups
+- **Ctrl + [** - Fold/collapse all groups
+- **Enter/Space** on group headers - Toggle individual group expansion
+
+### Selection
+- **Space** on checkboxes - Toggle selection
+- **Enter** on group checkboxes - Select/deselect entire group and children
+
+## Styling
+
+### CSS parts
+The component exposes these CSS parts for styling with ::part():
+
+- `container` - The main details element wrapper
+- `display` - The selection display area showing current choices
+- `controls` - The control button panel (fold/unfold/show-selected buttons)
+- `control-button` - Individual control buttons
+- `dropdown` - The dropdown container that appears when open
+- `filter` - The search section wrapper
+- `search` - The search input field
+- `options` - The scrollable options container
+
+```css
+multi-selector::part(dropdown) { background: black; }
+```
+
+### Custom properties
 Some simple styling is possible using custom properties. The following properties are available:
 
-* `--ms-primary-color`
-* `--ms-primary-color-disabled`
-* `--ms-background:`
-* `--ms-option-hover`
-* `--ms-text-color`
-* `--ms-text-color-disabled`
-* `--ms-main-padding`
-* `--ms-border-radius`
-* `--ms-button-color`
-* `--ms-button-hover`
-* `--ms-button-active`
-* `--ms-accent-color`
-* `--ms-search-background`
-* `--ms-search-text-color`
-* `--ms-search-placeholder-color`
-* `--ms-max-height`
+#### Layout & Spacing:
 
-## Translations
+- `--ms-height` - Overall component height
+- `--ms-max-height` - Maximum dropdown height
+- `--ms-padding-block` - Vertical padding
+- `--ms-padding-inline` - Horizontal padding
+- `--ms-border-radius` - Border radius for rounded corners
+
+#### Colors & Appearance:
+
+- `--ms-primary-color` - Borders and outlines
+- `--ms-accent-color` - Checkboxes and active states
+- `--ms-dropdown-background` - Dropdown background
+- `--ms-option-hover` - Hover state background
+
+#### Typography:
+
+- `--ms-text-color` - Main text color
+- `--ms-search-text-color` - Search input text
+- `--ms-search-placeholder-color` - Search placeholder text
+
+## Labels
+The following labels are customizable:
+```js
+{
+    labels: {
+        all: "All items",
+        empty: "No options loaded...",
+        placeholder: "options",
+        selection: "Filtered items",
+        filter: {
+            placeholder: "Search...",
+            allSelected: "<all selected>",
+        }
+    },
+    titles: {
+        unfoldGroups: "unfold groups: ctrl-]",
+        foldGroups: "fold groups: ctrl-[",
+        showSelected: "show selected: ctrl-\\",
+        clearFilter: "clear filter",
+    }
+}
+```
+
+### Translations
 There are three main ways to override the default labels:
 
 1. Per instance after creation:
