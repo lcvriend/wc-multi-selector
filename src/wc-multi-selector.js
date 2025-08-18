@@ -1,4 +1,5 @@
 function createTemplate(options) {
+// MARK: css
     const css = /*css*/`
 /* ==========================================================================
    HOST & FOUNDATION
@@ -33,8 +34,8 @@ function createTemplate(options) {
     --ms-padding-inline: 1em;
     --ms-border-radius: 5px;
     --ms-button-background: hsl(0, 0%, 94%);
-    --ms-button-hover: hsl(0, 0%, 87%);
-    --ms-button-active: hsl(0, 0%, 97%);
+    --ms-button-hover: hsl(0, 0%, 91%);
+    --ms-button-active: hsl(0, 0%, 86%);
     --ms-accent-color: hsl(0, 0%, 0%);
     --ms-search-background: hsl(0, 0%, 100%);
     --ms-search-text-color: var(--ms-text-color);
@@ -135,6 +136,7 @@ function createTemplate(options) {
 [data-command] {
     display: none;
     user-select: none;
+    font-family: monospace;
 }
 
 :where([data-command]) {
@@ -192,20 +194,45 @@ function createTemplate(options) {
    ========================================================================== */
 
 .filter {
-    padding-block: var(--ms-padding-block);
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
 }
 
-.filter input {
-    width: 100%;
+.search {
+    display: grid;
+    gap: .5em;
+    grid-template-columns: 1fr auto;
+    padding-inline: .5em;
     padding-block: var(--ms-padding-block);
-    padding-inline: var(--ms-padding-inline);
     border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
     border: 1px solid var(--ms-primary-color);
     border-right: none;
 }
 
-:where(.filter input) {
+.search > input {
+    padding-block: var(--ms-padding-block);
+    padding-inline: var(--ms-padding-inline);
+    border: none;
+    background-color: transparent;
+    color: inherit;
+}
+
+.filter .search > [data-command] {
+    border-radius: var(--ms-border-radius);
+    background-color: transparent;
+    border: none;
+    font-size: .65em;
+}
+
+.filter .search > [data-command]:hover {
+    background-color: var(--ms-button-hover);
+}
+
+.filter .search > [data-command].active {
+    background-color: var(--ms-button-active);
+}
+
+:where(.search) {
     background-color: var(--ms-search-background);
     color: var(--ms-search-text-color);
 }
@@ -399,6 +426,7 @@ code {
     border: transparent;
 }
 `
+// MARK: html
     return /*html*/`
 <style>
 ${css}
@@ -418,7 +446,11 @@ ${css}
     </summary>
     <div part="dropdown">
         <div part="filter" class="filter">
-            <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
+            <div class="search">
+                <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
+                <button data-command="toggle-values-only"
+                title="${options.titles.valuesOnly}">[val]</button>
+            </div>
             <button part="control-button" data-command="clear-query"
                 title="${options.titles.clearFilter}">&Cross;</button>
         </div>
@@ -452,6 +484,7 @@ class MultiSelector extends HTMLElement {
             foldGroups: "fold groups: ctrl-[",
             showSelected: "show selected: ctrl-\\",
             clearFilter: "clear filter",
+            valuesOnly: "search values only",
         }
     }
 
@@ -651,6 +684,9 @@ class MultiSelector extends HTMLElement {
                 break
             case "clear-query":
                 query = `[data-command="clear-query"]`
+                break
+            case "toggle-values-only":
+                query = `[data-command="toggle-values-only"]`
                 break
             case "options-container":
                 query = ":host > details > div > .options"
@@ -997,12 +1033,14 @@ class DataHandler {
 class SearchHandler {
     constructor(multiselector) {
         this.ms = multiselector
+        this.valuesOnlyMode = false
         this.matchPhrase = this.matchPhrase.bind(this)
         this.matchSelected = this.matchSelected.bind(this)
         this.handleKeyUp = this.makeHandleKeyUp().bind(this)
         this.handleClickClearQuery = this.handleClickClearQuery.bind(this)
         this.handleClickShowSelected = this.handleClickShowSelected.bind(this)
         this.handleKeyManageFilter = this.handleKeyManageFilter.bind(this)
+        this.handleToggleValuesOnly = this.handleToggleValuesOnly.bind(this)
     }
 
     get searchbox() {
@@ -1021,11 +1059,16 @@ class SearchHandler {
         return this.ms.getElement("first-group")
     }
 
+    get toggleValuesButton() {
+        return this.ms.getElement("toggle-values-only")
+    }
+
     addListener() {
         this.searchbox.addEventListener("keyup", this.handleKeyUp)
         this.clearQueryButton.addEventListener("click", this.handleClickClearQuery)
         this.showSelectedButton.addEventListener("click", this.handleClickShowSelected)
         document.addEventListener("keydown", this.handleKeyManageFilter)
+        this.toggleValuesButton.addEventListener("click", this.handleToggleValuesOnly)
     }
 
     handleClickShowSelected() {
@@ -1054,6 +1097,15 @@ class SearchHandler {
         this.filterData(this.firstGroup, this.matchPhrase)
         this.updateStateAfterFilter()
         this.searchbox.placeholder = this.ms.settings.labels.filter.placeholder
+    }
+
+    handleToggleValuesOnly() {
+        this.valuesOnlyMode = !this.valuesOnlyMode
+        this.toggleValuesButton.classList.toggle("active", this.valuesOnlyMode)
+        if (this.searchbox.value !== "") {
+            this.filterData(this.firstGroup, this.matchPhrase)
+            this.updateStateAfterFilter()
+        }
     }
 
     makeHandleKeyUp() {
@@ -1091,8 +1143,9 @@ class SearchHandler {
             return this.toggleShowElem(el, match)
         }
         if (el.matches(`[data-role="group"]`)) {
-            // if phrase in groupname then show element and all children
-            if (matcher(el)) {
+            // if phrase in groupname and we are not in values only mode
+            // then show element and all children
+            if (!this.valuesOnlyMode && matcher(el)) {
                 const children = el.querySelectorAll(`[data-value]`)
                 children.forEach(child => this.toggleShowElem(child, true))
                 return this.toggleShowElem(el, true)
