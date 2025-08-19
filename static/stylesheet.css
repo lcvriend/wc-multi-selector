@@ -93,8 +93,10 @@ section > div {
         margin-inline: auto;
         grid-template-columns: 1fr 1fr;
     }
-    section:first-of-type {
-        grid-template-columns: 1fr 1fr;
+    section:first-of-type,
+    section:last-of-type {
+        grid-template-columns: 1fr;
+        max-width: 500px;
     }
 }
 :where(section > div) > * + * {
@@ -228,10 +230,6 @@ form {
 }
 
 /* examples */
-section.top-example {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-}
 .styling-example {
     display: grid;
     place-items: center;
