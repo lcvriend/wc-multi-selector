@@ -87,14 +87,11 @@ section {
 section > div {
     display: grid;
 }
-pre {
-    max-height: 350px;
-}
 @media (min-width: 900px) {
     section {
         width: 920px;
         margin-inline: auto;
-        grid-template-columns: 21em 1fr;
+        grid-template-columns: 1fr 1fr;
     }
     section:first-of-type {
         grid-template-columns: 1fr 1fr;
@@ -118,7 +115,7 @@ blockquote {
     padding-inline: 1rem;
     border-left: 2px solid var(--border-color);
 }
-h3 {
+h2, h3, h4 {
     color: var(--section-header-color);
 }
 p code {
@@ -231,6 +228,10 @@ form {
 }
 
 /* examples */
+section.top-example {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+}
 .styling-example {
     display: grid;
     place-items: center;

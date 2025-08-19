@@ -13,28 +13,29 @@
     <h1>Multi-Selector</h1>
 </header>
 <main>
+    <section class="top-example">
+        <form>
+            <label for="courses">
+                Agricultural courses (demo)
+                <multi-selector src="data/courses.json" name="courses"></multi-selector>
+            </label>
+        </form>
+    </section>
     <section>
         <div>
             <h3>Web component demo</h3>
             <p><code>&lt;multi-selector&gt;</code> is a web component that lets a user select multiple options from a drop-down menu:</p>
             <ul>
                 <li>Arbitrarily nested groups of options</li>
-                <li>Searchable</li>
-                <li>Easy to control and navigate (also with the <i>keyboard)</i></li>
+                <li>Searchable groups/values</li>
+                <li>Keyboard navigation</li>
                 <li>Reads options from JSON or mark up</li>
-                <li>Style with custom properties</li>
+                <li>Styling through parts/custom properties</li>
                 <li>VanillaJS (no dependencies)</li>
             </ul>
-            <p>On this page you will find several examples of how to use this web component.</p>
-            <p><a href="https://github.com/lcvriend/wc-multi-selector">Here</a> is the Github repository.</p>
+            <p>This page contains several examples of how to use this web component. <a href="https://github.com/lcvriend/wc-multi-selector">Link</a> to the Github repository.</p>
         </div>
         <div>
-            <form>
-                <label for="courses">
-                    Agricultural courses (demo)
-                    <multi-selector src="data/courses.json" name="courses"></multi-selector>
-                </label>
-            </form>
             <h4>Contents</h4>
             <ul>
                 <li><a href="#json">Load from JSON</a></li>
@@ -55,25 +56,29 @@
         <div>
             <h3 id="json">Load from JSON</h3>
             <p>Supply the data as JSON using the <code>src</code> attribute of <code>&lt;multi-selector&gt;</code>.</p>
+            <h4>Data format</h4>
             <p>The data should be provided in this format:</p>
             <p><code>{
                 "label": "label",
                 "value": "value",
                 "children": []
             }</code></p>
-            <p>See <a href="data/soaps.json">soaps.json</a> for an example.</p>
-            <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. <code>&lt;multi-selector&gt;</code> will convert this to the format above.</p>
+            <p>See <a href="data/fallacies.json">fallacies.json</a> for an example. To preselect values add:
+            <p><code>selected: true</code></p>
+            <p>This works only on values, and will be ignored in groups.</p>
+            <h4>Automatic conversion</h4>
+            <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. Flat data can also be given as an array. <code>&lt;multi-selector&gt;</code> will convert these to the format above.</p>
             <p>See <a href="data/countries.json">countries.json</a> for an example.</p>
         </div>
         <div>
             <multi-selector src="data/countries.json" name="countries"></multi-selector>
+            <h4>Code</h4>
 <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     src="data/countries.json"
     name="countries"&gt;
-  &lt;/multi-selector&gt;
-</code></pre>
-        </div>
+  &lt;/multi-selector&gt;</code></pre>
+</div>
     </section>
 
 <!-- MARK: dom -->
@@ -96,14 +101,14 @@
                 <option>Green</option>
                 <option>Blue</option>
             </multi-selector>
+            <h4>Code</h4>
 <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector name="colors"&gt;
     &lt;option&gt;Red&lt;/option&gt;
     &lt;option&gt;Yellow&lt;/option&gt;
     &lt;option&gt;Green&lt;/option&gt;
     &lt;option&gt;Blue&lt;/option&gt;
-  &lt;/multi-selector&gt;
-</code></pre>
+  &lt;/multi-selector&gt;</code></pre>
         </div>
     </section>
 
@@ -141,6 +146,7 @@
                     <option value="marimba">Marimba</option>
                 </optgroup>
             </multi-selector>
+            <h4>Code</h4>
 <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector name="instruments"&gt;
   &lt;optgroup label="String instruments" value="string"&gt;
@@ -151,23 +157,8 @@
       &lt;option value="violin"&gt;Violin&lt;/option&gt;
       &lt;option value="cello"&gt;Cello&lt;/option&gt;
   &lt;/optgroup&gt;
-  &lt;optgroup label="Wind instruments" value="wind"&gt;
-      &lt;optgroup label="Brass instruments" value="brass"&gt;
-          &lt;option value="trumpet"&gt;Trumpet&lt;/option&gt;
-          &lt;option value="trombone"&gt;Trombone&lt;/option&gt;
-          &lt;option value="saxophone"&gt;Saxophone&lt;/option&gt;
-      &lt;/optgroup&gt;
-      &lt;optgroup label="Woodwind instruments" value="woodwind"&gt;
-          &lt;option value="flute"&gt;Flute&lt;/option&gt;
-          &lt;option value="clarinet"&gt;Clarinet&lt;/option&gt;
-      &lt;/optgroup&gt;
-  &lt;optgroup label="Percussion instruments" value="percussion"&gt;
-      &lt;option value="drums"&gt;Drums&lt;/option&gt;
-      &lt;option value="xylophone"&gt;Xylophone&lt;/option&gt;
-      &lt;option value="marimba"&gt;Marimba&lt;/option&gt;
-  &lt;/optgroup&gt;
-  &lt;/multi-selector&gt;
-</code></pre>
+  [...]
+  &lt;/multi-selector&gt;</code></pre>
         </div>
     </section>
 
@@ -176,23 +167,30 @@
         <div>
             <h3 id="control-navigation">Control & navigation</h3>
             <ul>
-                <li>(De)select groups of options using the group checkboxes.</li>
-                <li>Use the search input to filter options by key-word.</li>
-                <li>Use the &#9745;-button or use <kbd>ctrl</kbd>-<kbd>\</kbd> to show <em>only</em> the selected options.</li>
-                <li>Use the &Cross;-button or use <kbd>ctrl</kbd>-<kbd>/</kbd> show all options (clear applied filter).</li>
-                <li>(Un)fold all groups at once with the folding buttons in the control panel or use <kbd>ctrl</kbd>-<kbd>[</kbd> and <kbd>ctrl</kbd>-<kbd>]</kbd> to fold/unfold when the component is in focus.</li>
-                <li>Use <kbd>up</kbd>, <kbd>down</kbd>, <kbd>home</kbd>, <kbd>end</kbd> and <kbd>tab</kbd> to navigate through groups and options with the keyboard.</li>
-                <li>Close the component with <kbd>esc</kbd>.</li>
+                <li>(De)select groups of options using the group checkboxes</li>
+                <li>Use the search input to filter options by key-word</li>
+                <li>Toggle "values-only" to only search through values (not groups)</li>
+            </ul>
+            <h4>Show selected and folding</h4>
+            <ul>
+                <li>Use the &#9745;-button or use <kbd>ctrl</kbd>-<kbd>\</kbd> to show <em>only</em> the selected options</li>
+                <li>Use the &Cross;-button or use <kbd>ctrl</kbd>-<kbd>/</kbd> show all options (clear applied filter)</li>
+                <li>(Un)fold all groups at once with the folding buttons in the control panel or use <kbd>ctrl</kbd>-<kbd>[</kbd> and <kbd>ctrl</kbd>-<kbd>]</kbd> to fold/unfold when the component is in focus</li>
+            </ul>
+            <h4>Navigation</h4>
+            <ul>
+                <li>Use the <kbd>arrow keys</kbd>, <kbd>home</kbd>, <kbd>end</kbd> and <kbd>tab</kbd> to navigate</li>
+                <li>Close the component with <kbd>esc</kbd></li>
             </ul>
         </div>
         <div>
             <multi-selector src="data/fallacies.json" name="fallacies"></multi-selector>
-        <pre><code class="language-html">  &lt!-- html --&gt;
+            <h4>Code</h4>
+<pre><code class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     src="data/fallacies.json"
     name="fallacies"&gt;
-  &lt;/multi-selector&gt;
-            </code></pre>
+  &lt;/multi-selector&gt;</code></pre>
         </div>
     </section>
 
@@ -210,15 +208,15 @@
                 <multi-selector name="media genres" src="data/lit_and_entertainment.json" placeholder="What are your favorite media genres?" disabled>
                 </multi-selector>
             </div>
-                <pre><code data-theme="dark" class="language-html">  &lt!-- html --&gt;
+            <h4>Code</h4>
+<pre><code data-theme="dark" class="language-html">  &lt!-- html --&gt;
   &lt;multi-selector
     name="Select genres"
     src="data/genres.json"
     placeholder=
       "What are your favorite media genres?"
     disabled&gt;
-  &lt;/multi-selector&gt;
-                </code></pre>
+  &lt;/multi-selector&gt;</code></pre>
         </div>
     </section>
 
@@ -230,16 +228,15 @@
             <p>Selected options will be stored as a stringified JSON array.</p>
             <p>The <code>selectedValues</code> property on the <code>&lt;multi-selector&gt;</code> element will return the selection as an array.</p>
         </div>
-        <div style="overflow-x: hidden;">
+        <div>
             <form id="beefheart-form">
                 <label for="Albums">Captain Beefheart</label>
                 <multi-selector src="data/albums.json" name="albums" placeholder="Select Captain Beefheart Albums...."></multi-selector>
                 <button type="submit">submit</button>
             </form>
-            <div style="overflow-x: hidden;">
-                <h4>Form data</h4>
-                <pre><code id="output" class="language-json"></code></pre>
-            </div>
+            <h4>Form data</h4>
+            <pre><code id="output" class="language-json"></code></pre>
+            <h4>Code</h4>
 <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;form&gt;
     &lt;label for="Albums"&gt;Captain Beefheart&lt;/label&gt;
@@ -250,8 +247,7 @@
         "Select Captain Beefheart albums..."&gt;
     &lt;/multi-selector&gt;
     &lt;button type="submit"&gt;submit&lt;/button&gt;
-  &lt;/form&gt;
-</code></pre>
+  &lt;/form&gt;</code></pre>
         </div>
     </section>
 
@@ -262,24 +258,31 @@
             <p>
                 Some simple styling is possible using custom properties. The following properties are available:
             </p>
+            <h4>Layout & Spacing</h4>
             <ul>
-                <li><code>--ms-primary-color</code></li>
-                <li><code>--ms-primary-color-disabled</code></li>
-                <li><code>--ms-dropdown-background:</code></li>
-                <li><code>--ms-option-hover</code></li>
-                <li><code>--ms-text-color</code></li>
-                <li><code>--ms-text-color-disabled</code></li>
+                <li><code>--ms-height</code></li>
+                <li><code>--ms-max-height</code></li>
                 <li><code>--ms-padding-block</code></li>
                 <li><code>--ms-padding-inline</code></li>
                 <li><code>--ms-border-radius</code></li>
+            </ul>
+            <h4>Colors & Appearance</h4>
+            <ul>
+                <li><code>--ms-primary-color</code></li>
+                <li><code>--ms-primary-color-disabled</code></li>
+                <li><code>--ms-accent-color</code></li>
+                <li><code>--ms-dropdown-background:</code></li>
+                <li><code>--ms-option-hover</code></li>
                 <li><code>--ms-button-color</code></li>
                 <li><code>--ms-button-hover</code></li>
                 <li><code>--ms-button-active</code></li>
-                <li><code>--ms-accent-color</code></li>
                 <li><code>--ms-search-background</code></li>
+            </ul>
+            <h4>Typography</h4>
+            <ul>
+                <li><code>--ms-text-color</code></li>
+                <li><code>--ms-text-color-disabled</code></li>
                 <li><code>--ms-search-text-color</code></li>
-                <li><code>--ms-search-placeholder-color</code></li>
-                <li><code>--ms-max-height</code></li>
             </ul>
         </div>
         <div>
@@ -287,6 +290,7 @@
                 <multi-selector name="soap ingredients" src="data/soaps.json">
                 </multi-selector>
             </div>
+            <h4>Code</h4>
 <pre><code class="language-css">  /* css */
   .styling-example multi-selector {
     --ms-primary-color:
@@ -309,8 +313,7 @@
       hsl(120, 20%, 67%);
     width: 240px;
     margin: 0;
-  }
-</code></pre>
+  }</code></pre>
         </div>
     </section>
 
@@ -332,11 +335,11 @@
                 <multi-selector name="fruits">
                 </multi-selector>
             </div>
+            <h4>Code</h4>
 <pre><code class="language-html">  &lt!-- html --&gt;
   &lt;button id="add-data"&gt;Add data&lt;/button&gt;
   &lt;button id="clear-data" disabled&gt;Clear data&lt;/button&gt;
-  &lt;multi-selector name="fruits"&gt;&lt;/multi-selector&gt;
-</code></pre>
+  &lt;multi-selector name="fruits"&gt;&lt;/multi-selector&gt;</code></pre>
 <pre><code class="language-js">  // javascript
   const fruitSelector = document.querySelector("multi-selector[name='fruits']")
   const addDataButton = document.getElementById("add-data")
@@ -358,8 +361,7 @@
       fruitSelector.data = []
       clearDataButton.disabled = true
       addDataButton.disabled = false
-  })
-</code></pre>
+  })</code></pre>
         </div>
     </section>
 
