@@ -274,9 +274,7 @@ function createTemplate(options) {
 }
 
 [data-role="group"] > summary > label {
-    display: flex;
-    align-items: center;
-    gap: .25em;
+    display: inline;
 }
 
 [data-role="group"] > summary > label > span {
@@ -287,6 +285,8 @@ function createTemplate(options) {
 [data-role="group"] > summary > label > code {
     user-select: none;
     font-size: .65em;
+    margin-left: .5em;
+    vertical-align: middle;
 }
 
 [data-role="group"] > summary:after {
