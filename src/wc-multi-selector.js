@@ -119,10 +119,14 @@ function createTemplate(options) {
 }
 
 /* https://collaboradev.com/2015/03/28/responsive-css-truncate-and-ellipsis/ */
-.display span {
+.display > span {
     display: table-cell;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.display span > code {
+    font-size: .65em;
 }
 
 /* ==========================================================================
@@ -635,7 +639,7 @@ class MultiSelector extends HTMLElement {
     }
 
     get selectedLabels() {
-        return [...this.getElements("selected-labels")].map(i => i.textContent)
+        return [...this.getElements("selected-labels")].map(i => i.textContent.trim())
     }
 
     get selectedLeastNested() {
@@ -649,11 +653,25 @@ class MultiSelector extends HTMLElement {
         if (checkbox?.checked) {
             const span = checkbox.nextElementSibling.querySelector("span")
             let label = span ? span.textContent : checkbox.nextElementSibling.textContent
+
             if (el.dataset.role === "group") {
-                const n = el.querySelectorAll(`[data-role="option"] input:checked`).length
-                label = `${label} <code>[${n}]</code>`
+                const depth = parseInt(el.dataset.depth)
+                const checkedOptions = el.querySelectorAll(`[data-role="option"] input:checked`)
+                const items = [...checkedOptions].map(input =>
+                    input.nextElementSibling.textContent.trim()
+                )
+                return [{
+                    type: "group",
+                    label: label,
+                    count: items.length,
+                    depth: depth,
+                    items: items,
+                }]
+            } else {
+                return [{ type: "item", label: label }]
             }
-            return [label] }
+        }
+
         for (const child of el.querySelectorAll(":scope > div > [data-role]")) {
             output = [...output, ...this.getLeastNestedCheckedLabels(child)]
         }
@@ -873,13 +891,53 @@ class Renderer {
         this.ms.getElement("display").innerHTML = `<span>${this.ms.settings.labels.empty}</span>`
     }
 
+    renderTitle(item) {
+        const title = `${item.label} [${item.count}]`
+        const underline = '-'.repeat(title.length)
+        const itemList = this.listFormat.format(item.items)
+        return `${title}\n${underline}\n${itemList}`
+    }
+
     renderSelected() {
         const selectedLabels = this.ms.selectedLabels
-        const selectedLeastNested = this.ms.selectedLeastNested
+        const selectedStructured = this.ms.selectedLeastNested
+
+        let displayText
+        if (selectedLabels.length > 0) {
+            // sort: groups first, then by depth (shallow to deep), then by count (high to low)
+            const sorted = selectedStructured.sort((a, b) => {
+                // groups before items
+                if (a.type !== b.type) return a.type === "group" ? -1 : 1
+
+                //fFor groups: sort by depth first, then by count
+                if (a.type === "group" && b.type === "group") {
+                    if (a.depth !== b.depth) return a.depth - b.depth
+                    return b.count - a.count
+                }
+
+                // items stay in original order relative to each other
+                return 0
+            })
+
+            const displayItems = sorted.map(item => {
+                return item.type === "group"
+                    ? `<span title="${this.renderTitle(item)}">${item.label} <code>[${item.count}]</code></span>`
+                    : item.label
+            })
+            displayText = this.listFormat.format(displayItems)
+        } else {
+            displayText = this.ms.placeholder
+        }
+
+        const title = this.renderTitle({
+            label: this.ms.settings.labels.all,
+            items: selectedLabels,
+            count: selectedLabels.length,
+        })
         this.ms.getElement("display").innerHTML = selectedLabels.length > 0
-            // ? `<b><code>[${selectedLabels.length}]</code> | </b>${this.listFormat.format(selectedLeastNested)}`
-            ? `<span title="${this.listFormat.format(selectedLabels)}">${this.listFormat.format(selectedLeastNested)}</span>`
-            : this.ms.placeholder
+            ? `<span title="${title}">${displayText}</span>`
+            : displayText
+
         this.ms.getElement("show-selected").disabled = selectedLabels.length === 0
         this.updateGroupCounts()
     }
