@@ -40,10 +40,9 @@
             <ul>
                 <li><a href="#json">Load from JSON</a></li>
                 <li><a href="#options-in-markup">Load from DOM</a></li>
-                <li><a href="#categories-with-optgroup">Categories with optgroup</a></li>
                 <li><a href="#control-navigation">Control & navigation</a></li>
                 <li><a href="#form-integration">Form integration</a></li>
-                <li><a href="#disable">Disable</a></li>
+                <li><a href="#disable">Disabling and change events</a></li>
                 <li><a href="#styling-with-custom-properties">Styling with custom properties</a></li>
                 <li><a href="#empty">Empty state</a></li>
                 <li><a href="#alternatives">Alternatives</a></li>
@@ -59,13 +58,13 @@
             <h4>Data format</h4>
             <p>The data should be provided in this format:</p>
             <p><code>{
-                "label": "label",
+                "label": "label", // optional
                 "value": "value",
                 "children": []
             }</code></p>
-            <p>See <a href="data/fallacies.json">fallacies.json</a> for an example. To preselect values add:
+            <p>See <a href="data/fallacies.json">fallacies.json</a> for an example. If no label was provided then the value will be used as fall-back. The children may be omitted when the item is not a group. Values can be preselected by adding:
             <p><code>selected: true</code></p>
-            <p>This works only on values, and will be ignored in groups.</p>
+            <p>This works only on value nodes and will be ignored in group nodes (because its selection state is calculated from the selection state of its underlying value nodes).</p>
             <h4>Automatic conversion</h4>
             <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. Flat data can also be given as an array. <code>&lt;multi-selector&gt;</code> will convert these to the format above.</p>
             <p>See <a href="data/countries.json">countries.json</a> for an example.</p>
@@ -88,6 +87,9 @@
             <p>Populate <code>&lt;multi-selector&gt;</code> with markup by using <code>&lt;option&gt;</code> tags. <code>&lt;multi-selector&gt;</code> will assume that the value of an option is its text content unless a <code>value</code> attribute is supplied.</p>
             <p>Adding options to the DOM automatically will update the web component.</p>
             <blockquote>Note that updating the web component will completely <i>re-render</i> it.</blockquote>
+            <h4 id="categories-with-optgroup">Categories with optgroup</h4>
+            <p>Use <code>&lt;optgroup&gt;</code> tags to categorize options. Unlike the default <code>&lt;optgroup&gt;</code> tag (see <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup">MDN</a>) it can be nested.</p>
+            <p>Set labels and values with the <code>label</code> and <code>value</code> attributes. If not present labels and values will be set from the <code>textContent</code>.</p>
         </div>
         <div>
             <p>Add a color to the color selector:</p>
@@ -109,17 +111,6 @@
     &lt;option&gt;Green&lt;/option&gt;
     &lt;option&gt;Blue&lt;/option&gt;
   &lt;/multi-selector&gt;</code></pre>
-        </div>
-    </section>
-
-<!-- MARK: optgroup -->
-    <section>
-        <div>
-            <h3 id="categories-with-optgroup">Categories with optgroup</h3>
-            <p>Use <code>&lt;optgroup&gt;</code> tags to categorize options. Unlike the default <code>&lt;optgroup&gt;</code> tag (see <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup">MDN</a>) it can be nested.</p>
-            <p>Set labels and values with the <code>label</code> and <code>value</code> attributes. If not present labels and values will be set from the <code>textContent</code>.</p>
-        </div>
-        <div>
             <multi-selector name="instruments">
                 <optgroup label="String instruments" value="string">
                     <optgroup label="Guitar" value="guitar">
@@ -197,10 +188,11 @@
 <!-- MARK: disable -->
     <section>
         <div>
-            <h3 id="disable">Disable</h3>
+            <h3 id="disable">Disabling and change events</h3>
             <p>Disable <code>&lt;multi-selector&gt;</code> with the disabled attribute.</p>
             <p>Also note that the <code>placeholder</code>-attribute can be used to provide the user a brief hint to the expected input.</p>
-            <p>The component dispatches <code>change</code> events whenever an option is (de)selected. Check the console to see it in action.</p>
+            <h4>Change event</h4>
+            <p>The component dispatches <code>change</code> events whenever an option is (de)selected. The detail of the event contains the array of selected values. Check the console to see it in action.</p>
         </div>
         <div>
             <div>
@@ -437,7 +429,7 @@
     const genres = document.querySelector("multi-selector[name='media genres']")
     toggle.addEventListener("click", () => genres.toggleAttribute("disabled"))
 
-    genres.addEventListener("change", () => console.log("I was changed."))
+    genres.addEventListener("change", event => console.log("Change event detected, containing the following selected values:", event.detail))
 
     // test set and clear data
     const fruitSelector = document.querySelector("multi-selector[name='fruits']")

@@ -81,6 +81,7 @@ section {
     row-gap: 4rem;
     column-gap: 8rem;
     align-items: start;
+    align-items: center;
     justify-content: start;
     margin-inline: clamp(1rem, 5vw, 6rem)
 }

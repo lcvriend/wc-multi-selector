@@ -1,45 +1,45 @@
 [
     {
         "label": "Formal Fallacy",
-        "value": "Formal Fallacy",
+        "value": "formal-fallacy",
         "children": [
             {
                 "label": "Propositional Fallacy",
-                "value": "Propositional Fallacy",
+                "value": "propositional-fallacy",
                 "children": [
                     {
                         "label": "Affirming the Consequent",
-                        "value": "Affirming the Consequent",
+                        "value": "affirming-the-consequent",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Denying the Antecedent",
-                        "value": "Denying the Antecedent",
+                        "value": "denying-the-antecedent",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Affirming a Disjunct",
-                        "value": "Affirming a Disjunct",
+                        "value": "affirming-a-disjunct",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Commutation of a Conditional",
-                        "value": "Commutation of a Conditional",
+                        "value": "commutation-of-a-conditional",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Denying a Conjunct",
-                        "value": "Denying a Conjunct",
+                        "value": "denying-a-conjunct",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Improper Transposition",
-                        "value": "Improper Transposition",
+                        "value": "improper-transposition",
                         "selected": true,
                         "children": []
                     }
@@ -47,391 +47,391 @@
             },
             {
                 "label": "Probabilistic Fallacy",
-                "value": "Probabilistic Fallacy",
+                "value": "probabilistic-fallacy",
                 "children": [
                     {
                         "label": "Base Rate Fallacy",
-                        "value": "Base Rate Fallacy",
+                        "value": "base-rate-fallacy",
                         "children": []
                     },
                     {
                         "label": "Conjunction Fallacy",
-                        "value": "Conjunction Fallacy",
+                        "value": "conjunction-fallacy",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Fallacy of the Sheep",
-                        "value": "Fallacy of the Sheep",
+                        "value": "fallacy-of-the-sheep",
                         "selected": true,
                         "children": []
                     },
                     {
                         "label": "Gambler's Fallacy",
-                        "value": "Gambler's Fallacy",
+                        "value": "gamblers-fallacy",
                         "children": []
                     },
                     {
                         "label": "Hot Hand Fallacy",
-                        "value": "Hot Hand Fallacy",
+                        "value": "hot-hand-fallacy",
                         "children": []
                     },
                     {
                         "label": "Multiple Comparisons Fallacy",
-                        "value": "Multiple Comparisons Fallacy",
+                        "value": "multiple-comparisons-fallacy",
                         "children": []
                     },
                     {
                         "label": "Over-<BR>Extrapolation",
-                        "value": "Over-<BR>Extrapolation",
+                        "value": "over-extrapolation",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Syllogistic Fallacy",
-                "value": "Syllogistic Fallacy",
+                "value": "syllogistic-fallacy",
                 "children": [
                     {
                         "label": "Illicit Process",
-                        "value": "Illicit Process",
+                        "value": "illicit-process",
                         "children": []
                     },
                     {
                         "label": "Exclusive Premisses",
-                        "value": "Exclusive Premisses",
+                        "value": "exclusive-premisses",
                         "children": []
                     },
                     {
                         "label": "Affirmative Conclusion from a Negative Premiss",
-                        "value": "Affirmative Conclusion from a Negative Premiss",
+                        "value": "affirmative-conclusion-from-a-negative-premiss",
                         "children": []
                     },
                     {
                         "label": "Negative Conclusion from Affirmative Premisses",
-                        "value": "Negative Conclusion from Affirmative Premisses",
+                        "value": "negative-conclusion-from-affirmative-premisses",
                         "children": []
                     },
                     {
                         "label": "Four Term Fallacy",
-                        "value": "Four Term Fallacy",
+                        "value": "four-term-fallacy",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Quantificational Fallacy",
-                "value": "Quantificational Fallacy",
+                "value": "quantificational-fallacy",
                 "children": [
                     {
                         "label": "Existential Fallacy",
-                        "value": "Existential Fallacy",
+                        "value": "existential-fallacy",
                         "children": []
                     },
                     {
                         "label": "Illicit Contraposition",
-                        "value": "Illicit Contraposition",
+                        "value": "illicit-contraposition",
                         "children": []
                     },
                     {
                         "label": "Illicit Conversion",
-                        "value": "Illicit Conversion",
+                        "value": "illicit-conversion",
                         "children": []
                     },
                     {
-                        "label": "Some Are/ Some Are Not",
-                        "value": "Some Are/ Some Are Not",
+                        "label": "Some Are/Some Are Not",
+                        "value": "some-are-some-are-not",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Bad Reasons Fallacy",
-                "value": "Bad Reasons Fallacy",
+                "value": "bad-reasons-fallacy",
                 "children": []
             },
             {
                 "label": "Fallacy Fallacy",
-                "value": "Fallacy Fallacy",
+                "value": "fallacy-fallacy",
                 "children": []
             },
             {
                 "label": "Modal Fallacy",
-                "value": "Modal Fallacy",
+                "value": "modal-fallacy",
                 "children": []
             },
             {
                 "label": "Modal Scope Fallacy",
-                "value": "Modal Scope Fallacy",
+                "value": "modal-scope-fallacy",
                 "children": []
             },
             {
                 "label": "Masked Man Fallacy",
-                "value": "Masked Man Fallacy",
+                "value": "masked-man-fallacy",
                 "children": []
             }
         ]
     },
     {
         "label": "Informal Fallacy",
-        "value": "Informal Fallacy",
+        "value": "informal-fallacy",
         "children": [
             {
                 "label": "Weak Analogy",
-                "value": "Weak Analogy",
+                "value": "weak-analogy",
                 "children": [
                     {
                         "label": "Biased Sample",
-                        "value": "Biased Sample",
+                        "value": "biased-sample",
                         "children": []
                     },
                     {
                         "label": "Hasty Generalization",
-                        "value": "Hasty Generalization",
+                        "value": "hasty-generalization",
                         "children": []
                     },
                     {
                         "label": "Anecdotal Fallacy",
-                        "value": "Anecdotal Fallacy",
+                        "value": "anecdotal-fallacy",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Non Causa Pro Causa",
-                "value": "Non Causa Pro Causa",
+                "value": "non-causa-pro-causa",
                 "children": [
                     {
                         "label": "Cum Hoc",
-                        "value": "Cum Hoc",
+                        "value": "cum-hoc",
                         "children": []
                     },
                     {
                         "label": "Post Hoc",
-                        "value": "Post Hoc",
+                        "value": "post-hoc",
                         "children": []
                     },
                     {
                         "label": "Regression Fallacy",
-                        "value": "Regression Fallacy",
+                        "value": "regression-fallacy",
                         "children": []
                     },
                     {
                         "label": "Slippery Slope",
-                        "value": "Slippery Slope",
+                        "value": "slippery-slope",
                         "children": []
                     },
                     {
                         "label": "Texas Sharpshooter Fallacy",
-                        "value": "Texas Sharpshooter Fallacy",
+                        "value": "texas-sharpshooter-fallacy",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Ambiguity",
-                "value": "Ambiguity",
+                "value": "ambiguity",
                 "children": [
                     {
                         "label": "Amphiboly",
-                        "value": "Amphiboly",
+                        "value": "amphiboly",
                         "children": [
                             {
                                 "label": "Scope Fallacy",
-                                "value": "Scope Fallacy",
+                                "value": "scope-fallacy",
                                 "children": []
                             },
                             {
                                 "label": "Quantifier shift",
-                                "value": "Quantifier shift",
+                                "value": "quantifier-shift",
                                 "children": []
                             }
                         ]
                     },
                     {
                         "label": "Equivocation",
-                        "value": "Equivocation",
+                        "value": "equivocation",
                         "children": [
                             {
                                 "label": "Redefinition",
-                                "value": "Redefinition",
+                                "value": "redefinition",
                                 "children": []
                             },
                             {
                                 "label": "No-True-Scotsman",
-                                "value": "No-True-Scotsman",
+                                "value": "no-true-scotsman",
                                 "children": []
                             },
                             {
                                 "label": "Ambiguous Middle",
-                                "value": "Ambiguous Middle",
+                                "value": "ambiguous-middle",
                                 "children": []
                             }
                         ]
                     },
                     {
                         "label": "Quoting Out of Context",
-                        "value": "Quoting Out of Context",
+                        "value": "quoting-out-of-context",
                         "children": []
                     },
                     {
                         "label": "Accent",
-                        "value": "Accent",
+                        "value": "accent",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Red Herring",
-                "value": "Red Herring",
+                "value": "red-herring",
                 "children": [
                     {
                         "label": "Genetic Fallacy",
-                        "value": "Genetic Fallacy",
+                        "value": "genetic-fallacy",
                         "children": [
                             {
                                 "label": "Ad Verecundiam",
-                                "value": "Ad Verecundiam",
+                                "value": "ad-verecundiam",
                                 "children": []
                             },
                             {
                                 "label": "Appeal to Celebrity",
-                                "value": "Appeal to Celebrity",
+                                "value": "appeal-to-celebrity",
                                 "children": []
                             },
                             {
                                 "label": "Etymological Fallacy",
-                                "value": "Etymological Fallacy",
+                                "value": "etymological-fallacy",
                                 "children": []
                             },
                             {
                                 "label": "Ad Hominem",
-                                "value": "Ad Hominem",
+                                "value": "ad-hominem",
                                 "children": []
                             },
                             {
                                 "label": "Poisoning the Well",
-                                "value": "Poisoning the Well",
+                                "value": "poisoning-the-well",
                                 "children": []
                             }
                         ]
                     },
                     {
                         "label": "Two Wrongs Make a Right",
-                        "value": "Two Wrongs Make a Right",
+                        "value": "two-wrongs-make-a-right",
                         "children": []
                     },
                     {
                         "label": "Tu Quoque",
-                        "value": "Tu Quoque",
+                        "value": "tu-quoque",
                         "children": []
                     },
                     {
                         "label": "Appeal to Consequences",
-                        "value": "Appeal to Consequences",
+                        "value": "appeal-to-consequences",
                         "children": []
                     },
                     {
                         "label": "Appeal to Force",
-                        "value": "Appeal to Force",
+                        "value": "appeal-to-force",
                         "children": []
                     },
                     {
                         "label": "Emotional Appeal",
-                        "value": "Emotional Appeal",
+                        "value": "emotional-appeal",
                         "children": []
                     },
                     {
                         "label": "Wishful Thinking",
-                        "value": "Wishful Thinking",
+                        "value": "wishful-thinking",
                         "children": []
                     },
                     {
                         "label": "Guilt by Association",
-                        "value": "Guilt by Association",
+                        "value": "guilt-by-association",
                         "children": []
                     },
                     {
                         "label": "Hitler Card",
-                        "value": "Hitler Card",
+                        "value": "hitler-card",
                         "children": []
                     },
                     {
                         "label": "Straw Man",
-                        "value": "Straw Man",
+                        "value": "straw-man",
                         "children": []
                     },
                     {
                         "label": "Bandwagon Fallacy",
-                        "value": "Bandwagon Fallacy",
+                        "value": "bandwagon-fallacy",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Begging the Question",
-                "value": "Begging the Question",
+                "value": "begging-the-question",
                 "children": [
                     {
                         "label": "Question-Begging Analogy",
-                        "value": "Question-Begging Analogy",
+                        "value": "question-begging-analogy",
                         "children": []
                     },
                     {
                         "label": "Loaded Words",
-                        "value": "Loaded Words",
+                        "value": "loaded-words",
                         "children": []
                     },
                     {
                         "label": "Appeal to Nature",
-                        "value": "Appeal to Nature",
+                        "value": "appeal-to-nature",
                         "children": []
                     }
                 ]
             },
             {
                 "label": "Accident",
-                "value": "Accident",
+                "value": "accident",
                 "children": []
             },
             {
                 "label": "Appeal to Ignorance",
-                "value": "Appeal to Ignorance",
+                "value": "appeal-to-ignorance",
                 "children": []
             },
             {
                 "label": "Black-or-White Fallacy",
-                "value": "Black-or-White Fallacy",
+                "value": "black-or-white-fallacy",
                 "children": []
             },
             {
                 "label": "One-Sidedness",
-                "value": "One-Sidedness",
+                "value": "one-sidedness",
                 "children": []
             },
             {
                 "label": "Special Pleading",
-                "value": "Special Pleading",
+                "value": "special-pleading",
                 "children": []
             },
             {
                 "label": "Over-precision",
-                "value": "Over-precision",
+                "value": "over-precision",
                 "children": []
             },
             {
                 "label": "Over-Generalization",
-                "value": "Over-Generalization",
+                "value": "over-generalization",
                 "children": []
             },
             {
                 "label": "Vagueness",
-                "value": "Vagueness",
+                "value": "vagueness",
                 "children": []
             },
             {
                 "label": "Fallacy of the Heap",
-                "value": "Fallacy of the Heap",
+                "value": "fallacy-of-the-heap",
                 "children": []
             }
         ]

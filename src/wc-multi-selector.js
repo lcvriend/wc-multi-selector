@@ -771,6 +771,8 @@ class MultiSelector extends HTMLElement {
             processedData = this.dataHandler.convertStructure(newValue)
         }
 
+        processedData = this.dataHandler.normalizeLabels(processedData)
+
         if (this.dataHandler.needsWrapping(processedData)) {
             processedData = [{
                 label: this.settings.labels.all,
@@ -969,8 +971,7 @@ class HTMLBuilder {
             .map(item => {
                 this.keys.push(item.label)
                 const itemID = this.keys.join("-")
-                const children = item?.children ?? []
-                const label = children.length > 0
+                const label = item.children.length > 0
                     ? `<span>${item.label}</span><code data-role="group-count" data-total="${this.countCheckboxes(item.children)}">[${this.countCheckboxes(item.children)}]</code>`
                     : item.label
                 const input = `<input
@@ -981,16 +982,18 @@ class HTMLBuilder {
                     ${item.selected ? "checked": ""}>
                 <label for="${itemID}">${label} </label>`
                 let rendered = ""
-                if (children.length === 0) {
+                if (item.children.length === 0) {
                     rendered = `<div
                         data-role="option"
-                        data-value="${item.label}">
+                        data-label="${item.label}"
+                        data-value="${item.value}"">
                         ${input}
                     </div>`
                 } else {
                     rendered = `<details
                         data-role="group"
-                        data-value="${item.label}"
+                        data-label="${item.label}"
+                        data-value="${item.value}"
                         data-depth="${depth}"${depth === 0 ? " open" : ""}>
                         <summary>${input}</summary>
                         <div>${this.buildHTML(item.children, depth)}</div>
@@ -1058,6 +1061,29 @@ class DataHandler {
         return { label, value, children, selected }
     }
 
+    normalizeLabels(data) {
+        if (!Array.isArray(data)) return data
+
+        return data.map(item => {
+            const normalized = {
+                children: [],
+                ...item,
+            }
+
+            // If no label but has value, use value as label
+            if (!normalized.label && normalized.value) {
+                normalized.label = normalized.value
+            }
+
+            // Recursively normalize children
+            if (normalized.children && normalized.children.length > 0) {
+                normalized.children = this.normalizeLabels(normalized.children)
+            }
+
+            return normalized
+        })
+    }
+
     convertStructure(source) {
         if (Array.isArray(source)) {
             return source.map(item => ({
@@ -1078,7 +1104,7 @@ class DataHandler {
 
     needsConversion(obj) {
         if (!Array.isArray(obj)) return true
-        return (obj.length > 0 && !(obj[0]?.label && obj[0]?.value))
+        return (obj.length > 0 && !obj[0]?.value)
     }
 
     needsWrapping(data) {
@@ -1225,7 +1251,7 @@ class SearchHandler {
         const phrase = this.searchbox.value.toUpperCase()
         let value = ""
         if (el.matches(`[data-value]`)) {
-            value = el.dataset.value.toUpperCase()
+            value = el.dataset.label.toUpperCase()
         }
         return value.includes(phrase)
     }
