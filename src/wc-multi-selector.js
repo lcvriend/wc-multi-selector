@@ -830,7 +830,7 @@ class MultiSelector extends HTMLElement {
 
     // MARK: ...focus
     onDocumentClick(event) {
-        if ( event.target === this ) { return }
+        if (event.composedPath().includes(this)) return
         this.shadowRoot.querySelector("details").open = false
         this.onBlur()
     }
