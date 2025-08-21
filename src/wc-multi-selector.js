@@ -563,7 +563,7 @@ class MultiSelector extends HTMLElement {
     disconnectedCallback() {
         document.removeEventListener("click", this.onDocumentClick)
         document.removeEventListener("keyup", this.onTabOutOrEscape)
-        document.removeEventListener("keydown", this.foldingHandler.handleKeyFolding)
+        document.removeEventListener("keydown", this.foldingHandler.handleKeyDown)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
         this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
     }
@@ -759,13 +759,13 @@ class MultiSelector extends HTMLElement {
         let processedData = newValue
 
         if (!processedData || processedData.length === 0) {
-            this.setAttribute('data-empty', '')
+            this.setAttribute("data-empty", "")
             this._data = []
             this.renderer.renderEmpty()
             return
         }
 
-        this.removeAttribute('data-empty')
+        this.removeAttribute("data-empty")
 
         if (this.dataHandler.needsConversion(newValue)) {
             processedData = this.dataHandler.convertStructure(newValue)
@@ -895,7 +895,7 @@ class Renderer {
 
     renderTitle(item) {
         const title = `${item.label} [${item.count}]`
-        const underline = '-'.repeat(title.length)
+        const underline = "-".repeat(title.length)
         const itemList = this.listFormat.format(item.items)
         return `${title}\n${underline}\n${itemList}`
     }
@@ -986,7 +986,7 @@ class HTMLBuilder {
                     rendered = `<div
                         data-role="option"
                         data-label="${item.label}"
-                        data-value="${item.value}"">
+                        data-value="${item.value}">
                         ${input}
                     </div>`
                 } else {
@@ -1120,23 +1120,13 @@ class SearchHandler {
         this.valuesOnlyMode = false
         this.matchPhrase = this.matchPhrase.bind(this)
         this.matchSelected = this.matchSelected.bind(this)
+        this.handleClick = this.handleClick.bind(this)
         this.handleKeyUp = this.makeHandleKeyUp().bind(this)
-        this.handleClickClearQuery = this.handleClickClearQuery.bind(this)
-        this.handleClickShowSelected = this.handleClickShowSelected.bind(this)
         this.handleKeyManageFilter = this.handleKeyManageFilter.bind(this)
-        this.handleToggleValuesOnly = this.handleToggleValuesOnly.bind(this)
     }
 
     get searchbox() {
         return this.ms.getElement("searchbox")
-    }
-
-    get showSelectedButton() {
-        return this.ms.getElement("show-selected")
-    }
-
-    get clearQueryButton() {
-        return this.ms.getElement("clear-query")
     }
 
     get firstGroup() {
@@ -1148,11 +1138,21 @@ class SearchHandler {
     }
 
     addListener() {
-        this.searchbox.addEventListener("keyup", this.handleKeyUp)
-        this.clearQueryButton.addEventListener("click", this.handleClickClearQuery)
-        this.showSelectedButton.addEventListener("click", this.handleClickShowSelected)
+        this.ms.shadowRoot.addEventListener("keyup", this.handleKeyUp)
+        this.ms.shadowRoot.addEventListener("click", this.handleClick)
         document.addEventListener("keydown", this.handleKeyManageFilter)
-        this.toggleValuesButton.addEventListener("click", this.handleToggleValuesOnly)
+    }
+
+    handleClick(event) {
+        if (event.target.matches(`[data-command="clear-query"]`)) {
+            this.handleClickClearQuery()
+        }
+        if (event.target.matches(`[data-command="show-selected"]`)) {
+            this.handleClickShowSelected()
+        }
+        if (event.target.matches(`[data-command="toggle-values-only"]`)) {
+            this.handleToggleValuesOnly()
+        }
     }
 
     handleClickShowSelected() {
@@ -1195,18 +1195,20 @@ class SearchHandler {
     makeHandleKeyUp() {
         let timeout
         return function(event) {
+            // Only handle if it's the search input
+            if (!event.target.matches('.filter input[type="text"]')) {
+                return
+            }
+
             const ignore = [
-                "Tab",
-                "ArrowUp",
-                "ArrowDown",
-                "ArrowLeft",
-                "ArrowRight",
+                "Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"
             ]
             if (ignore.includes(event.key)) { return }
             if (event.key === "Escape") { event.target.value = "" }
+
             clearTimeout(timeout)
             const waitSeconds = event.key === "Enter" ? 0 : 500
-            timeout = setTimeout( () => {
+            timeout = setTimeout(() => {
                 this.filterData(this.firstGroup, this.matchPhrase)
                 this.updateStateAfterFilter()
                 this.searchbox.placeholder = this.ms.settings.labels.filter.placeholder
@@ -1359,30 +1361,20 @@ class CheckboxHandler extends EventTarget {
 class FoldingHandler {
     constructor(multiselector) {
         this.ms = multiselector
-        this.handleClickFold = this.handleClickFold.bind(this)
-        this.handleClickUnfold = this.handleClickUnfold.bind(this)
-        this.handleKeyFolding = this.handleKeyFolding.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
     }
 
     get options() {
         return this.ms.getElement("options-container")
     }
 
-    get foldButton() {
-        return this.ms.getElement("fold")
-    }
-
-    get unfoldButton() {
-        return this.ms.getElement("unfold")
-    }
-
     addListener() {
-        this.foldButton.addEventListener("click", this.handleClickFold)
-        this.unfoldButton.addEventListener("click", this.handleClickUnfold)
-        document.addEventListener("keydown", this.handleKeyFolding)
+        this.ms.shadowRoot.addEventListener("click", this.handleClick)
+        document.addEventListener("keydown", this.handleKeyDown)
     }
 
-    handleKeyFolding(event) {
+    handleKeyDown(event) {
         // return if no element within the tree is in focus/hovered
         if(!this.ms.contains(document.activeElement) && !this.ms.isHover) {
             return
@@ -1394,6 +1386,15 @@ class FoldingHandler {
         if (event.ctrlKey && event.key === "[") {
             this.handleClickFold()
             event.preventDefault()
+        }
+    }
+
+    handleClick(event) {
+        if (event.target.matches('[data-command="fold"]')) {
+            this.handleClickFold()
+        }
+        if (event.target.matches('[data-command="unfold"]')) {
+            this.handleClickUnfold()
         }
     }
 
