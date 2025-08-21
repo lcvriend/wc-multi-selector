@@ -24,24 +24,35 @@ function createTemplate(options) {
    ========================================================================== */
 
 :host {
-    --ms-primary-color: hsl(0, 0%, 67%);
-    --ms-primary-color-disabled: hsl(0, 5%, 72%);
-    --ms-dropdown-background: hsl(0, 0%, 100%);
-    --ms-option-hover: hsl(0, 0%, 92%);
-    --ms-text-color: hsl(0, 0%, 0%);
-    --ms-text-color-disabled: hsl(0, 5%, 72%);
+    /* Layout & Spacing - these are fine */
+    --ms-height: calc(2rem + var(--ms-padding-block));
+    --ms-max-height: 60vh;
     --ms-padding-block: .25em;
     --ms-padding-inline: 1em;
     --ms-border-radius: 5px;
-    --ms-button-background: hsl(0, 0%, 94%);
-    --ms-button-hover: hsl(0, 0%, 91%);
-    --ms-button-active: hsl(0, 0%, 86%);
-    --ms-accent-color: hsl(0, 0%, 0%);
+
+    /* Base Colors */
+    --ms-text-color: inherit;
+    --ms-border-color: currentColor;
+    --ms-checkbox-color: currentColor;
+
+    /* Derived Colors */
+    --ms-text-color-disabled: color-mix(in srgb, currentColor 50%, transparent);
+    --ms-border-color-disabled: color-mix(in srgb, currentColor 40%, transparent);
+
+    /* Backgrounds */
+    --ms-dropdown-background: hsl(0, 0%, 100%);
     --ms-search-background: hsl(0, 0%, 100%);
-    --ms-search-text-color: var(--ms-text-color);
-    --ms-search-placeholder-color: hsl(0, 0%, 50%);
-    --ms-height: calc(2rem + var(--ms-padding-block));
-    --ms-max-height: 60vh;
+    --ms-hover: hsl(0, 0%, 93%);
+
+    /* Button States */
+    --ms-button-background: color-mix(in srgb, currentColor 10%, transparent);
+    --ms-button-background-hover: color-mix(in srgb, currentColor 15%, transparent);
+    --ms-button-background-active: color-mix(in srgb, currentColor 20%, transparent);
+
+    /* Search */
+    --ms-search-text-color: inherit;
+    --ms-search-placeholder-text-color: color-mix(in srgb, currentColor 50%, transparent);
 }
 
 /* ==========================================================================
@@ -50,19 +61,9 @@ function createTemplate(options) {
 
 :host([mode="dark"]),
 :host > details.system-dark {
-    --ms-primary-color: hsl(0, 0%, 67%);
-    --ms-primary-color-disabled: hsl(0, 5%, 42%);
     --ms-dropdown-background: hsl(0, 0%, 7%);
-    --ms-option-hover: hsl(0, 0%, 15%);
-    --ms-text-color: hsl(0, 0%, 84%);
-    --ms-text-color-disabled: hsl(0, 5%, 52%);
-    --ms-button-background: hsl(0, 0%, 24%);
-    --ms-button-hover: hsl(0, 0%, 32%);
-    --ms-button-active: hsl(0, 0%, 39%);
-    --ms-accent-color: hsl(0, 0%, 100%);
     --ms-search-background: hsl(0, 0%, 12%);
-    --ms-search-text-color: var(--ms-text-color);
-    color: var(--ms-text-color);
+    --ms-hover: hsl(0, 0%, 15%);
 }
 
 /* ==========================================================================
@@ -76,7 +77,7 @@ function createTemplate(options) {
 }
 
 :where(:host > details) {
-    border: 1px solid var(--ms-primary-color);
+    border: 1px solid var(--ms-border-color);
     border-radius: var(--ms-border-radius);
 }
 
@@ -145,7 +146,7 @@ function createTemplate(options) {
 
 :where([data-command]) {
     background-color: var(--ms-button-background);
-    border: 1px solid var(--ms-primary-color);
+    border: 1px solid var(--ms-border-color);
     color: var(--ms-text-color);
 }
 
@@ -155,11 +156,11 @@ function createTemplate(options) {
 
 :where([data-command]:not([disabled])):hover {
     cursor: pointer;
-    background-color: var(--ms-button-hover);
+    background-color: var(--ms-button-background-hover);
 }
 
 :where([data-command]:not([disabled])):active {
-    background-color: var(--ms-button-active);
+    background-color: var(--ms-button-background-active);
 }
 
 [data-command]:first-of-type {
@@ -209,7 +210,7 @@ function createTemplate(options) {
     padding-inline: .5em;
     padding-block: var(--ms-padding-block);
     border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
-    border: 1px solid var(--ms-primary-color);
+    border: 1px solid var(--ms-border-color);
     border-right: none;
 }
 
@@ -229,11 +230,11 @@ function createTemplate(options) {
 }
 
 .filter .search > [data-command]:hover {
-    background-color: var(--ms-button-hover);
+    background-color: var(--ms-button-background-hover);
 }
 
 .filter .search > [data-command].active {
-    background-color: var(--ms-button-active);
+    background-color: var(--ms-button-background-active);
 }
 
 :where(.search) {
@@ -242,7 +243,7 @@ function createTemplate(options) {
 }
 
 ::placeholder {
-    color: var(--ms-search-placeholder-color);
+    color: var(--ms-search-placeholder-text-color);
 }
 
 /* ==========================================================================
@@ -305,7 +306,7 @@ function createTemplate(options) {
 }
 
 [data-role="group"] > :not(summary) {
-    border-left: 2px solid var(--ms-primary-color);
+    border-left: 2px solid var(--ms-border-color);
     margin-left: .25rem;
     padding-left: .75rem;
 }
@@ -330,7 +331,7 @@ function createTemplate(options) {
 
 :where([data-role="group"] > summary):hover,
 :where([data-role="option"]):hover {
-    background-color: var(--ms-option-hover);
+    background-color: var(--ms-hover);
 }
 
 /* ==========================================================================
@@ -355,17 +356,17 @@ input[type="checkbox"] + label:before {
     margin-right: .5rem;
     width: .6rem;
     height: .6rem;
-    outline: 1px solid var(--ms-primary-color);
+    outline: 1px solid var(--ms-border-color);
 }
 
 input[type="checkbox"]:checked + label:before {
-    background-color: var(--ms-accent-color);
+    background-color: var(--ms-checkbox-color);
 }
 
 input[type="checkbox"]:indeterminate + label:before {
     background: linear-gradient(to right,
-        var(--ms-accent-color) 0%,
-        var(--ms-accent-color) 48%,
+        var(--ms-checkbox-color) 0%,
+        var(--ms-checkbox-color) 48%,
         var(--ms-dropdown-background) 48%,
         var(--ms-dropdown-background) 100%
     );
@@ -395,7 +396,7 @@ input[type="checkbox"]:focus-visible + label:before {
 
 :host([disabled]),
 :host([data-empty]) {
-    --ms-primary-color: var(--ms-primary-color-disabled);
+    --ms-border-color: var(--ms-border-color-disabled);
     background-color: var(--ms-background-disabled);
     color: var(--ms-text-color-disabled);
     tab-index: -1;
