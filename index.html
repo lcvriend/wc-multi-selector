@@ -29,22 +29,23 @@
                 <li>Arbitrarily nested groups of options</li>
                 <li>Searchable groups/values</li>
                 <li>Keyboard navigation</li>
-                <li>Reads options from JSON or mark up</li>
-                <li>Styling through parts/custom properties</li>
+                <li>Reads options from JSON or markup</li>
+                <li>Adaptive styling with dark mode support</li>
                 <li>VanillaJS (no dependencies)</li>
             </ul>
-            <p>This page contains several examples of how to use this web component. <a href="https://github.com/lcvriend/wc-multi-selector">Link</a> to the Github repository.</p>
+            <p>This page contains several examples of how to use this web component. <a href="https://github.com/lcvriend/wc-multi-selector">View on GitHub</a>.</p>
         </div>
         <div>
             <h4>Contents</h4>
             <ul>
                 <li><a href="#json">Load from JSON</a></li>
-                <li><a href="#options-in-markup">Load from DOM</a></li>
+                <li><a href="#options-in-markup">Options in markup</a></li>
                 <li><a href="#control-navigation">Control & navigation</a></li>
                 <li><a href="#form-integration">Form integration</a></li>
-                <li><a href="#disable">Disabling and change events</a></li>
-                <li><a href="#styling-with-custom-properties">Styling with custom properties</a></li>
-                <li><a href="#empty">Empty state</a></li>
+                <li><a href="#component-behavior">Component behavior and events</a></li>
+                <li><a href="#styling">Styling and theming</a></li>
+                <li><a href="#empty">Programmatic data management</a></li>
+                <li><a href="#css-reference">CSS-reference</a></li>
                 <li><a href="#alternatives">Alternatives</a></li>
             </ul>
         </div>
@@ -55,19 +56,25 @@
         <div>
             <h3 id="json">Load from JSON</h3>
             <p>Supply the data as JSON using the <code>src</code> attribute of <code>&lt;multi-selector&gt;</code>.</p>
-            <h4>Data format</h4>
-            <p>The data should be provided in this format:</p>
+            <h4>Expected data structure</h4>
+            <p>Each item should follow this JSON structure:</p>
             <p><code>{
-                "label": "label", // optional
-                "value": "value",
-                "children": []
+                "label": "Display text",  // optional<br>
+                "value": "unique_id",     // required<br>
+                "children": []            // optional for leaf nodes
             }</code></p>
-            <p>See <a href="data/fallacies.json">fallacies.json</a> for an example. If no label was provided then the value will be used as fall-back. The children may be omitted when the item is not a group. Values can be preselected by adding:
-            <p><code>selected: true</code></p>
-            <p>This works only on value nodes and will be ignored in group nodes (because its selection state is calculated from the selection state of its underlying value nodes).</p>
-            <h4>Automatic conversion</h4>
-            <p>It is also possible to provide the data as a nested object where the options are given as strings in an array. Flat data can also be given as an array. <code>&lt;multi-selector&gt;</code> will convert these to the format above.</p>
-            <p>See <a href="data/countries.json">countries.json</a> for an example.</p>
+            <p>See <a href="data/fallacies.json">fallacies.json</a> for an example. When no label is provided, the value serves as the fallback display text.</p>
+
+            <h4>Preselecting options</h4>
+            <p>Add <code>"selected": true</code> to any leaf node to preselect it. This property is ignored on group nodes since their selection state derives from their children.</p>
+
+            <h4>Simplified data formats</h4>
+            <p><code>&lt;multi-selector&gt;</code> automatically converts simpler formats:</p>
+            <ul>
+                <li>Flat arrays: <code>["option1", "option2"]</code></li>
+                <li>Nested objects: <code>{"Group": ["item1", "item2"]}</code></li>
+            </ul>
+            <p>See <a href="data/albums.json">albums.json</a> and <a href="data/countries.json">countries.json</a> for examples of alternative formats.</p>
         </div>
         <div>
             <multi-selector src="data/countries.json" name="countries"></multi-selector>
@@ -83,13 +90,13 @@
 <!-- MARK: dom -->
     <section>
         <div>
-            <h3 id="options-in-markup">Load from DOM</a> </h3>
-            <p>Populate <code>&lt;multi-selector&gt;</code> with markup by using <code>&lt;option&gt;</code> tags. <code>&lt;multi-selector&gt;</code> will assume that the value of an option is its text content unless a <code>value</code> attribute is supplied.</p>
-            <p>Adding options to the DOM automatically will update the web component.</p>
-            <blockquote>Note that updating the web component will completely <i>re-render</i> it.</blockquote>
-            <h4 id="categories-with-optgroup">Categories with optgroup</h4>
-            <p>Use <code>&lt;optgroup&gt;</code> tags to categorize options. Unlike the default <code>&lt;optgroup&gt;</code> tag (see <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/optgroup">MDN</a>) it can be nested.</p>
-            <p>Set labels and values with the <code>label</code> and <code>value</code> attributes. If not present labels and values will be set from the <code>textContent</code>.</p>
+            <h3 id="options-in-markup">Define options in markup</h3>
+            <p>Populate <code>&lt;multi-selector&gt;</code> using standard <code>&lt;option&gt;</code> tags. Each option uses its text content as the value unless you provide a <code>value</code> attribute.</p>
+            <p>Dynamically adding options to the DOM will update the component automatically.</p>
+            <blockquote>Note that DOM updates trigger a complete component <i>re-render</i>.</blockquote>
+            <h4 id="categories-with-optgroup">Grouping with optgroup</h4>
+            <p>Use <code>&lt;optgroup&gt;</code> tags to create option groups. This component supports nested <code>&lt;optgroup&gt;</code> elements, extending beyond the standard HTML behavior.</p>
+            <p>Group labels and values default to the element's <code>textContent</code>, but can be overridden with <code>label</code> and <code>value</code> attributes.</p>
         </div>
         <div>
             <p>Add a color to the color selector:</p>
@@ -156,22 +163,22 @@
 <!-- MARK: navigation -->
     <section>
         <div>
-            <h3 id="control-navigation">Control & navigation</h3>
+            <h3 id="control-navigation">Controls & navigation</h3>
             <ul>
-                <li>(De)select groups of options using the group checkboxes</li>
-                <li>Use the search input to filter options by key-word</li>
-                <li>Toggle "values-only" to only search through values (not groups)</li>
+                <li>Select or deselect entire groups using group checkboxes</li>
+                <li>Filter options by keyword using the search input</li>
+                <li>Toggle the <kbd>[val]</kbd> button to search values only (excluding group names)</li>
             </ul>
-            <h4>Show selected and folding</h4>
+            <h4>Filtering and folding</h4>
             <ul>
-                <li>Use the &#9745;-button or use <kbd>ctrl</kbd>-<kbd>\</kbd> to show <em>only</em> the selected options</li>
-                <li>Use the &Cross;-button or use <kbd>ctrl</kbd>-<kbd>/</kbd> show all options (clear applied filter)</li>
-                <li>(Un)fold all groups at once with the folding buttons in the control panel or use <kbd>ctrl</kbd>-<kbd>[</kbd> and <kbd>ctrl</kbd>-<kbd>]</kbd> to fold/unfold when the component is in focus</li>
+                <li>Show only selected options: click <kbd>☑</kbd> or press <kbd>Ctrl</kbd>+<kbd>\</kbd></li>
+                <li>Clear all filters: click <kbd>✕</kbd> or press <kbd>Ctrl</kbd>+<kbd>/</kbd></li>
+                <li>Fold or unfold all groups: use <kbd>+</kbd>/<kbd>-</kbd> buttons or press <kbd>Ctrl</kbd>+<kbd>[</kbd>/<kbd>Ctrl</kbd>+<kbd>]</kbd></li>
             </ul>
-            <h4>Navigation</h4>
+            <h4>Keyboard navigation</h4>
             <ul>
-                <li>Use the <kbd>arrow keys</kbd>, <kbd>home</kbd>, <kbd>end</kbd> and <kbd>tab</kbd> to navigate</li>
-                <li>Close the component with <kbd>esc</kbd></li>
+                <li>Navigate with <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, and <kbd>Tab</kbd></li>
+                <li>Close the dropdown with <kbd>Esc</kbd></li>
             </ul>
         </div>
         <div>
@@ -188,11 +195,10 @@
 <!-- MARK: disable -->
     <section>
         <div>
-            <h3 id="disable">Disabling and change events</h3>
-            <p>Disable <code>&lt;multi-selector&gt;</code> with the disabled attribute.</p>
-            <p>Also note that the <code>placeholder</code>-attribute can be used to provide the user a brief hint to the expected input.</p>
-            <h4>Change event</h4>
-            <p>The component dispatches <code>change</code> events whenever an option is (de)selected. The detail of the event contains the array of selected values. Check the console to see it in action.</p>
+            <h3 id="component-behavior">Component behavior and events</h3>
+            <p>Control component state with the <code>disabled</code> attribute. Use <code>placeholder</code> to provide helpful text when no selections are made.</p>
+            <h4>Change events</h4>
+            <p>The component dispatches <code>change</code> events whenever selections change. The event's <code>detail</code> property contains an array of selected values. Open the browser console to see the event data structure.</p>
         </div>
         <div>
             <div>
@@ -216,9 +222,9 @@
     <section>
         <div>
             <h3 id="form-integration">Form integration</h3>
-            <p>Use <code>&lt;multi-selector&gt;</code> within a <code>&lt;form&gt;</code>.</p>
-            <p>Selected options will be stored as a stringified JSON array.</p>
-            <p>The <code>selectedValues</code> property on the <code>&lt;multi-selector&gt;</code> element will return the selection as an array.</p>
+            <p><code>&lt;multi-selector&gt;</code> works seamlessly with standard HTML forms. It participates in form submission and validation like any native form control.</p>
+            <p>Form data is submitted as a JSON string containing the selected values. For programmatic access, use the <code>selectedValues</code> property which returns a live array.</p>
+            <p>Set the <code>name</code> attribute to specify the form field name.</p>
         </div>
         <div>
             <form id="beefheart-form">
@@ -246,36 +252,22 @@
 <!-- MARK: styling -->
     <section>
         <div>
-            <h3 id="styling-with-custom-properties">Styling with custom properties</h3>
-            <p>
-                Some simple styling is possible using custom properties. The following properties are available:
-            </p>
-            <h4>Layout & Spacing</h4>
+            <h3 id="styling">Styling and theming</h3>
+            <p>The component adapts to its environment by inheriting text color and using transparent backgrounds. It automatically derives border colors and interactive states from the inherited color.</p>
+
+            <h4>Dark mode support</h4>
+            <p>Set <code>mode="dark"</code> or let the component automatically detect system preference using <code>prefers-color-scheme</code>.</p>
+
+            <h4>Styling approaches</h4>
+            <p>Customize appearance using <code>::part()</code> selectors for precise control, or CSS custom properties for simple theming:</p>
             <ul>
-                <li><code>--ms-height</code></li>
-                <li><code>--ms-max-height</code></li>
-                <li><code>--ms-padding-block</code></li>
-                <li><code>--ms-padding-inline</code></li>
-                <li><code>--ms-border-radius</code></li>
+                <li><code>::part(container)</code> - Main dropdown container</li>
+                <li><code>::part(display)</code> - Selected items display area</li>
+                <li><code>::part(options)</code> - Options list container</li>
+                <li><code>--ms-*</code> properties - Colors, spacing, and dimensions</li>
             </ul>
-            <h4>Colors & Appearance</h4>
-            <ul>
-                <li><code>--ms-primary-color</code></li>
-                <li><code>--ms-primary-color-disabled</code></li>
-                <li><code>--ms-accent-color</code></li>
-                <li><code>--ms-dropdown-background:</code></li>
-                <li><code>--ms-option-hover</code></li>
-                <li><code>--ms-button-color</code></li>
-                <li><code>--ms-button-hover</code></li>
-                <li><code>--ms-button-active</code></li>
-                <li><code>--ms-search-background</code></li>
-            </ul>
-            <h4>Typography</h4>
-            <ul>
-                <li><code>--ms-text-color</code></li>
-                <li><code>--ms-text-color-disabled</code></li>
-                <li><code>--ms-search-text-color</code></li>
-            </ul>
+
+            <p>See the <a href="#css-reference">CSS reference</a> for all available custom properties.</p>
         </div>
         <div>
             <div class="styling-example">
@@ -285,26 +277,25 @@
             <h4>Code</h4>
 <pre><code class="language-css">  /* css */
   .styling-example multi-selector {
-    --ms-primary-color:
-      hsl(120, 24%, 55%);
-    --ms-dropdown-background:
-      hsl(120, 24%, 25%);
-    --ms-search-background:
-      hsl(120, 24%, 35%);
-    --ms-search-placeholder-color:
-      hsl(0, 5%, 68%);
-    --ms-text-color:
-      hsl(0, 5%, 84%);
-    --ms-accent-color:
-      hsl(120, 24%, 15%);
-    --ms-button-background:
-      hsl(120, 20%, 44%);
-    --ms-button-hover:
-      hsl(120, 20%, 57%);
-    --ms-button-active:
-      hsl(120, 20%, 67%);
-    width: 240px;
+    --ms-text-color: hsl(0, 5%, 84%);
+    --ms-border-color: hsl(120, 24%, 55%);
+    --ms-dropdown-background: hsl(120, 24%, 25%);
+    --ms-search-background: hsl(120, 24%, 35%);
+    --ms-hover: hsl(120, 24%, 30%);
+    --ms-search-placeholder-text-color: hsl(0, 5%, 68%);
+    width: 300px;
     margin: 0;
+  }
+  .styling-example multi-selector::part(container) {
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  .styling-example multi-selector::part(dropdown) {
+    background: var(--ms-dropdown-background);
+  }
+  .styling-example multi-selector::part(options) {
+    border-radius: 8px;
+    border: 1px solid hsl(120, 24%, 40%);
   }</code></pre>
         </div>
     </section>
@@ -312,18 +303,18 @@
 <!-- MARK: empty -->
     <section>
         <div>
-            <h3 id="empty">Empty state and adding data</h3>
+            <h3 id="empty">Empty state and dynamic data</h3>
             <p>
-                When the <code>&lt;multi-selector&gt;</code> is added without data it will display an empty message and be disabled.
+                Components without initial data display an empty state message and remain disabled until data is provided.
             </p>
             <p>
-                Besides loading data from JSON or the DOM, data can also be set directly using javascript.
+                Set or update data programmatically using the <code>data</code> property. Assign an array of objects or set to an empty array to clear all options.
             </p>
         </div>
         <div>
             <div>
-                <button id="add-data">Add data</button>
-                <button id="clear-data" disabled>Clear data</button>
+                <button id="add-data" autocomplete="off">Add data</button>
+                <button id="clear-data" autocomplete="off" disabled>Clear data</button>
                 <multi-selector name="fruits">
                 </multi-selector>
             </div>
@@ -357,8 +348,84 @@
         </div>
     </section>
 
-<!-- MARK: alternatives -->
+<!-- MARK: css reference -->
     <section>
+        <div>
+            <h3 id="css-reference">CSS Reference</h3>
+            <p>Complete reference for styling <code>&lt;multi-selector&gt;</code> components.</p>
+
+            <h4>Custom Properties</h4>
+            <p>Use these CSS custom properties for theming:</p>
+
+            <h5>Layout & Spacing</h5>
+            <ul>
+                <li><code>--ms-height</code> - Component height (default: <code>calc(2rem + var(--ms-padding-block))</code>)</li>
+                <li><code>--ms-max-height</code> - Maximum dropdown height (default: <code>60vh</code>)</li>
+                <li><code>--ms-padding-block</code> - Vertical padding (default: <code>.25em</code>)</li>
+                <li><code>--ms-padding-inline</code> - Horizontal padding (default: <code>1em</code>)</li>
+                <li><code>--ms-border-radius</code> - Border radius (default: <code>5px</code>)</li>
+            </ul>
+
+            <h5>Base Colors</h5>
+            <ul>
+                <li><code>--ms-text-color</code> - Main text color (default: <code>inherit</code>)</li>
+                <li><code>--ms-border-color</code> - Border color (default: <code>currentColor</code>)</li>
+                <li><code>--ms-checkbox-color</code> - Checkbox fill color (default: <code>currentColor</code>)</li>
+            </ul>
+
+            <h5>Derived Colors</h5>
+            <ul>
+                <li><code>--ms-text-color-disabled</code> - Disabled text color</li>
+                <li><code>--ms-border-color-disabled</code> - Disabled border color</li>
+            </ul>
+
+            <h5>Backgrounds</h5>
+            <ul>
+                <li><code>--ms-dropdown-background</code> - Dropdown container background</li>
+                <li><code>--ms-search-background</code> - Search input background</li>
+                <li><code>--ms-hover</code> - Hover state background</li>
+            </ul>
+
+            <h5>Button States</h5>
+            <ul>
+                <li><code>--ms-button-background</code> - Button background</li>
+                <li><code>--ms-button-background-hover</code> - Button hover state</li>
+                <li><code>--ms-button-background-active</code> - Button active state</li>
+            </ul>
+
+            <h5>Search Input</h5>
+            <ul>
+                <li><code>--ms-search-text-color</code> - Search input text color</li>
+                <li><code>--ms-search-placeholder-text-color</code> - Search placeholder color</li>
+            </ul>
+
+            <h4>Shadow Parts</h4>
+            <p>Use <code>::part()</code> selectors for structural styling:</p>
+
+            <ul>
+                <li><code>::part(container)</code> - Main dropdown container (<code>&lt;details&gt;</code>)</li>
+                <li><code>::part(display)</code> - Selected items display area</li>
+                <li><code>::part(controls)</code> - Control button panel</li>
+                <li><code>::part(control-button)</code> - Individual control buttons</li>
+                <li><code>::part(dropdown)</code> - Dropdown content area</li>
+                <li><code>::part(filter)</code> - Filter/search section</li>
+                <li><code>::part(search)</code> - Search input field</li>
+                <li><code>::part(options)</code> - Options container</li>
+            </ul>
+
+            <h4>Theme Modes</h4>
+            <p>The component automatically adapts to dark/light themes:</p>
+            <ul>
+                <li><code>mode="light"</code> - Force light theme</li>
+                <li><code>mode="dark"</code> - Force dark theme</li>
+                <li>No mode attribute - Automatically follows <code>prefers-color-scheme</code></li>
+            </ul>
+
+            <h4>Styling Priority</h4>
+            <p>When both custom properties and <code>::part()</code> rules target the same property, <code>::part()</code> rules win due to higher CSS specificity. Use <code>::part()</code> for precise control and custom properties for theming.</p>
+        </div>
+
+<!-- MARK: alternatives -->
         <div>
             <h3 id="alternatives">Alternatives</h3>
             <ul>

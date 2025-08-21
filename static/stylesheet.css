@@ -121,7 +121,7 @@ blockquote {
 h2, h3, h4 {
     color: var(--section-header-color);
 }
-p code {
+:where(p, li) code {
     font-size: 1.2em;
     color:cadetblue;
 }
@@ -231,26 +231,34 @@ form {
 }
 
 /* examples */
+/* css */
 .styling-example {
     display: grid;
     place-items: center;
     padding: 1.5rem;
-    background-color:hsl(120, 24%, 15%)
+    background-color: hsl(120, 24%, 15%);
 }
+
 .styling-example multi-selector {
-    --ms-primary-color: hsl(120, 24%, 55%);
+    --ms-text-color: hsl(0, 5%, 84%);
+    --ms-border-color: hsl(120, 24%, 55%);
     --ms-dropdown-background: hsl(120, 24%, 25%);
     --ms-search-background: hsl(120, 24%, 35%);
-    --ms-search-placeholder-color: hsl(0, 5%, 68%);
-    --ms-text-color: hsl(0, 5%, 84%);
-    --ms-accent-color:hsl(120, 24%, 65%);
-    --ms-button-color: hsl(120, 20%, 44%);
-    --ms-button-hover: hsl(120, 20%, 57%);
-    --ms-button-active: hsl(120, 20%, 67%);
+    --ms-hover: hsl(120, 24%, 30%);
+    --ms-search-placeholder-text-color: hsl(0, 5%, 68%);
+    width: 300px;
     margin: 0;
-    width: 280px;
-    /* --multi-selector-color-text-placeholder-search: hsl(62, 78%, 93%);
-    --multi-selector-color-focus: hsl(120, 39%, 84%); */
+}
+.styling-example multi-selector::part(container) {
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.styling-example multi-selector::part(dropdown) {
+    background: var(--ms-dropdown-background);
+}
+.styling-example multi-selector::part(options) {
+    border-radius: 8px;
+    border: 1px solid hsl(120, 24%, 40%);
 }
 
 .hidden {
