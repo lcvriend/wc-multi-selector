@@ -912,7 +912,7 @@ class Renderer {
                 // groups before items
                 if (a.type !== b.type) return a.type === "group" ? -1 : 1
 
-                //fFor groups: sort by depth first, then by count
+                // for groups: sort by depth first, then by count
                 if (a.type === "group" && b.type === "group") {
                     if (a.depth !== b.depth) return a.depth - b.depth
                     return b.count - a.count
@@ -966,45 +966,60 @@ class HTMLBuilder {
         this.keys = []
     }
 
-    buildHTML(items, depth=-1) {
-        depth++
-        return items
-            .map(item => {
-                this.keys.push(item.label)
-                const itemID = this.keys.join("-")
-                const label = item.children.length > 0
-                    ? `<span>${item.label}</span><code data-role="group-count" data-total="${this.countCheckboxes(item.children)}">[${this.countCheckboxes(item.children)}]</code>`
-                    : item.label
-                const input = `<input
-                    type="checkbox"
-                    id="${itemID}"
-                    name="${itemID}"
-                    value="${item.value}"
-                    ${item.selected ? "checked": ""}>
-                <label for="${itemID}">${label} </label>`
-                let rendered = ""
-                if (item.children.length === 0) {
-                    rendered = `<div
-                        data-role="option"
-                        data-label="${item.label}"
-                        data-value="${item.value}">
-                        ${input}
-                    </div>`
-                } else {
-                    rendered = `<details
-                        data-role="group"
-                        data-label="${item.label}"
-                        data-value="${item.value}"
-                        data-depth="${depth}"${depth === 0 ? " open" : ""}>
-                        <summary>${input}</summary>
-                        <div>${this.buildHTML(item.children, depth)}</div>
-                    </details>`
-                }
-                this.keys.pop()
-                return rendered
-            })
-            .join("")
-            .replace(/\s+/g, " ") // remove excess whitespace
+    buildHTML(items, depth = 0) {
+        return items.map(item => this.buildItemHTML(item, depth)).join("")
+    }
+
+    buildItemHTML(item, depth) {
+        const sanitizedValue = item.value.toString().replace(/[^a-zA-Z0-9_-]/g, '_')
+        this.keys.push(sanitizedValue)
+        const itemID = `ms-${this.keys.join("-")}`
+
+        const rendered = item.children.length === 0
+            ? this.buildOptionHTML(item, itemID)
+            : this.buildGroupHTML(item, itemID, depth)
+
+        this.keys.pop()
+        return rendered
+    }
+
+    buildOptionHTML(item, itemID) {
+        const input = `<input
+            type="checkbox"
+            id="${itemID}"
+            name="${itemID}"
+            value="${item.value}"
+            ${item.selected ? "checked": ""}>
+        <label for="${itemID}">${item.label}</label>`
+
+        return `<div
+            data-role="option"
+            data-label="${item.label}"
+            data-value="${item.value}">
+            ${input}
+        </div>`
+    }
+
+    buildGroupHTML(item, itemID, depth) {
+        const childCount = this.countCheckboxes(item.children)
+        const label = `<span>${item.label}</span><code data-role="group-count" data-total="${childCount}">[${childCount}]</code>`
+
+        const input = `<input
+            type="checkbox"
+            id="${itemID}"
+            name="${itemID}"
+            value="${item.value}"
+            ${item.selected ? "checked": ""}>
+        <label for="${itemID}">${label}</label>`
+
+        return `<details
+            data-role="group"
+            data-label="${item.label}"
+            data-value="${item.value}"
+            data-depth="${depth}"${depth === 0 ? " open" : ""}>
+            <summary>${input}</summary>
+            <div>${this.buildHTML(item.children, depth + 1)}</div>
+        </details>`
     }
 
     countCheckboxes(data) {
