@@ -1,200 +1,236 @@
-# multi-selector (web component)
+# Multi-Selector Web Component
 
-<img src="./screenshots/ms-countries.png" alt="Multi-selector with dropdown open" width="570">
+A lightweight, accessible web component for selecting multiple options from hierarchical data structures. Built with vanilla JavaScript and no external dependencies. Check out [this page](https://lcvriend.github.io/wc-multi-selector/) for several examples.
 
-`<multi-selector>` is a web component that lets a user select multiple options from a drop-down menu:
+<img src="./screenshots/ms-countries.png" alt="Multi-selector with dropdown open" width="496">
 
-* Arbitrarily nested groups of options
-* Searchable
-* Easy to control and navigate (also with the keyboard)
-* Reads options from JSON or mark up
-* Supports dark mode
-* Style with custom properties
-* VanillaJS (no dependencies)
+## Features
 
-Check out [this page](https://lcvriend.github.io/wc-multi-selector/) for several examples.
+- **Hierarchical Data**: Support for arbitrarily nested option groups
+- **Multiple Data Sources**: Load from JSON or define options in HTML markup
+- **Advanced Search**: Filter by labels or values with instant results
+- **Keyboard Navigation**: Full keyboard accessibility with intuitive shortcuts
+- **Form Integration**: Native form participation with proper validation
+- **Adaptive Theming**: Automatic dark/light mode detection with custom styling
+- **Accessibility**: WCAG compliant with proper ARIA attributes and focus management
 
-## How to use
-Load the `<multi-selector>` web component and add it to your page:
+## Quick Start
 
 ```html
-<multi-selector
-    src="data/countries.json"
-    name="countries">
+<!-- Basic usage with JSON data -->
+<multi-selector src="data/options.json" name="my-options"></multi-selector>
+
+<!-- Inline options -->
+<multi-selector name="colors">
+    <option>Red</option>
+    <option>Blue</option>
+    <option>Green</option>
 </multi-selector>
-<script src="src/wc-multi-selector.js"></script>
+
+<!-- Grouped options -->
+<multi-selector name="instruments">
+    <optgroup label="String">
+        <option value="guitar">Guitar</option>
+        <option value="violin">Violin</option>
+    </optgroup>
+    <optgroup label="Wind">
+        <option value="flute">Flute</option>
+        <option value="trumpet">Trumpet</option>
+    </optgroup>
+</multi-selector>
 ```
 
-### Attributes
-The following attributes are available for customizing the component:
+## Installation
 
-attribute     | description
---------------|-------------
-`name`        | Name of the component
-`placeholder` | Text when no value is set
-`disabled`    | If set then component is non-interactive
-`src`         | Path to data to embed
+Simply include the JavaScript file in your HTML:
 
-### Properties
-The component also exposes the following properties:
+```html
+<script src="wc-multi-selector.js"></script>
+```
 
-property              | description
-----------------------|-------------
-`options`             | All options as array
-`selectedValues`      | All selected values as array
-`selectedLabels`      | All selected labels as array
-`selectedLeastNested` | All selected groups and labels that are least nested
+The component automatically registers itself as `<multi-selector>`.
 
-### Events
-The component dispatches a `change` event whenever an option is (de)selected.
+## Data Structure
 
-### Methods
-The following methods are available:
+### JSON Format
 
-method                          | description
---------------------------------|-----------------------------
-addSelectedValues(...values)    | Add values to selection
-removeSelectedValues(...values) | Remove values from selection
-
-## Data
-### Load from JSON
-Supply the data as JSON using the src attribute of `<multi-selector>`.
-
-The data should be provided in this format:
+Each option should follow this structure:
 
 ```json
-{ "label": "label", "value": "value", "children": [] }
+{
+    "label": "Display Text",     // Optional - falls back to value
+    "value": "unique_id",        // Required
+    "selected": false,           // Optional - preselect option
+    "children": []               // Optional - for nested groups
+}
 ```
 
-See [soaps.json](data/soaps.json) for an example. To preselect values add `"selected": true`. Note that only values can be selected, not categories.
+### Simplified Formats
 
-It is also possible to provide the data as a nested object where the options are given as strings in an array. `<multi-selector>` will convert this to the format above.
+The component automatically converts simpler formats:
 
-See [countries.json](data/countries.json) for an example.
+```json
+// Flat array
+["Option 1", "Option 2", "Option 3"]
 
-### Load from DOM
-Populate `<multi-selector>` with markup by using `<option>` tags. `<multi-selector>` will assume that the value of an option is its text content unless a value attribute is supplied. Use the `selected` attribute to preselect a value.
+// Nested object
+{
+    "Group A": ["Item 1", "Item 2"],
+    "Group B": ["Item 3", "Item 4"]
+}
+```
 
-Use `<optgroup>` tags to categorize options. Unlike the default `<optgroup>` tag, it can be nested.
+## API Reference
 
-Set labels and values with the label and value attributes. If not present labels and values will be set from the textContent.
+### Attributes
 
-## Keyboard navigation
-### Opening and Closing
-- **Enter/Space** on the closed selector opens the dropdown
-- **Escape** closes the dropdown from anywhere within
-- **Tab** navigates away and closes the dropdown
+| Attribute     | Type              | Description |
+|---------------|-------------------|-------------|
+| `src`         | string            | URL to JSON data source |
+| `name`        | string            | Form field name |
+| `placeholder` | string            | Text shown when no selections made |
+| `disabled`    | boolean           | Disable the component |
+| `mode`        | "light" \| "dark" | Force theme mode (auto-detects if not set) |
 
-### General Navigation
-- **Arrow Up/Down** - Navigate between focusable elements (summary, search, group headers, options)
-- **Arrow Left/Right** - Navigate horizontally through control buttons and elements
-- **Home** - Jump to the top (selector summary)
-- **End** - Jump to the last focusable element in the dropdown
+### Properties
 
-### Search and Filtering
-- **Ctrl + \\** - Show only selected items (same as clicking the ✓ button)
-- **Ctrl + /** - Clear search filter and show all items
-- **Escape** in search box - Clear the current search term
+| Property         | Type   | Description |
+|------------------|--------|-------------|
+| `data`           | Array  | Get/set the options data |
+| `selectedValues` | Array  | Array of currently selected values |
+| `selectedLabels` | Array  | Array of currently selected labels |
+| `settings`       | Object | Component configuration options |
 
-### Group Management
-- **Ctrl + ]** - Unfold/expand all groups
-- **Ctrl + [** - Fold/collapse all groups
-- **Enter/Space** on group headers - Toggle individual group expansion
+### Methods
 
-### Selection
-- **Space** on checkboxes - Toggle selection
-- **Enter** on group checkboxes - Select/deselect entire group and children
+| Method                   | Parameters | Description |
+|--------------------------|------------|-------------|
+| `addSelectedValues()`    | ...values  | Add values to selection |
+| `removeSelectedValues()` | ...values  | Remove values from selection |
+
+### Events
+
+| Event    | Detail                     | Description |
+|----------|----------------------------|-------------|
+| `change` | `{detail: selectedValues}` | Fired when selection changes |
+
+## Keyboard Shortcuts
+
+### Navigation
+- `↑` `↓` `←` `→` - Navigate options
+- `Home` / `End` - Jump to first/last option
+- `Tab` - Standard tab navigation
+- `Esc` - Close dropdown
+
+### Filtering & Folding
+- `Ctrl` + `\` - Show only selected items
+- `Ctrl` + `/` - Clear search filter
+- `Ctrl` + `[` - Fold all groups
+- `Ctrl` + `]` - Unfold all groups
 
 ## Styling
 
-### CSS parts
-The component exposes these CSS parts for styling with ::part():
+### CSS Custom Properties
 
-- `container` - The main details element wrapper
-- `display` - The selection display area showing current choices
-- `controls` - The control button panel (fold/unfold/show-selected buttons)
-- `control-button` - Individual control buttons
-- `dropdown` - The dropdown container that appears when open
-- `filter` - The search section wrapper
-- `search` - The search input field
-- `options` - The scrollable options container
+The component uses CSS custom properties for theming:
 
 ```css
-multi-selector::part(dropdown) { background: black; }
+multi-selector {
+    /* Layout */
+    --ms-height: calc(2rem + var(--ms-padding-block));
+    --ms-max-height: 60vh;
+    --ms-padding-block: .25em;
+    --ms-padding-inline: 1em;
+    --ms-border-radius: 5px;
+
+    /* Colors */
+    --ms-text-color: inherit;
+    --ms-border-color: currentColor;
+    --ms-dropdown-background: hsl(0, 0%, 100%);
+    --ms-hover: hsl(0, 0%, 93%);
+}
 ```
 
-### Custom properties
-Some simple styling is possible using custom properties. The following properties are available:
+### Shadow Parts
 
-#### Layout & Spacing:
+Use `::part()` selectors for structural styling:
 
-- `--ms-height` - Overall component height
-- `--ms-max-height` - Maximum dropdown height
-- `--ms-padding-block` - Vertical padding
-- `--ms-padding-inline` - Horizontal padding
-- `--ms-border-radius` - Border radius for rounded corners
+```css
+multi-selector::part(container) {
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 
-#### Colors & Appearance:
+multi-selector::part(dropdown) {
+    background: var(--custom-background);
+}
+```
 
-- `--ms-primary-color` - Borders and outlines
-- `--ms-accent-color` - Checkboxes and active states
-- `--ms-dropdown-background` - Dropdown background
-- `--ms-option-hover` - Hover state background
+Available parts:
+- `container` - Main dropdown container
+- `display` - Selected items display
+- `controls` - Control button panel
+- `dropdown` - Dropdown content area
+- `filter` - Search section
+- `options` - Options container
 
-#### Typography:
+## Form Integration
 
-- `--ms-text-color` - Main text color
-- `--ms-search-text-color` - Search input text
-- `--ms-search-placeholder-color` - Search placeholder text
+The component participates in forms like native controls:
 
-## Labels
-The following labels are customizable:
-```js
-{
+```html
+<form>
+    <multi-selector name="preferences" src="data.json"></multi-selector>
+    <button type="submit">Submit</button>
+</form>
+```
+
+Form data is submitted as a JSON string of selected values.
+
+## Advanced Usage
+
+### Dynamic Data Management
+
+```javascript
+const selector = document.querySelector('multi-selector')
+
+// Set data programmatically
+selector.data = [
+    { label: "Option 1", value: "opt1" },
+    { label: "Option 2", value: "opt2" }
+]
+
+// Listen for changes
+selector.addEventListener('change', event => {
+    console.log('Selected:', event.detail)
+})
+
+// Programmatically select options
+selector.addSelectedValues('opt1', 'opt2')
+```
+
+### Custom Settings
+
+```javascript
+selector.settings = {
     labels: {
-        all: "All items",
-        empty: "No options loaded...",
-        placeholder: "options",
-        selection: "Filtered items",
+        placeholder: "Choose items...",
         filter: {
-            placeholder: "Search...",
-            allSelected: "<all selected>",
+            placeholder: "Type to search..."
         }
     },
     titles: {
-        unfoldGroups: "unfold groups: ctrl-]",
-        foldGroups: "fold groups: ctrl-[",
-        showSelected: "show selected: ctrl-\\",
-        clearFilter: "clear filter",
+        unfoldGroups: "Expand all groups",
+        showSelected: "Show selected only"
     }
 }
-```
 
-### Translations
-There are three main ways to override the default labels:
-
-1. Per instance after creation:
-```js
-const selector = document.querySelector('multi-selector')
-selector.settings = {
-    labels: { all: "Alle items" }
-}
-```
-
-2. Global defaults before any instances:
-```js
-MultiSelector.defaultSettings = {
-    labels: { all: "Alle items" }
-}
-```
-
-3. Hybrid - extend defaults and set per instance:
-```js
 // Extend defaults
 MultiSelector.defaultSettings.labels.all = "Alle items"
-
-// Override specific instance
-selector.settings = {
-    titles: { unfold_groups: "Openvouwen" }
-}
 ```
+
+## Alternatives
+
+- [BVSelect](https://bmsvieira.github.io/BVSelect-VanillaJS/)
+- [vanilla-select](https://vorotina.github.io/vanilla-select/)
+- [multiselect-combo-box](https://multiselect-combo-box.web.app/)
