@@ -1016,7 +1016,8 @@ class HTMLBuilder {
             data-role="group"
             data-label="${item.label}"
             data-value="${item.value}"
-            data-depth="${depth}"${depth === 0 ? " open" : ""}>
+            data-depth="${depth}"
+            ${depth === 0 ? " open" : ""}>
             <summary>${input}</summary>
             <div>${this.buildHTML(item.children, depth + 1)}</div>
         </details>`
@@ -1245,9 +1246,11 @@ class SearchHandler {
             return this.toggleShowElem(el, match)
         }
         if (el.matches(`[data-role="group"]`)) {
-            // if phrase in groupname and we are not in values only mode
+            // skip wrapper group at depth 0
+            // if phrase in group name and we are not in values only mode
             // then show element and all children
-            if (!this.valuesOnlyMode && matcher(el)) {
+            const depth = parseInt(el.dataset.depth)
+            if (!this.valuesOnlyMode && depth > 0 && matcher(el)) {
                 const children = el.querySelectorAll(`[data-value]`)
                 children.forEach(child => this.toggleShowElem(child, true))
                 return this.toggleShowElem(el, true)
