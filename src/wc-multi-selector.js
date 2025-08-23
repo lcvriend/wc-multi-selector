@@ -1309,9 +1309,11 @@ class CheckboxHandler extends EventTarget {
     }
 
     addListener() {
-        this.addEventListener("change", this.setAllGroupStates)
-        this.addEventListener("change", this.renderSelected)
-        this.ms.shadowRoot.addEventListener("change", this.handleCheckboxChange)
+        this.ms.shadowRoot.addEventListener("change", (event) => {
+            this.handleCheckboxChange(event)
+            this.setAllGroupStates()
+            this.renderSelected()
+        })
     }
 
     handleCheckboxChange(event) {
