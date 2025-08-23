@@ -42,17 +42,17 @@ function createTemplate(options) {
 
     /* Backgrounds */
     --ms-dropdown-background: hsl(0, 0%, 100%);
-    --ms-search-background: hsl(0, 0%, 100%);
-    --ms-hover: hsl(0, 0%, 93%);
+    --ms-filter-background: color-mix(in srgb, var(--ms-dropdown-background) 96%, currentColor 4%);
+    --ms-hover: color-mix(in srgb, var(--ms-dropdown-background) 93%, currentColor 7%);
 
     /* Button States */
     --ms-button-background: color-mix(in srgb, currentColor 10%, transparent);
     --ms-button-background-hover: color-mix(in srgb, currentColor 15%, transparent);
     --ms-button-background-active: color-mix(in srgb, currentColor 20%, transparent);
 
-    /* Search */
-    --ms-search-text-color: inherit;
-    --ms-search-placeholder-text-color: color-mix(in srgb, currentColor 50%, transparent);
+    /* Filter */
+    --ms-filter-text-color: inherit;
+    --ms-filter-placeholder-text-color: color-mix(in srgb, currentColor 50%, transparent);
 }
 
 /* ==========================================================================
@@ -62,8 +62,7 @@ function createTemplate(options) {
 :host([mode="dark"]),
 :host > details.system-dark {
     --ms-dropdown-background: hsl(0, 0%, 7%);
-    --ms-search-background: hsl(0, 0%, 12%);
-    --ms-hover: hsl(0, 0%, 15%);
+    --ms-hover: color-mix(in srgb, var(--ms-dropdown-background) 85%, currentColor 15%);
 }
 
 /* ==========================================================================
@@ -203,7 +202,7 @@ function createTemplate(options) {
     grid-template-columns: 1fr auto;
 }
 
-.search {
+.search-container {
     display: grid;
     gap: .5em;
     grid-template-columns: 1fr auto;
@@ -214,7 +213,7 @@ function createTemplate(options) {
     border-right: none;
 }
 
-.search > input {
+.search-container > input {
     padding-block: var(--ms-padding-block);
     padding-inline: var(--ms-padding-inline);
     border: none;
@@ -222,28 +221,28 @@ function createTemplate(options) {
     color: inherit;
 }
 
-.filter .search > [data-command] {
+.filter .search-container > [data-command] {
     border-radius: var(--ms-border-radius);
     background-color: transparent;
     border: none;
     font-size: .65em;
 }
 
-.filter .search > [data-command]:hover {
+.filter .search-container > [data-command]:hover {
     background-color: var(--ms-button-background-hover);
 }
 
-.filter .search > [data-command].active {
+.filter .search-container > [data-command].active {
     background-color: var(--ms-button-background-active);
 }
 
-:where(.search) {
-    background-color: var(--ms-search-background);
-    color: var(--ms-search-text-color);
+:where(.filter) {
+    background-color: var(--ms-filter-background);
+    color: var(--ms-filter-text-color);
 }
 
 ::placeholder {
-    color: var(--ms-search-placeholder-text-color);
+    color: var(--ms-filter-placeholder-text-color);
 }
 
 /* ==========================================================================
@@ -451,7 +450,7 @@ ${css}
     </summary>
     <div part="dropdown">
         <div part="filter" class="filter">
-            <div class="search">
+            <div class="search-container">
                 <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
                 <button data-command="toggle-values-only"
                 title="${options.titles.valuesOnly}">[val]</button>
@@ -1481,7 +1480,7 @@ class NavigationHandler {
 
     get focusableElementsSelector() {
         return `
-            input[type="text"],
+            .search-container input[type="text"],
             details[open]:not(.hide) > summary,
             details[open]:not(.hide) > div > details:not(.hide) > summary,
             details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
@@ -1580,7 +1579,7 @@ class NavigationHandler {
         const inc = event.key === "ArrowRight" ? 1 : -1
         const opened = this.box.querySelectorAll(`
             .control-panel button:not([disabled]),
-            .search input[type="text"],
+            .search-container input[type="text"],
             [data-command="toggle-values-only"],
             [data-command="clear-query"],
             details[open]:not(.hide) > summary,
