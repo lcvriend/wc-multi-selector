@@ -516,11 +516,6 @@ class MultiSelector extends HTMLElement {
         this.handleMediaQueryChange = this.handleMediaQueryChange.bind(this)
 
         this.isHover = false
-
-        // re-dispatch changes
-        this.checkboxHandler.addEventListener("change", (event) => {
-            this.dispatchEvent(new CustomEvent("change", {detail: event.detail}))
-        })
     }
 
     async connectedCallback() {
@@ -601,6 +596,14 @@ class MultiSelector extends HTMLElement {
             default:
                 this[property] = newValue
         }
+    }
+
+    dispatchChangeEvent() {
+        this.dispatchEvent(new CustomEvent("change", {
+            detail: this.selectedValues,
+            bubbles: true,
+            composed: true
+        }))
     }
 
     get settings() {
@@ -1316,7 +1319,7 @@ class CheckboxHandler extends EventTarget {
         if (event.target.closest("details").matches(`[data-role="group"]`)) {
             this.toggleCheckboxChildren(event.target)
         }
-        this.dispatchEvent(new CustomEvent("change", {detail: this.ms.selectedValues}))
+        this.ms.dispatchChangeEvent()
     }
 
     toggleCheckboxChildren(clickedCheckbox) {
