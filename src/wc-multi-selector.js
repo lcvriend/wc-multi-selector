@@ -324,7 +324,7 @@ function createTemplate(options) {
 /* Smooth transitions */
 input[type="checkbox"] + label:before,
 [data-role="group"] > summary:after {
-    transition: transform 0.15s ease;
+    transition: transform 0.1s ease;
 }
 
 /*
@@ -368,7 +368,7 @@ input[type="checkbox"] + label:before {
     margin-right: .5rem;
     width: .6rem;
     height: .6rem;
-    outline: 1px solid var(--ms-border-color);
+    border: 1px solid var(--ms-border-color);
 }
 
 input[type="checkbox"]:checked + label:before {
