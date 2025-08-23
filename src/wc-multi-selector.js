@@ -310,12 +310,25 @@ function createTemplate(options) {
     padding-left: .75rem;
 }
 
-:where([data-role="group"] > summary > label):hover span {
-    text-decoration: underline;
-    text-underline-offset: .25em;
+/* Checkbox scaling - when hovering the wrapper */
+[data-role="option"]:hover input[type="checkbox"] + label:before,
+.checkbox-wrapper:hover input[type="checkbox"] + label:before {
+    transform: scale(1.25);
 }
 
-/* ==========================================================================
+/* Plus/minus scaling - when hovering summary but NOT the checkbox wrapper */
+[data-role="group"] > summary:hover:not(:has(.checkbox-wrapper:hover)):after {
+    transform: scale(1.25);
+}
+
+/* Smooth transitions */
+input[type="checkbox"] + label:before,
+[data-role="group"] > summary:after {
+    transition: transform 0.15s ease;
+}
+
+/*
+==========================================================================
    OPTIONS
    ========================================================================== */
 
@@ -741,7 +754,7 @@ class MultiSelector extends HTMLElement {
                 query = `[data-role="option"] > :checked + label`
                 break
             case "groups":
-                query = `[data-role="group"]:not(.hide) > summary > [type="checkbox"]`
+                query = `[data-role="group"]:not(.hide) > summary > .checkbox-wrapper > [type="checkbox"]`
                 break
             case "hidden":
                 query = ".hide"
@@ -1006,13 +1019,15 @@ class HTMLBuilder {
         const childCount = this.countCheckboxes(item.children)
         const label = `<span>${item.label}</span><code data-role="group-count" data-total="${childCount}">[${childCount}]</code>`
 
-        const input = `<input
-            type="checkbox"
-            id="${itemID}"
-            name="${itemID}"
-            value="${item.value}"
-            ${item.selected ? "checked": ""}>
-        <label for="${itemID}">${label}</label>`
+        const input = `<span class="checkbox-wrapper">
+            <input
+                type="checkbox"
+                id="${itemID}"
+                name="${itemID}"
+                value="${item.value}"
+                ${item.selected ? "checked": ""}>
+            <label for="${itemID}">${label}</label>
+        </span>`
 
         return `<details
             data-role="group"
