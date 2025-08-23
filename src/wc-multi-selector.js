@@ -807,14 +807,11 @@ class MultiSelector extends HTMLElement {
         }
     }
 
-    // MARK: ...color
-    set mode(newValue) {
-        if (newValue === "dark") {
-            this.setAttribute("mode", "dark")
-        } else if (newValue === "light") {
-            this.setAttribute("mode", "light")
-        } else if (newValue === null) {
-            this.removeAttribute("mode")
+    // MARK: ...mode
+    handleMediaQueryChange() {
+        // Only update mode if it wasn't explicitly set by user
+        if (!this._modeExplicitlySet) {
+            this.setAttribute("mode", this.mediaQuery.matches ? "dark" : "light")
         }
     }
 
@@ -822,13 +819,16 @@ class MultiSelector extends HTMLElement {
         return this.getAttribute("mode") || "light"
     }
 
-    handleMediaQueryChange() {
-        if (!this.hasAttribute("mode")) {
-            if (this.mediaQuery.matches) {
-                this.getElement("box").classList.add("system-dark")
-            } else {
-                this.getElement("box").classList.remove("system-dark")
-            }
+    set mode(newValue) {
+        this._modeExplicitlySet = true  // Track that user set this
+        if (newValue === "dark") {
+            this.setAttribute("mode", "dark")
+        } else if (newValue === "light") {
+            this.setAttribute("mode", "light")
+        } else if (newValue === null) {
+            this._modeExplicitlySet = false  // Reset to auto-detect
+            this.removeAttribute("mode")
+            this.handleMediaQueryChange()  // Immediately apply system pref
         }
     }
 
