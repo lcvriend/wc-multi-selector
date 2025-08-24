@@ -1138,7 +1138,7 @@ class DataHandler {
 
     needsConversion(obj) {
         if (!Array.isArray(obj)) return true
-        return (obj.length > 0 && !obj[0]?.value)
+        return (obj.length > 0 && !("value" in obj[0]))
     }
 
     needsWrapping(data) {
