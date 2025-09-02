@@ -631,6 +631,10 @@ class MultiSelector extends HTMLElement {
         return [...this.getElements("options")].map(i => i.dataset.value)
     }
 
+    get isActive() {
+        return this.contains(document.activeElement) || this.isHover
+    }
+
     // MARK: ...selection
     get selectedValues() {
         return [...this.getElements("selected-values")].map(i => i.value)
@@ -821,7 +825,7 @@ class MultiSelector extends HTMLElement {
 
     // MARK: ...mode
     handleMediaQueryChange() {
-        // Only update mode if it wasn't explicitly set by user
+        //oOnly update mode if it wasn't explicitly set by user
         if (!this._modeExplicitlySet) {
             this.setAttribute("mode", this.mediaQuery.matches ? "dark" : "light")
         }
@@ -832,15 +836,15 @@ class MultiSelector extends HTMLElement {
     }
 
     set mode(newValue) {
-        this._modeExplicitlySet = true  // Track that user set this
+        this._modeExplicitlySet = true
         if (newValue === "dark") {
             this.setAttribute("mode", "dark")
         } else if (newValue === "light") {
             this.setAttribute("mode", "light")
         } else if (newValue === null) {
-            this._modeExplicitlySet = false  // Reset to auto-detect
+            this._modeExplicitlySet = false
             this.removeAttribute("mode")
-            this.handleMediaQueryChange()  // Immediately apply system pref
+            this.handleMediaQueryChange()
         }
     }
 
@@ -1196,18 +1200,22 @@ class SearchHandler {
     }
 
     handleKeyManageFilter(event) {
-        // return if no element within the tree is in focus/hovered
-        if(!this.ms.contains(document.activeElement) && !this.ms.isHover) {
-            return
+        if (!this.ms.isActive) return
+        if (!event.ctrlKey) return
+
+        switch (event.key) {
+            case "\\":
+                this.handleClickShowSelected()
+                break
+            case "/":
+                this.handleClickClearQuery()
+                break
+            default:
+                return
         }
-        if (event.ctrlKey && event.key === "\\") {
-            this.handleClickShowSelected()
-            event.preventDefault()
-        }
-        if (event.ctrlKey && event.key === "/") {
-            this.handleClickClearQuery()
-            event.preventDefault()
-        }
+
+        event.preventDefault()
+        event.stopPropagation()
     }
 
     handleClickClearQuery() {
@@ -1413,18 +1421,23 @@ class FoldingHandler {
     }
 
     handleKeyDown(event) {
-        // return if no element within the tree is in focus/hovered
-        if(!this.ms.contains(document.activeElement) && !this.ms.isHover) {
-            return
+        if (!this.ms.isActive) return
+
+        if (!event.ctrlKey) return
+
+        switch (event.key) {
+            case "]":
+                this.handleClickUnfold()
+                break
+            case "[":
+                this.handleClickFold()
+                break
+            default:
+                return
         }
-        if (event.ctrlKey && event.key === "]") {
-            this.handleClickUnfold()
-            event.preventDefault()
-        }
-        if (event.ctrlKey && event.key === "[") {
-            this.handleClickFold()
-            event.preventDefault()
-        }
+
+        event.preventDefault()
+        event.stopPropagation()
     }
 
     handleClick(event) {
@@ -1519,26 +1532,26 @@ class NavigationHandler {
                     return // Let text editing happen
                 }
             }
-            switch ( event.key ) {
+            switch (event.key) {
                 case "ArrowUp":
                 case "ArrowDown":
                     this.handleUpDownArrow(event)
-                    event.preventDefault()
                     break
                 case "ArrowLeft":
                 case "ArrowRight":
                     this.handleLeftRightArrow(event)
-                    event.preventDefault()
                     break
                 case "Home":
                     this.handleHome()
-                    event.preventDefault()
                     break
                 case "End":
                     this.handleEnd()
-                    event.preventDefault()
                     break
+                default:
+                    return
             }
+            event.preventDefault()
+            event.stopPropagation()
         })
     }
 
@@ -1597,14 +1610,21 @@ class NavigationHandler {
             .search-container input[type="text"],
             [data-command="toggle-values-only"],
             [data-command="clear-query"],
+            details[data-depth="0"]:not(.hide) > summary,
+            details[data-depth="0"]:not(.hide) > summary .checkbox-wrapper [type="checkbox"],
             details[open]:not(.hide) > summary,
-            details[open]:not(.hide) > summary > [type="checkbox"],
+            details[open]:not(.hide) > summary .checkbox-wrapper [type="checkbox"],
             details[open]:not(.hide) > div > details:not(.hide) > summary,
-            details[open]:not(.hide) > div > details:not(.hide) > summary > [type="checkbox"],
+            details[open]:not(.hide) > div > details:not(.hide) > summary .checkbox-wrapper [type="checkbox"],
             details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
         )
+        console.log(opened)
+        console.log(event.target)
         const nextIdx = [...opened].indexOf(event.target)
+        console.log(nextIdx)
         const next = opened[nextIdx + inc]
+        console.log(next)
+
         if (next) { next.focus() }
     }
 }
