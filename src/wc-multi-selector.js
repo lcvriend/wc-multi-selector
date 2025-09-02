@@ -1142,7 +1142,10 @@ class DataHandler {
 
     needsConversion(obj) {
         if (!Array.isArray(obj)) return true
-        return (obj.length > 0 && !("value" in obj[0]))
+        if (obj.length === 0) return false
+
+        const firstItem = obj[0]
+        return typeof firstItem !== "object" || firstItem === null || !("value" in firstItem)
     }
 
     needsWrapping(data) {
