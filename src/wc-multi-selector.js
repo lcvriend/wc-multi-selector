@@ -526,6 +526,7 @@ class MultiSelector extends HTMLElement {
         this.onDocumentClick = this.onDocumentClick.bind(this)
         this.onTabOutOrEscape = this.onTabOutOrEscape.bind(this)
         this.handleMediaQueryChange = this.handleMediaQueryChange.bind(this)
+        this.handleWheel = this.handleWheel.bind(this)
 
         this.isHover = false
     }
@@ -547,6 +548,7 @@ class MultiSelector extends HTMLElement {
 
         this.addEventListener("mouseenter", this.onMouseEnter)
         this.addEventListener("mouseleave", this.onMouseLeave)
+        this.addWheelHandling()
 
         this.checkboxHandler.addListener()
         this.searchHandler.addListener()
@@ -574,6 +576,7 @@ class MultiSelector extends HTMLElement {
         document.removeEventListener("keydown", this.foldingHandler.handleKeyDown)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
         this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
+        this.removeWheelHandling()
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -872,6 +875,42 @@ class MultiSelector extends HTMLElement {
     }
     onMouseLeave() {
         this.isHover = false
+    }
+
+    // MARK: ...scroll
+    addWheelHandling() {
+        const optionsContainer = this.getElement("options-container")
+        if (optionsContainer) {
+            optionsContainer.addEventListener("wheel", this.handleWheel, {
+                passive: false,
+                capture: true
+            })
+        }
+    }
+
+    removeWheelHandling() {
+        const optionsContainer = this.getElement("options-container")
+        if (optionsContainer) {
+            optionsContainer.removeEventListener("wheel", this.handleWheel, {
+                capture: true
+            })
+        }
+    }
+
+    handleWheel(event) {
+        const container = event.currentTarget
+
+        const atTop = container.scrollTop === 0
+        const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 1
+
+        const scrollingUp = event.deltaY < 0
+        const scrollingDown = event.deltaY > 0
+
+        if ((atTop && scrollingUp) || (atBottom && scrollingDown)) {
+            event.preventDefault()
+        }
+
+        event.stopPropagation()
     }
 }
 
