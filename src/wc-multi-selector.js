@@ -524,7 +524,7 @@ class MultiSelector extends HTMLElement {
         this.onMouseEnter = this.onMouseEnter.bind(this)
         this.onMouseLeave = this.onMouseLeave.bind(this)
         this.onDocumentClick = this.onDocumentClick.bind(this)
-        this.onTabOutOrEscape = this.onTabOutOrEscape.bind(this)
+        this.onEscape = this.onEscape.bind(this)
         this.handleMediaQueryChange = this.handleMediaQueryChange.bind(this)
         this.handleWheel = this.handleWheel.bind(this)
 
@@ -544,7 +544,8 @@ class MultiSelector extends HTMLElement {
         this.internals_.setFormValue(this.selectedValues)
 
         document.addEventListener("click", this.onDocumentClick)
-        document.addEventListener("keyup", this.onTabOutOrEscape)
+        this.addEventListener("keyup", this.onEscape)
+        this.addEventListener("focusout", this.onFocusOut)
 
         this.addEventListener("mouseenter", this.onMouseEnter)
         this.addEventListener("mouseleave", this.onMouseLeave)
@@ -573,8 +574,9 @@ class MultiSelector extends HTMLElement {
     }
 
     disconnectedCallback() {
+        this.removeEventListener("focusout", this.onFocusOut)
+        this.removeEventListener("keyup", this.onEscape)
         document.removeEventListener("click", this.onDocumentClick)
-        document.removeEventListener("keyup", this.onTabOutOrEscape)
         document.removeEventListener("keydown", this.foldingHandler.handleKeyDown)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
         this.removeEventListener("wheel", this.handleWheel, {
@@ -858,18 +860,29 @@ class MultiSelector extends HTMLElement {
     onDocumentClick(event) {
         if (event.composedPath().includes(this)) return
         this.shadowRoot.querySelector("details").open = false
-        this.onBlur()
+        this.onClose()
     }
 
-    onTabOutOrEscape(event) {
-        let keys = ["Tab", "Escape"]
-        let isInRoot = event.target === this
-        if ( event.key === "Tab" && isInRoot || !keys.includes(event.key) ) { return }
-        this.shadowRoot.querySelector("details").open = false
-        this.onBlur()
+    onEscape(event) {
+        if (event.key === "Escape") {
+            this.shadowRoot.querySelector("details").open = false
+            this.onClose()
+        }
     }
 
-    onBlur() {
+    onFocusOut(event) {
+        // Check if focus is moving outside the component
+        const isStillInside =
+            this.shadowRoot.contains(event.relatedTarget) ||
+            this.contains(event.relatedTarget)
+
+        if (!isStillInside) {
+            this.shadowRoot.querySelector("details").open = false
+            this.onClose()
+        }
+    }
+
+    onClose() {
         this.internals_.setFormValue(JSON.stringify(this.selectedValues))
     }
 
