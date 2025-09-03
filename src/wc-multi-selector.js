@@ -548,8 +548,10 @@ class MultiSelector extends HTMLElement {
 
         this.addEventListener("mouseenter", this.onMouseEnter)
         this.addEventListener("mouseleave", this.onMouseLeave)
-        this.addWheelHandling()
-
+        this.addEventListener("wheel", this.handleWheel, {
+            passive: false,
+            capture: true
+        })
         this.checkboxHandler.addListener()
         this.searchHandler.addListener()
         this.foldingHandler.addListener()
@@ -575,8 +577,9 @@ class MultiSelector extends HTMLElement {
         document.removeEventListener("keyup", this.onTabOutOrEscape)
         document.removeEventListener("keydown", this.foldingHandler.handleKeyDown)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
-        this.mediaQuery.removeEventListener("change", this.handleMediaQueryChange)
-        this.removeWheelHandling()
+        this.removeEventListener("wheel", this.handleWheel, {
+            capture: true
+        })
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -878,30 +881,31 @@ class MultiSelector extends HTMLElement {
     }
 
     // MARK: ...scroll
-    addWheelHandling() {
-        const optionsContainer = this.getElement("options-container")
-        if (optionsContainer) {
-            optionsContainer.addEventListener("wheel", this.handleWheel, {
-                passive: false,
-                capture: true
-            })
-        }
-    }
-
-    removeWheelHandling() {
-        const optionsContainer = this.getElement("options-container")
-        if (optionsContainer) {
-            optionsContainer.removeEventListener("wheel", this.handleWheel, {
-                capture: true
-            })
-        }
-    }
-
     handleWheel(event) {
-        const container = event.currentTarget
+        // Always stop propagation first
+        event.stopPropagation()
 
-        const atTop = container.scrollTop === 0
-        const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 1
+        // Only handle scroll containment if dropdown is open
+        const box = this.getElement("box")
+        if (!box?.open) return
+
+        const optionsContainer = this.getElement("options-container")
+        if (!optionsContainer) return
+
+        // Check if scroll is happening within options area
+        const rect = optionsContainer.getBoundingClientRect()
+        const isWithinOptions =
+            event.clientX >= rect.left &&
+            event.clientX <= rect.right &&
+            event.clientY >= rect.top &&
+            event.clientY <= rect.bottom
+
+        if (!isWithinOptions) return
+
+        const atTop = optionsContainer.scrollTop === 0
+        const atBottom =
+            optionsContainer.scrollTop + optionsContainer.clientHeight >=
+            optionsContainer.scrollHeight - 1
 
         const scrollingUp = event.deltaY < 0
         const scrollingDown = event.deltaY > 0
@@ -909,8 +913,6 @@ class MultiSelector extends HTMLElement {
         if ((atTop && scrollingUp) || (atBottom && scrollingDown)) {
             event.preventDefault()
         }
-
-        event.stopPropagation()
     }
 }
 
