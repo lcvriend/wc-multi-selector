@@ -833,7 +833,7 @@ class MultiSelector extends HTMLElement {
 
     // MARK: ...mode
     handleMediaQueryChange() {
-        //oOnly update mode if it wasn't explicitly set by user
+        //only update mode if it wasn't explicitly set by user
         if (!this._modeExplicitlySet) {
             this.setAttribute("mode", this.mediaQuery.matches ? "dark" : "light")
         }
@@ -871,7 +871,6 @@ class MultiSelector extends HTMLElement {
     }
 
     onFocusOut(event) {
-        // Check if focus is moving outside the component
         const isStillInside =
             this.shadowRoot.contains(event.relatedTarget) ||
             this.contains(event.relatedTarget)
@@ -895,17 +894,16 @@ class MultiSelector extends HTMLElement {
 
     // MARK: ...scroll
     handleWheel(event) {
-        // Always stop propagation first
         event.stopPropagation()
 
-        // Only handle scroll containment if dropdown is open
+        // only handle scroll containment if dropdown is open
         const box = this.getElement("box")
         if (!box?.open) return
 
         const optionsContainer = this.getElement("options-container")
         if (!optionsContainer) return
 
-        // Check if scroll is happening within options area
+        // check if scroll is happening within options area
         const rect = optionsContainer.getBoundingClientRect()
         const isWithinOptions =
             event.clientX >= rect.left &&
@@ -1162,12 +1160,12 @@ class DataHandler {
                 ...item,
             }
 
-            // If no label but has value, use value as label
+            // if no label but has value, use value as label
             if (!normalized.label && normalized.value) {
                 normalized.label = normalized.value
             }
 
-            // Recursively normalize children
+            // recursively normalize children
             if (normalized.children && normalized.children.length > 0) {
                 normalized.children = this.normalizeLabels(normalized.children)
             }
@@ -1294,16 +1292,20 @@ class SearchHandler {
     makeHandleKeyUp() {
         let timeout
         return function(event) {
-            // Only handle if it's the search input
-            if (!event.target.matches('.filter input[type="text"]')) {
-                return
-            }
+            if (!event.target.matches('.filter input[type="text"]')) return
 
             const ignore = [
                 "Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"
             ]
-            if (ignore.includes(event.key)) { return }
-            if (event.key === "Escape") { event.target.value = "" }
+            if (ignore.includes(event.key)) return
+            if (event.key === "Escape") {
+                if (event.target.value === "") {
+                    this.ms.getElement("box").open = false
+                    this.ms.onClose()
+                } else {
+                    event.target.value = ""
+                }
+            }
 
             clearTimeout(timeout)
             const waitSeconds = event.key === "Enter" ? 0 : 500
@@ -1557,6 +1559,7 @@ class FoldingHandler {
 class NavigationHandler {
     constructor(multiselector) {
         this.ms = multiselector
+        this.handleKeyDown = this.handleKeyDown.bind(this)
     }
 
     get box() {
@@ -1576,40 +1579,47 @@ class NavigationHandler {
     }
 
     addListener() {
-        this.ms.shadowRoot.addEventListener("keydown", event =>
-        {
-            if (event.target === this.searchbox) {
-                const allowNavigation = ["ArrowUp", "ArrowDown"].includes(event.key) ||
-                    (["ArrowLeft", "ArrowRight"].includes(event.key) &&
-                    (event.target.value === "" ||
-                    (event.key === "ArrowRight" && event.target.selectionStart === event.target.value.length) ||
-                    (event.key === "ArrowLeft" && event.target.selectionStart === 0)))
+        this.ms.shadowRoot.addEventListener("keydown", event => this.handleKeyDown(event))
+    }
 
-                if (!allowNavigation) {
-                    return // Let text editing happen
-                }
+    handleKeyDown(event) {
+        // handle search input
+        // - prevent key escape
+        // - manage navigation edges
+        if (event.target === this.searchbox) {
+            const keys = [
+                "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+                "Home", "End", "Tab",
+            ]
+            if (!keys.includes(event.key)) {
+                event.stopPropagation()
+                return // let text edit happen
             }
-            switch (event.key) {
-                case "ArrowUp":
-                case "ArrowDown":
-                    this.handleUpDownArrow(event)
-                    break
-                case "ArrowLeft":
-                case "ArrowRight":
-                    this.handleLeftRightArrow(event)
-                    break
-                case "Home":
-                    this.handleHome()
-                    break
-                case "End":
-                    this.handleEnd()
-                    break
-                default:
-                    return
-            }
-            event.preventDefault()
-            event.stopPropagation()
-        })
+            if (!this.shouldAllowNavigation(event)) return
+        }
+
+        switch (event.key) {
+            case "ArrowUp":
+            case "ArrowDown":
+                this.handleUpDownArrow(event)
+                break
+            case "ArrowLeft":
+            case "ArrowRight":
+                this.handleLeftRightArrow(event)
+                break
+            case "Home":
+                this.handleHome()
+                break
+            case "End":
+                this.handleEnd()
+                break
+            case "Enter":
+                this.handleEnter(event)
+            default:
+                return
+        }
+        event.preventDefault()
+        event.stopPropagation()
     }
 
     handleHome() {
@@ -1675,14 +1685,51 @@ class NavigationHandler {
             details[open]:not(.hide) > div > details:not(.hide) > summary .checkbox-wrapper [type="checkbox"],
             details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
         )
-        console.log(opened)
-        console.log(event.target)
         const nextIdx = [...opened].indexOf(event.target)
-        console.log(nextIdx)
         const next = opened[nextIdx + inc]
-        console.log(next)
 
         if (next) { next.focus() }
+    }
+
+    handleEnter(event) {
+        // buttons: trigger click, prevent dropdown close
+        if (event.target.matches(`button`)) {
+            event.target.click()
+            event.preventDefault()
+            event.stopPropagation()
+            return
+        }
+
+        // checkboxes: trigger change
+        if (event.target.matches(`[type="checkbox"]`)) {
+            event.target.checked = !event.target.checked
+            event.target.dispatchEvent(new Event('change', { bubbles: true }))
+            event.preventDefault()
+            event.stopPropagation()
+            return
+        }
+
+        // groups: open/close (default browser behavior)
+        if (event.target.matches(`details > summary`)) {
+            event.stopPropagation() // prevent dropdown close, allow details toggle
+            return
+        }
+    }
+
+    shouldAllowNavigation(event) {
+        const isVerticalNav = ["ArrowUp", "ArrowDown"].includes(event.key)
+        if (isVerticalNav) return true
+
+        const isHorizontalNav = ["ArrowLeft", "ArrowRight"].includes(event.key)
+        if (!isHorizontalNav) return false
+
+        const input = event.target
+        if (input.value === "") return true
+
+        const atStart = input.selectionStart === 0
+        const atEnd = input.selectionStart === input.value.length
+
+        return (event.key === "ArrowLeft" && atStart) || (event.key === "ArrowRight" && atEnd)
     }
 }
 
