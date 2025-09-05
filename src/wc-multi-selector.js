@@ -558,7 +558,6 @@ class MultiSelector extends HTMLElement {
         this.foldingHandler.addListener()
         this.navigationHandler.addListener()
 
-        this.setAttribute("tabindex", "0")
         if (this.hasAttribute("disabled")) {
             this.getElement("box").setAttribute("tabindex", -1)
         }
