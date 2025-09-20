@@ -651,19 +651,27 @@ class MultiSelector extends HTMLElement {
     addSelectedValues(...values) {
         values.forEach(item => {
             const element = this.shadowRoot.querySelector(`input[value="${item}"]`)
-            if (element) { element.checked = true }
+            if (element) {
+                element.checked = true
+                this.checkboxHandler.toggleCheckboxChildren(element)
+            }
         })
         this.checkboxHandler.setAllGroupStates()
         this.renderer.renderSelected()
+        this.dispatchChangeEvent()
     }
 
     removeSelectedValues(...values) {
         values.forEach(item => {
             const element = this.shadowRoot.querySelector(`input[value="${item}"]`)
-            if (element) { element.checked = false }
+            if (element) {
+                element.checked = false
+                this.checkboxHandler.toggleCheckboxChildren(element)
+            }
         })
         this.checkboxHandler.setAllGroupStates()
         this.renderer.renderSelected()
+        this.dispatchChangeEvent()
     }
 
     get selectedLabels() {
