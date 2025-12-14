@@ -14,6 +14,7 @@
     --regex-color: #e90;
 }
 
+body:has(darkmode-toggle[scheme="dark"]),
 .dark-theme {
     --text-color: #f8f8f2;
     --comment-color: #8292a2;
