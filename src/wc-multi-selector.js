@@ -1,16 +1,15 @@
-function createTemplate(options) {
-// MARK: css
-    const css = /*css*/`
+const componentSheet = new CSSStyleSheet()
+componentSheet.replaceSync(`
 /* ==========================================================================
    HOST & FOUNDATION
    ========================================================================== */
 
 :host {
-    position: relative;
     box-sizing: border-box;
     display: grid;
     height: var(--ms-height);
     color: var(--ms-text-color);
+    border-radius: var(--ms-border-radius);
 }
 
 :host *,
@@ -56,54 +55,44 @@ function createTemplate(options) {
 }
 
 /* ==========================================================================
-   CUSTOM PROPERTIES (DARK THEME)
+   TRIGGER
    ========================================================================== */
 
-:host([mode="dark"]),
-:host > details.system-dark {
-    --ms-dropdown-background: hsl(0, 0%, 7%);
-    --ms-hover: color-mix(in srgb, var(--ms-dropdown-background) 85%, currentColor 15%);
+.trigger-bar {
+    anchor-name: --ms-trigger;
+
+    display: flex;
+    align-items: center;
+    padding-inline: .5rem;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: var(--ms-border-radius);
+    background: transparent;
+    color: inherit;
+    font: inherit;
 }
 
-/* ==========================================================================
-   MAIN CONTAINER & DETAILS
-   ========================================================================== */
-
-:host > details {
-    position: absolute;
-    height: 100%;
+.trigger {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
     cursor: pointer;
 }
 
-:where(:host > details) {
-    border: 1px solid var(--ms-border-color);
-    border-radius: var(--ms-border-radius);
-}
-
-:host > details[open] {
-    height: unset;
-    z-index: 999999;
-}
-
-/* ==========================================================================
-   SUMMARY (TRIGGER)
-   ========================================================================== */
-
-:host > details > summary {
-    display: flex;
-    align-items: center;
-    gap: .5em;
-    height: var(--ms-height);
-    padding-block: var(--ms-padding-block);
-    padding-inline: var(--ms-padding-inline);
-}
-
-:host > details > summary > .display {
+.trigger > .display {
     margin-right: auto;
 }
 
-:host > details[open] .click-me {
-    display: none;
+:host([open]) .trigger-bar {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
 }
 
 /* ==========================================================================
@@ -145,7 +134,7 @@ function createTemplate(options) {
 
 :where([data-command]) {
     background-color: var(--ms-button-background);
-    border: 1px solid var(--ms-border-color);
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
     color: var(--ms-text-color);
 }
 
@@ -170,7 +159,7 @@ function createTemplate(options) {
     border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
 }
 
-:host > details[open] [data-command] {
+:host([open]) [data-command] {
     display: grid;
     place-items: center;
 }
@@ -179,18 +168,28 @@ function createTemplate(options) {
    DROPDOWN CONTAINER
    ========================================================================== */
 
-:host > details[open] > div {
+.dropdown:popover-open {
+    position-anchor: --ms-trigger;
+    position: fixed;
+    top: anchor(bottom);
+    left: anchor(left);
+    width: anchor-size(width);
+    margin: 0;
+    padding: 0;
+    color: inherit;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-top: none;
+    border-radius: 0 0 var(--ms-border-radius) var(--ms-border-radius);
+    background-color: var(--ms-dropdown-background);
     display: grid;
     grid-template-rows: auto 1fr;
     gap: .5em;
     padding-inline: var(--ms-padding-inline);
     padding-bottom: 1em;
-    border-bottom-left-radius: var(--ms-border-radius);
-    border-bottom-right-radius: var(--ms-border-radius);
 }
 
-:where(:host > details[open] > div) {
-    background-color: var(--ms-dropdown-background);
+:host([open]) .click-me {
+    display: none;
 }
 
 /* ==========================================================================
@@ -209,7 +208,7 @@ function createTemplate(options) {
     padding-inline: .5em;
     padding-block: var(--ms-padding-block);
     border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
-    border: 1px solid var(--ms-border-color);
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
     border-right: none;
 }
 
@@ -249,7 +248,7 @@ function createTemplate(options) {
    OPTIONS CONTAINER
    ========================================================================== */
 
-:host > details[open] > div > .options {
+[popover] > .options {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -305,7 +304,7 @@ function createTemplate(options) {
 }
 
 [data-role="group"] > :not(summary) {
-    border-left: 2px solid var(--ms-border-color);
+    border-left: 2px solid color-mix(in srgb, currentColor 30%, transparent);
     margin-left: .25rem;
     padding-left: .75rem;
 }
@@ -327,8 +326,7 @@ input[type="checkbox"] + label:before,
     transition: transform 0.1s ease;
 }
 
-/*
-==========================================================================
+/* ==========================================================================
    OPTIONS
    ========================================================================== */
 
@@ -385,8 +383,7 @@ input[type="checkbox"]:indeterminate + label:before {
 }
 
 input[type="checkbox"]:focus-visible + label:before {
-    outline: 2px solid Highlight;
-    outline: 2px solid -webkit-focus-ring-color;
+    outline: 2px solid var(--focus-color, Highlight);
     outline-offset: 2px;
 }
 
@@ -398,8 +395,12 @@ input[type="checkbox"]:focus-visible + label:before {
     display: none;
 }
 
-:focus-visible {
-    z-index: 999999;
+.trigger:focus-visible {
+    outline: none;
+}
+
+.trigger-bar:has(.trigger:focus-visible) {
+    outline: 2px solid var(--focus-color, Highlight);
 }
 
 /* ==========================================================================
@@ -411,7 +412,6 @@ input[type="checkbox"]:focus-visible + label:before {
     --ms-border-color: var(--ms-border-color-disabled);
     background-color: var(--ms-background-disabled);
     color: var(--ms-text-color-disabled);
-    tab-index: -1;
     pointer-events: none;
     user-select: none;
 }
@@ -442,40 +442,95 @@ code {
     border-radius: 20px;
     border: transparent;
 }
-`
-// MARK: html
+
+/* ==========================================================================
+   TOOLTIP
+   ========================================================================== */
+
+.tooltip {
+    position-anchor: --ms-trigger;
+    position: fixed;
+    top: calc(anchor(bottom) + 0.25rem);
+    left: anchor(left);
+    position-try-fallbacks: flip-block, flip-inline;
+    margin: 0;
+    padding: 0.5rem;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: var(--ms-border-radius);
+    background-color: var(--ms-dropdown-background);
+    color: inherit;
+    font: inherit;
+    width: anchor-size(width);
+}
+
+.tooltip-title {
+    font-weight: bold;
+    font-size: .95em;
+    margin-bottom: 0.25rem;
+}
+
+.tooltip-items {
+    line-height: 1.4;
+    font-size: 0.85em;
+}
+
+.tooltip-group + .tooltip-group {
+    margin-top: 0.25rem;
+}
+
+.tooltip-group-header {
+    font-weight: bold;
+}
+`)
+
+
+function createTemplate(options) {
     return /*html*/`
-<style>
-${css}
-</style>
-<details part="container">
-    <summary>
+<div part="trigger" class="trigger-bar">
+    <button class="trigger" popovertarget="dropdown">
         <div part="display" class="display"><span>...</span></div>
-        <div part="controls" class="control-panel">
-            <button part="control-button" data-command="unfold"
-                title="${options.titles.unfoldGroups}">&plus;</button>
-            <button part="control-button" data-command="fold"
-                title="${options.titles.foldGroups}">&minus;</button>
-            <button part="control-button" data-command="show-selected"
-                title="${options.titles.showSelected}" disabled>&#9745;</button>
-        </div>
         <div class="click-me">&#9660;</div>
-    </summary>
-    <div part="dropdown">
-        <div part="filter" class="filter">
-            <div class="search-container">
-                <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
-                <button data-command="toggle-values-only"
-                title="${options.titles.valuesOnly}">[val]</button>
-            </div>
-            <button part="control-button" data-command="clear-query"
-                title="${options.titles.clearFilter}">&Cross;</button>
-        </div>
-        <div part="options" class="options"></div>
+    </button>
+    <div part="controls" class="control-panel">
+        <button 
+            part="control-button"
+            data-command="unfold"
+            title="${options.titles.unfoldGroups}"
+            popovertarget="dropdown"
+            popovertargetaction="show"
+        >&plus;</button>
+        <button
+            part="control-button"
+            data-command="fold"
+            title="${options.titles.foldGroups}"
+            popovertarget="dropdown"
+            popovertargetaction="show"
+        >&minus;</button>
+        <button
+            part="control-button"
+            data-command="show-selected"
+            title="${options.titles.showSelected}"
+            popovertarget="dropdown"
+            popovertargetaction="show"
+            disabled
+        >&#9745;</button>
     </div>
-</details>
-        `
-    }
+</div>
+<div id="dropdown" part="dropdown" popover class="dropdown">
+    <div part="filter" class="filter">
+        <div class="search-container">
+            <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
+            <button data-command="toggle-values-only"
+            title="${options.titles.valuesOnly}">[val]</button>
+        </div>
+        <button part="control-button" data-command="clear-query"
+            title="${options.titles.clearFilter}">&Cross;</button>
+    </div>
+    <div part="options" class="options"></div>
+</div>
+<div id="tooltip" part="tooltip" popover="manual" class="tooltip"></div>
+    `
+}
 
 
 // region selector
@@ -507,7 +562,7 @@ class MultiSelector extends HTMLElement {
 
     constructor() {
         super()
-        this._settings = {...this.constructor.defaultSettings}
+        this._settings = { ...this.constructor.defaultSettings }
         this._pendingAttributes = new Map()
         this._isReady = false
         this.internals_ = this.attachInternals()
@@ -520,15 +575,11 @@ class MultiSelector extends HTMLElement {
         this.checkboxHandler = new CheckboxHandler(this)
         this.foldingHandler = new FoldingHandler(this)
         this.navigationHandler = new NavigationHandler(this)
+        this.handlePopoverToggle = this.handlePopoverToggle.bind(this)
+        this.tooltipHandler = new TooltipHandler(this)
 
-        this.onMouseEnter = this.onMouseEnter.bind(this)
-        this.onMouseLeave = this.onMouseLeave.bind(this)
-        this.onDocumentClick = this.onDocumentClick.bind(this)
-        this.onEscape = this.onEscape.bind(this)
         this.handleMediaQueryChange = this.handleMediaQueryChange.bind(this)
         this.handleWheel = this.handleWheel.bind(this)
-
-        this.isHover = false
     }
 
     async connectedCallback() {
@@ -543,12 +594,7 @@ class MultiSelector extends HTMLElement {
         // participate in form
         this.internals_.setFormValue(this.selectedValues)
 
-        document.addEventListener("click", this.onDocumentClick)
-        this.addEventListener("keyup", this.onEscape)
-        this.addEventListener("focusout", this.onFocusOut)
-
-        this.addEventListener("mouseenter", this.onMouseEnter)
-        this.addEventListener("mouseleave", this.onMouseLeave)
+        this.getElement("dropdown").addEventListener("toggle", this.handlePopoverToggle)
         this.addEventListener("wheel", this.handleWheel, {
             passive: false,
             capture: true
@@ -557,16 +603,17 @@ class MultiSelector extends HTMLElement {
         this.searchHandler.addListener()
         this.foldingHandler.addListener()
         this.navigationHandler.addListener()
+        this.tooltipHandler.addListener()
 
         if (this.hasAttribute("disabled")) {
-            this.getElement("box").setAttribute("tabindex", -1)
+            this.getElement("trigger").disabled = true
         }
 
         // observe mutations
         let observer = new MutationObserver(async () => {
             this.data = await this.dataHandler.getData()
         })
-        observer.observe(this, {childList: true})
+        observer.observe(this, { childList: true })
 
         this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
         this.mediaQuery.addEventListener("change", this.handleMediaQueryChange)
@@ -574,10 +621,8 @@ class MultiSelector extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.removeEventListener("focusout", this.onFocusOut)
-        this.removeEventListener("keyup", this.onEscape)
-        document.removeEventListener("click", this.onDocumentClick)
-        document.removeEventListener("keydown", this.foldingHandler.handleKeyDown)
+        this.getElement("dropdown")?.removeEventListener("toggle", this.handlePopoverToggle)
+        document.removeEventListener("keydown", this.foldingHandler.handleKeyUp)
         document.removeEventListener("keydown", this.searchHandler.handleKeyManageFilter)
         this.removeEventListener("wheel", this.handleWheel, {
             capture: true
@@ -596,21 +641,14 @@ class MultiSelector extends HTMLElement {
     }
 
     applyAttribute(property, newValue) {
-        switch(property) {
+        switch (property) {
             case "name":
                 this.name = newValue
                 break
-            case "mode":
-                this.getElement("box").classList.remove("system-dark")
-                break
             case "disabled":
-                const box = this.getElement("box")
-                if (box) {
-                    if (newValue === "") {
-                        box.setAttribute("tabindex", -1)
-                    } else {
-                        box.removeAttribute("tabindex")
-                    }
+                const trigger = this.getElement("trigger")
+                if (trigger) {
+                    trigger.disabled = (newValue === "")
                 }
                 break
             default:
@@ -631,7 +669,7 @@ class MultiSelector extends HTMLElement {
     }
 
     set settings(newSettings) {
-        this._settings = {...this.constructor.defaultSettings, ...newSettings}
+        this._settings = { ...this.constructor.defaultSettings, ...newSettings }
         this.renderer?.render()
     }
 
@@ -640,7 +678,7 @@ class MultiSelector extends HTMLElement {
     }
 
     get isActive() {
-        return this.contains(document.activeElement) || this.isHover
+        return this.contains(document.activeElement)
     }
 
     // MARK: ...selection
@@ -718,11 +756,17 @@ class MultiSelector extends HTMLElement {
     getElement(name) {
         let query
         switch (name) {
-            case "box":
-                query = "details"
-                break
             case "display":
                 query = ".display"
+                break
+            case "trigger":
+                query = ".trigger"
+                break
+            case "trigger-bar":
+                query = ".trigger-bar"
+                break
+            case "dropdown":
+                query = "[popover]"
                 break
             case "fold":
                 query = `[data-command="fold"]`
@@ -743,13 +787,16 @@ class MultiSelector extends HTMLElement {
                 query = `[data-command="toggle-values-only"]`
                 break
             case "options-container":
-                query = ":host > details > div > .options"
+                query = "[popover] > .options"
                 break
             case "first-group":
                 query = `[data-role="group"]`
                 break
             case "label-all":
                 query = `[data-role="group"] label`
+                break
+            case "tooltip":
+                query = "#tooltip"
                 break
             default:
                 console.warn(`Unexpected value passed to getElement: ${name}`)
@@ -760,7 +807,7 @@ class MultiSelector extends HTMLElement {
 
     getElements(name) {
         let query
-        switch(name) {
+        switch (name) {
             case "options":
                 query = `[data-role="option"]`
                 break
@@ -865,39 +912,26 @@ class MultiSelector extends HTMLElement {
     }
 
     // MARK: ...focus
-    onDocumentClick(event) {
-        if (event.composedPath().includes(this)) return
-        this.shadowRoot.querySelector("details").open = false
-        this.onClose()
-    }
-
-    onEscape(event) {
-        if (event.key === "Escape") {
-            this.shadowRoot.querySelector("details").open = false
-            this.onClose()
-        }
-    }
-
-    onFocusOut(event) {
-        const isStillInside =
-            this.shadowRoot.contains(event.relatedTarget) ||
-            this.contains(event.relatedTarget)
-
-        if (!isStillInside) {
-            this.shadowRoot.querySelector("details").open = false
-            this.onClose()
-        }
-    }
-
     onClose() {
         this.internals_.setFormValue(JSON.stringify(this.selectedValues))
     }
 
-    onMouseEnter() {
-        this.isHover = true
+    handlePopoverToggle(event) {
+        if (event.newState === "open") {
+            this.tooltipHandler.hide()
+            this.setAttribute("open", "")
+            this.getElement("trigger")?.focus()
+        } else {
+            this.removeAttribute("open")
+            this.onClose()
+        }
     }
-    onMouseLeave() {
-        this.isHover = false
+
+    handleTriggerClick(event) {
+        if (event.target.closest("[data-command]")) return
+        if (!event.target.closest(".trigger")) return
+        if (this._justDismissed) return
+        this.getElement("dropdown").togglePopover()
     }
 
     // MARK: ...scroll
@@ -905,8 +939,8 @@ class MultiSelector extends HTMLElement {
         event.stopPropagation()
 
         // only handle scroll containment if dropdown is open
-        const box = this.getElement("box")
-        if (!box?.open) return
+        const dropdown = this.getElement("dropdown")
+        if (!dropdown?.matches(":popover-open")) return
 
         const optionsContainer = this.getElement("options-container")
         if (!optionsContainer) return
@@ -961,23 +995,20 @@ class Renderer {
     }
 
     render() {
+        this.ms.shadowRoot.adoptedStyleSheets = [componentSheet]
         this.ms.shadowRoot.innerHTML = createTemplate(this.ms.settings).trim()
         let html = this.htmlBuilder.buildHTML(this.ms.data)
         this.optionsContainer.innerHTML += html
         this.ms.checkboxHandler.setAllGroupStates()
         this.renderSelected()
+        this.ms.getElement("dropdown").addEventListener("toggle", this.ms.handlePopoverToggle)
     }
 
     renderEmpty() {
+        this.ms.shadowRoot.adoptedStyleSheets = [componentSheet]
         this.ms.shadowRoot.innerHTML = createTemplate(this.ms.settings).trim()
         this.ms.getElement("display").innerHTML = `<span>${this.ms.settings.labels.empty}</span>`
-    }
-
-    renderTitle(item) {
-        const title = `${item.label} [${item.count}]`
-        const underline = "-".repeat(title.length)
-        const itemList = this.listFormat.format(item.items)
-        return `${title}\n${underline}\n${itemList}`
+        this.ms.getElement("dropdown").addEventListener("toggle", this.ms.handlePopoverToggle)
     }
 
     renderSelected() {
@@ -1003,7 +1034,7 @@ class Renderer {
 
             const displayItems = sorted.map(item => {
                 return item.type === "group"
-                    ? `<span title="${this.renderTitle(item)}">${item.label} <code>[${item.count}]</code></span>`
+                    ? `<span>${item.label} <code>[${item.count}]</code></span>`
                     : item.label
             })
             displayText = this.listFormat.format(displayItems)
@@ -1011,13 +1042,8 @@ class Renderer {
             displayText = this.ms.placeholder
         }
 
-        const title = this.renderTitle({
-            label: this.ms.settings.labels.all,
-            items: selectedLabels,
-            count: selectedLabels.length,
-        })
         this.ms.getElement("display").innerHTML = selectedLabels.length > 0
-            ? `<span title="${title}">${displayText}</span>`
+            ? `<span>${displayText}</span>`
             : displayText
 
         this.ms.getElement("show-selected").disabled = selectedLabels.length === 0
@@ -1035,6 +1061,38 @@ class Renderer {
                 ? `[${selectedCount}/${total}]`
                 : `[${total}]`
         })
+    }
+
+    renderTooltip() {
+        const selectedLabels = this.ms.selectedLabels
+        if (selectedLabels.length === 0) return false
+
+        const groups = this.ms.shadowRoot.querySelectorAll(`[data-role="group"]`)
+        let html = ""
+
+        groups.forEach(group => {
+            if (parseInt(group.dataset.depth) === 0) return
+
+            const checkedOptions = [...group.querySelectorAll(`[data-role="option"] input:checked`)]
+                .filter(input => input.closest(`[data-role="group"]`) === group)
+            if (checkedOptions.length === 0) return
+
+            const checkbox = group.querySelector("input")
+            const nextSibling = checkbox.nextElementSibling
+            const label = nextSibling.querySelector("span")?.textContent || nextSibling.textContent
+
+            const labels = checkedOptions.map(input => input.nextElementSibling.textContent.trim())
+
+            html += `<div class="tooltip-group">`
+                + `<div class="tooltip-group-header">${label} [${checkedOptions.length}]</div>`
+                + `<div>${this.listFormat.format(labels)}</div>`
+                + `</div>`
+        })
+
+        const tooltip = this.ms.getElement("tooltip")
+        tooltip.innerHTML = html
+
+        return true
     }
 }
 
@@ -1068,7 +1126,7 @@ class HTMLBuilder {
             id="${itemID}"
             name="${itemID}"
             value="${item.value}"
-            ${item.selected ? "checked": ""}>
+            ${item.selected ? "checked" : ""}>
         <label for="${itemID}">${item.label}</label>`
 
         return `<div
@@ -1089,7 +1147,7 @@ class HTMLBuilder {
                 id="${itemID}"
                 name="${itemID}"
                 value="${item.value}"
-                ${item.selected ? "checked": ""}>
+                ${item.selected ? "checked" : ""}>
             <label for="${itemID}">${label}</label>
         </span>`
 
@@ -1263,7 +1321,7 @@ class SearchHandler {
     }
 
     handleKeyManageFilter(event) {
-        if (!this.ms.isActive) return
+        // if (!this.ms.isActive) return
         if (!event.ctrlKey) return
 
         switch (event.key) {
@@ -1299,7 +1357,7 @@ class SearchHandler {
 
     makeHandleKeyUp() {
         let timeout
-        return function(event) {
+        return function (event) {
             if (!event.target.matches('.filter input[type="text"]')) return
 
             const ignore = [
@@ -1308,8 +1366,7 @@ class SearchHandler {
             if (ignore.includes(event.key)) return
             if (event.key === "Escape") {
                 if (event.target.value === "") {
-                    this.ms.getElement("box").open = false
-                    this.ms.onClose()
+                    this.ms.getElement("dropdown").hidePopover()
                 } else {
                     event.target.value = ""
                 }
@@ -1475,7 +1532,7 @@ class FoldingHandler {
     constructor(multiselector) {
         this.ms = multiselector
         this.handleClick = this.handleClick.bind(this)
-        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleKeyUp = this.handleKeyUp.bind(this)
     }
 
     get options() {
@@ -1484,12 +1541,11 @@ class FoldingHandler {
 
     addListener() {
         this.ms.shadowRoot.addEventListener("click", this.handleClick)
-        document.addEventListener("keydown", this.handleKeyDown)
+        document.addEventListener("keyup", this.handleKeyUp)
     }
 
-    handleKeyDown(event) {
-        if (!this.ms.isActive) return
-
+    handleKeyUp(event) {
+        // if (!this.ms.isActive) return
         if (!event.ctrlKey) return
 
         switch (event.key) {
@@ -1570,16 +1626,24 @@ class NavigationHandler {
         this.handleKeyDown = this.handleKeyDown.bind(this)
     }
 
-    get box() {
-        return this.ms.getElement("box")
+    get trigger() {
+        return this.ms.getElement("trigger")
+    }
+
+    get dropdown() {
+        return this.ms.getElement("dropdown")
+    }
+
+    get isOpen() {
+        return this.dropdown?.matches(":popover-open")
     }
 
     get focusableElementsSelector() {
         return `
-            .search-container input[type="text"],
-            details[open]:not(.hide) > summary,
-            details[open]:not(.hide) > div > details:not(.hide) > summary,
-            details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
+        .search-container input[type="text"],
+        details[data-depth="0"]:not(.hide) > summary,
+        details[open]:not(.hide) > div > details:not(.hide) > summary,
+        details[open]:not(.hide) > div > div:not(.hide) > [type="checkbox"]`
     }
 
     get searchbox() {
@@ -1591,6 +1655,26 @@ class NavigationHandler {
     }
 
     handleKeyDown(event) {
+        const keys = [
+            "ArrowUp", "ArrowDown",
+            "ArrowLeft", "ArrowRight",
+            "Home", "End", "Tab",
+            "Enter", " ",
+            "Escape",
+        ]
+        if (!keys.includes(event.key)) return
+
+        if (event.key === "Escape") {
+            if (event.target === this.searchbox && event.target.value !== "") {
+                event.target.value = ""
+            } else if (this.isOpen) {
+                this.dropdown.hidePopover()
+                this.trigger.focus()
+            }
+            event.stopPropagation()
+            return
+        }
+
         // handle search input
         // - prevent key escape
         // - manage navigation edges
@@ -1606,6 +1690,9 @@ class NavigationHandler {
             if (!this.shouldAllowNavigation(event)) return
         }
 
+        if (!this.isOpen && !["Enter", " "].includes(event.key)) {
+            return // let parent handle navigation
+        }
         switch (event.key) {
             case "ArrowUp":
             case "ArrowDown":
@@ -1631,12 +1718,12 @@ class NavigationHandler {
     }
 
     handleHome() {
-        this.box.querySelector("summary").focus()
+        this.trigger.focus()
     }
 
     handleEnd() {
         const selectors = this.focusableElementsSelector
-        const opened = this.box.querySelectorAll(selectors);
+        const opened = this.dropdown.querySelectorAll(selectors);
         [...opened].at(-1).focus()
     }
 
@@ -1644,43 +1731,57 @@ class NavigationHandler {
         const inc = event.key === "ArrowDown" ? 1 : -1
 
         // handle toplevel
-        if ( event.target.matches(`:host > details > summary, :host > details > summary > *`) ) {
-            if ( inc > 0 && !this.box.open ) {
-                this.box.setAttribute("open", "")
+        if (event.target === this.trigger) {
+            if (inc > 0 && !this.isOpen) {
+                this.dropdown.showPopover()
                 return
             }
-            if ( inc < 0 && this.box.open ) {
-                this.box.removeAttribute("open")
+            if (inc < 0 && this.isOpen) {
+                this.dropdown.hidePopover()
                 return
             }
         }
 
+        if (event.target === this.searchbox && inc < 0) {
+            this.trigger.focus()
+            return
+        }
+
         // handle filter buttons
-        if ( event.target.matches(`.filter button`)) {
-            if ( inc > 0 ) {
-                const firstOption = this.box.querySelector(`.options details:not(.hide) > summary, .options div:not(.hide) > [type="checkbox"]`)
+        if (event.target.matches(`.filter button`)) {
+            if (inc > 0) {
+                const firstOption = this.dropdown.querySelector(`.options details:not(.hide) > summary, .options div:not(.hide) > [type="checkbox"]`)
                 if (firstOption) {
                     firstOption.focus()
                 }
                 return
             }
-            if ( inc < 0 ) {
-                this.box.querySelector(`summary`).focus()
+            if (inc < 0) {
+                this.trigger.focus()
                 return
             }
         }
 
         const selectors = this.focusableElementsSelector
-        const opened = this.box.querySelectorAll(selectors)
+        const opened = this.dropdown.querySelectorAll(selectors)
         const closest = event.target.closest(selectors)
         const nextIdx = [...opened].indexOf(closest)
         const next = opened[nextIdx + inc]
-        if ( next ) { next.focus() }
+        if (next) { next.focus() }
     }
 
     handleLeftRightArrow(event) {
         const inc = event.key === "ArrowRight" ? 1 : -1
-        const opened = this.box.querySelectorAll(`
+        if (event.target.closest(".trigger-bar")) {
+            const bar = this.ms.getElement("trigger-bar")
+            const elements = bar.querySelectorAll("button:not([disabled])")
+            const idx = [...elements].indexOf(event.target)
+            const inc = event.key === "ArrowRight" ? 1 : -1
+            const next = elements[idx + inc]
+            if (next) next.focus()
+            return
+        }
+        const opened = this.dropdown.querySelectorAll(`
             .control-panel button:not([disabled]),
             .search-container input[type="text"],
             [data-command="toggle-values-only"],
@@ -1700,9 +1801,16 @@ class NavigationHandler {
     }
 
     handleEnter(event) {
-        // buttons: trigger click, prevent dropdown close
-        if (event.target.matches(`button`)) {
-            event.target.click()
+        // trigger: do nothing when on data-commands
+        if (event.target.matches(`[data-command]`)) {
+            event.preventDefault()
+            event.stopPropagation()
+            return
+        }
+
+        // trigger: toggle dropdown
+        if (event.target.closest(".trigger")) {
+            this.dropdown.togglePopover()
             event.preventDefault()
             event.stopPropagation()
             return
@@ -1741,5 +1849,52 @@ class NavigationHandler {
     }
 }
 
+// region tooltip
+class TooltipHandler {
+    constructor(multiselector) {
+        this.ms = multiselector
+        this._delay = 400
+        this._timer = null
+        this.handleMouseOver = this.handleMouseOver.bind(this)
+        this.handleMouseOut = this.handleMouseOut.bind(this)
+    }
+
+    get tooltip() {
+        return this.ms.getElement("tooltip")
+    }
+
+    get isOpen() {
+        return this.tooltip?.matches(":popover-open")
+    }
+
+    addListener() {
+        this.ms.shadowRoot.addEventListener("mouseover", this.handleMouseOver)
+        this.ms.shadowRoot.addEventListener("mouseout", this.handleMouseOut)
+    }
+
+    show() {
+        if (!this.ms.renderer.renderTooltip()) return
+        this.tooltip.showPopover()
+    }
+
+    hide() {
+        clearTimeout(this._timer)
+        if (this.isOpen) this.tooltip.hidePopover()
+    }
+
+    handleMouseOver() {
+        if (!event.target.closest(".trigger-bar")) return
+        if (event.relatedTarget?.closest(".trigger-bar")) return
+        if (this.ms.getElement("dropdown").matches(":popover-open")) return
+        if (this.ms.selectedLabels.length === 0) return
+        this._timer = setTimeout(() => this.show(), this._delay)
+    }
+
+    handleMouseOut() {
+        if (!event.target.closest(".trigger-bar")) return
+        if (event.relatedTarget?.closest(".trigger-bar")) return
+        this.hide()
+    }
+}
 
 window.customElements.define("multi-selector", MultiSelector)
