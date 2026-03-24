@@ -1071,15 +1071,19 @@ class Renderer {
         let html = ""
 
         groups.forEach(group => {
-            if (parseInt(group.dataset.depth) === 0) return
-
             const checkedOptions = [...group.querySelectorAll(`[data-role="option"] input:checked`)]
                 .filter(input => input.closest(`[data-role="group"]`) === group)
             if (checkedOptions.length === 0) return
 
             const checkbox = group.querySelector("input")
             const nextSibling = checkbox.nextElementSibling
-            const label = nextSibling.querySelector("span")?.textContent || nextSibling.textContent
+            let label = nextSibling.querySelector("span")?.textContent || nextSibling.textContent
+
+            if (parseInt(group.dataset.depth) === 0) {
+                const hasChildGroups = group.querySelector(`[data-role="group"]`) !== null
+                if (hasChildGroups) return
+                label = this.ms.getAttribute("name") ?? label
+            }
 
             const labels = checkedOptions.map(input => input.nextElementSibling.textContent.trim())
 
