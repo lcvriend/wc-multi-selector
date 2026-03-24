@@ -54,6 +54,10 @@ componentSheet.replaceSync(`
     --ms-filter-placeholder-text-color: color-mix(in srgb, currentColor 50%, transparent);
 }
 
+:host([mode="dark"]) {
+    --ms-dropdown-background: hsl(0, 0%, 18%);
+}
+
 /* ==========================================================================
    TRIGGER
    ========================================================================== */
@@ -575,9 +579,10 @@ class MultiSelector extends HTMLElement {
         this.checkboxHandler = new CheckboxHandler(this)
         this.foldingHandler = new FoldingHandler(this)
         this.navigationHandler = new NavigationHandler(this)
-        this.handlePopoverToggle = this.handlePopoverToggle.bind(this)
         this.tooltipHandler = new TooltipHandler(this)
 
+        this.handlePopoverToggle = this.handlePopoverToggle.bind(this)
+        this.handleExternalScroll = this.handleExternalScroll.bind(this)
         this.handleMediaQueryChange = this.handleMediaQueryChange.bind(this)
         this.handleWheel = this.handleWheel.bind(this)
     }
@@ -627,6 +632,7 @@ class MultiSelector extends HTMLElement {
         this.removeEventListener("wheel", this.handleWheel, {
             capture: true
         })
+        window.removeEventListener("scroll", this.handleExternalScroll, true)
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -921,8 +927,10 @@ class MultiSelector extends HTMLElement {
             this.tooltipHandler.hide()
             this.setAttribute("open", "")
             this.getElement("trigger")?.focus()
+            window.addEventListener("scroll", this.handleExternalScroll, true)
         } else {
             this.removeAttribute("open")
+            window.removeEventListener("scroll", this.handleExternalScroll, true)
             this.onClose()
         }
     }
@@ -966,6 +974,10 @@ class MultiSelector extends HTMLElement {
         if ((atTop && scrollingUp) || (atBottom && scrollingDown)) {
             event.preventDefault()
         }
+    }
+
+    handleExternalScroll() {
+        this.getElement("dropdown").hidePopover()
     }
 }
 
