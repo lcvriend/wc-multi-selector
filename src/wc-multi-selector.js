@@ -131,9 +131,11 @@ componentSheet.replaceSync(`
 }
 
 [data-command] {
-    display: none;
+    display: grid;
+    place-items: center;
     user-select: none;
     font-family: monospace;
+    min-width: 1.5rem;
 }
 
 :where([data-command]) {
@@ -143,7 +145,7 @@ componentSheet.replaceSync(`
 }
 
 [data-command][disabled] {
-    color: hsl(0, 0%, 72%);
+    opacity: .5;
 }
 
 :where([data-command]:not([disabled])):hover {
@@ -155,17 +157,18 @@ componentSheet.replaceSync(`
     background-color: var(--ms-button-background-active);
 }
 
-[data-command]:first-of-type {
-    border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
-}
-
-[data-command]:last-of-type {
+[data-command="clear-query"] {
     border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
+    margin-right: .5rem;
 }
 
-:host([open]) [data-command] {
-    display: grid;
-    place-items: center;
+[data-command="unfold"] {
+    border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
+    border-right: none;
+}
+[data-command="show-selected"] {
+    border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
+    border-left: none;
 }
 
 /* ==========================================================================
@@ -196,6 +199,14 @@ componentSheet.replaceSync(`
     display: none;
 }
 
+.close-me {
+    display: none;
+}
+
+:host([open]) .close-me {
+    display: block;
+}
+
 /* ==========================================================================
    FILTER SECTION
    ========================================================================== */
@@ -214,6 +225,7 @@ componentSheet.replaceSync(`
     border-radius: var(--ms-border-radius) 0 0 var(--ms-border-radius);
     border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
     border-right: none;
+    background-color: var(--ms-filter-background);
 }
 
 .search-container > input {
@@ -240,7 +252,6 @@ componentSheet.replaceSync(`
 }
 
 :where(.filter) {
-    background-color: var(--ms-filter-background);
     color: var(--ms-filter-text-color);
 }
 
@@ -494,31 +505,8 @@ function createTemplate(options) {
     <button class="trigger" popovertarget="dropdown">
         <div part="display" class="display"><span>...</span></div>
         <div class="click-me">&#9660;</div>
+        <div class="close-me">&#9650;</div>
     </button>
-    <div part="controls" class="control-panel">
-        <button 
-            part="control-button"
-            data-command="unfold"
-            title="${options.titles.unfoldGroups}"
-            popovertarget="dropdown"
-            popovertargetaction="show"
-        >&plus;</button>
-        <button
-            part="control-button"
-            data-command="fold"
-            title="${options.titles.foldGroups}"
-            popovertarget="dropdown"
-            popovertargetaction="show"
-        >&minus;</button>
-        <button
-            part="control-button"
-            data-command="show-selected"
-            title="${options.titles.showSelected}"
-            popovertarget="dropdown"
-            popovertargetaction="show"
-            disabled
-        >&#9745;</button>
-    </div>
 </div>
 <div id="dropdown" part="dropdown" popover class="dropdown">
     <div part="filter" class="filter">
@@ -527,8 +515,29 @@ function createTemplate(options) {
             <button data-command="toggle-values-only"
             title="${options.titles.valuesOnly}">[val]</button>
         </div>
-        <button part="control-button" data-command="clear-query"
-            title="${options.titles.clearFilter}">&Cross;</button>
+        <div part="controls" class="control-panel">
+            <button
+                part="control-button"
+                data-command="clear-query"
+                title="${options.titles.clearFilter}"
+            >&Cross;</button>
+            <button 
+                part="control-button"
+                data-command="unfold"
+                title="${options.titles.unfoldGroups}"
+            >&plus;</button>
+            <button
+                part="control-button"
+                data-command="fold"
+                title="${options.titles.foldGroups}"
+            >&minus;</button>
+            <button
+                part="control-button"
+                data-command="show-selected"
+                title="${options.titles.showSelected}"
+                disabled
+            >&#9745;</button>
+        </div>
     </div>
     <div part="options" class="options"></div>
 </div>
