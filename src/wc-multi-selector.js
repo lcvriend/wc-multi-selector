@@ -96,7 +96,7 @@ componentSheet.replaceSync(`
 :host([open]) .trigger-bar {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-bottom: none;
+    border-bottom-color: transparent;
 }
 
 /* ==========================================================================
