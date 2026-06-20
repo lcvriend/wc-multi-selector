@@ -6,10 +6,14 @@ componentSheet.replaceSync(`
 
 :host {
     box-sizing: border-box;
+    flex: 1;
     display: grid;
     height: var(--ms-height);
     color: var(--ms-text-color);
     border-radius: var(--ms-border-radius);
+    min-width: 140px;
+    container-type: inline-size;
+    container-name: host;
 }
 
 :host *,
@@ -128,6 +132,7 @@ componentSheet.replaceSync(`
 
 .control-panel {
     display: flex;
+    justify-content: flex-end;
 }
 
 [data-command] {
@@ -159,7 +164,6 @@ componentSheet.replaceSync(`
 
 [data-command="clear-query"] {
     border-radius: 0 var(--ms-border-radius) var(--ms-border-radius) 0;
-    margin-right: .5rem;
 }
 
 [data-command="unfold"] {
@@ -214,9 +218,18 @@ componentSheet.replaceSync(`
 .filter {
     display: grid;
     grid-template-columns: 1fr auto;
+    gap: .5rem;
 }
 
-.search-container {
+.search {
+    display: flex;
+    container-type: inline-size;
+    container-name: search;
+}
+
+.searchbox {
+    flex: 1;
+    min-width: 80px;
     display: grid;
     gap: .5em;
     grid-template-columns: 1fr auto;
@@ -228,26 +241,46 @@ componentSheet.replaceSync(`
     background-color: var(--ms-filter-background);
 }
 
-.search-container > input {
+.searchbox > input {
     padding-block: var(--ms-padding-block);
     padding-inline: var(--ms-padding-inline);
     border: none;
     background-color: transparent;
     color: inherit;
+    min-width: 0;
 }
 
-.filter .search-container > [data-command] {
+.filter .searchbox > [data-command] {
     border-radius: var(--ms-border-radius);
     background-color: transparent;
     border: none;
     font-size: .65em;
 }
 
-.filter .search-container > [data-command]:hover {
+@container host (max-width: 220px) {
+    .filter {
+        grid-template-columns: 1fr;
+    }
+    .control-panel {
+        justify-self: end;
+    }
+}
+
+@container search (max-width: 160px) {
+    .searchbox {
+        grid-template-columns: 1fr;
+    }
+
+    .filter .searchbox > [data-command] {
+        display: none;
+    }
+}
+
+.filter .searchbox > [data-command]:hover {
     background-color: var(--ms-button-background-hover);
 }
 
-.filter .search-container > [data-command].active {
+.filter .searchbox > [data-command].active {
     background-color: var(--ms-button-background-active);
 }
 
@@ -348,6 +381,12 @@ input[type="checkbox"] + label:before,
 [data-role="option"] {
     display: grid;
     padding: .1em;
+
+    > label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 /* ==========================================================================
@@ -510,17 +549,19 @@ function createTemplate(options) {
 </div>
 <div id="dropdown" part="dropdown" popover class="dropdown">
     <div part="filter" class="filter">
-        <div class="search-container">
-            <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
-            <button data-command="toggle-values-only"
-            title="${options.titles.valuesOnly}">[val]</button>
-        </div>
-        <div part="controls" class="control-panel">
+        <div class="search">
+            <div class="searchbox">
+                <input part="search" type="text" placeholder="${options.labels.filter.placeholder}" aria-label="search" role="searchbox">
+                <button data-command="toggle-values-only"
+                title="${options.titles.valuesOnly}">[val]</button>
+            </div>
             <button
                 part="control-button"
                 data-command="clear-query"
                 title="${options.titles.clearFilter}"
             >&Cross;</button>
+        </div>
+        <div part="controls" class="control-panel">
             <button 
                 part="control-button"
                 data-command="unfold"
@@ -937,6 +978,7 @@ class MultiSelector extends HTMLElement {
             this.setAttribute("open", "")
             this.getElement("trigger")?.focus()
             window.addEventListener("scroll", this.handleExternalScroll, true)
+            this.dispatchEvent(new Event('ms-open', { bubbles: true, composed: true }))
         } else {
             this.removeAttribute("open")
             window.removeEventListener("scroll", this.handleExternalScroll, true)
